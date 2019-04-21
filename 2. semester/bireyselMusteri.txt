@@ -1,21 +1,24 @@
 Bireysel Musteri Listesi
------------------------------
+*****************************
 Musteri: 1 
-    Ad Soyad: Bahadir Bayraktar
-    Tc No: 21964552113
-    Musteri Turu: Bireysel
-    Hesaplar:
-        1: 214536874
-            Bakiye: 4000
-        2: 365487585
-            Bakiye: 8444
+    Ad-Soyad: Bahadir Bayraktar
+    Tc-No: 21964552113
+    Musteri-Turu: Bireysel
+    Hesap: 1
+        Hesap-No: 214536874
+        Bakiye: 4000
+    Hesap: 2
+        Hesap-No: 365487585
+        Bakiye: 8444
 -----------------------------
 Musteri: 2
-    Ad Soyad: baHa by
-    Tc No: 21964552113
-    Musteri Turu: ticari
-    Hesaplar:
-        1: 214536874
-            Bakiye: 4000
-        2: 365487585
-            Bakiye: 8444
+    Ad-Soyad: baHa by
+    Tc-No: 21964552113
+    Musteri-Turu: Ticari
+    Hesap: 1
+        Hesap-No: 214536874
+        Bakiye: 4000
+    Hesap: 2
+        Hesap-No: 365487585
+        Bakiye: 8444
+-----------------------------
