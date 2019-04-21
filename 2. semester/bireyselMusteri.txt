@@ -1,9 +1,9 @@
 Bireysel Musteri Listesi
 -----------------------------
 Musteri: 1 
-    Ad-Soyad: Bahadir Bayraktar
-    Tc-No: 21964552113
-    Musteri-turu: bireysel
+    Ad Soyad: Bahadir Bayraktar
+    Tc No: 21964552113
+    Musteri Turu: Bireysel
     Hesaplar:
         1: 214536874
             Bakiye: 4000
@@ -11,9 +11,9 @@ Musteri: 1
             Bakiye: 8444
 -----------------------------
 Musteri: 2
-    Ad-Soyad: baHa by
-    Tc-No: 21964552113
-    Musteri-turu: ticari
+    Ad Soyad: baHa by
+    Tc No: 21964552113
+    Musteri Turu: ticari
     Hesaplar:
         1: 214536874
             Bakiye: 4000
