@@ -23,7 +23,7 @@ Musteri: 4
         Hesap No: 365487587
         Bakiye: 8444
     Hesap: 5
-        Hesap No: 214536877
+        Hesap No: 27777777
         Bakiye: 4000
     Hesap: 6
         Hesap No: 365487585
