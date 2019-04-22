@@ -15,7 +15,7 @@ typedef struct{
 	char Ad[50];
 	double tcNo;
 	int hesapSayisi;
-	int mTuru;
+	int mTuru;//0->bireysel || 1->ticari
 }Musteri;
 
 typedef struct{
@@ -25,7 +25,7 @@ typedef struct{
 }Banka;
 
 Banka baHa;
-
+void Guncelle();
 void VeriAl();
 void HesapNoOlustur();
 
@@ -35,7 +35,7 @@ int main(){
 	// for (i=0; i<100; i++){
 	// 	HesapNoOlustur();
 	// }
-	VeriAl();
+	//Guncelle();
 }
 void HesapNoOlustur(){
 	int temp, islem=0;
@@ -49,20 +49,19 @@ void HesapNoOlustur(){
 }
 
 int HesapNoKontrol(int hesapNo){
-	
+	return true;
 }
 
 void VeriAl(){
-	int t, i, mNo, hSayi, hNo;
-	double b;
+	int i, mNo;
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
 	baHa.mSayisi=0;
 	while(!feof(pf)){
 		fscanf(pf, " Musteri: %d", &mNo);
 		fscanf(pf, " Tc-No: %lf", &baHa.musteri[mNo-1].tcNo);
-		fscanf(pf, " Hesap Sayisi: %d", &hSayi);
-		for (i=0; i<hSayi; i++){
+		fscanf(pf, " Hesap Sayisi: %d", &baHa.musteri[mNo-1].hesapSayisi);
+		for (i=0; i<baHa.musteri[mNo-1].hesapSayisi; i++){
 			fscanf(pf, " Hesap %*d : %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &baHa.musteri[mNo-1].hesap[i].bakiye);
 		}
@@ -74,8 +73,8 @@ void VeriAl(){
 	while(!feof(pf)){
 		fscanf(pf, " Musteri: %d", &mNo);
 		fscanf(pf, " Tc-No: %lf", &baHa.musteri[mNo-1].tcNo);
-		fscanf(pf, " Hesap Sayisi: %d", &hSayi);
-		for (i=0; i<hSayi; i++){
+		fscanf(pf, " Hesap Sayisi: %d", &baHa.musteri[mNo-1].hesapSayisi);
+		for (i=0; i<baHa.musteri[mNo-1].hesapSayisi; i++){
 			fscanf(pf, " Hesap %*d : %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &baHa.musteri[mNo-1].hesap[i].bakiye);
 		}
@@ -87,5 +86,19 @@ void VeriAl(){
 }
 
 void Guncelle(){
+	int i;
+	FILE *pf1, *pf2;
+	fclose(fopen("bireyselMusteri.txt", "w"));
+	fclose(fopen("ticariMusteri.txt", "w"));
+	pf1 = fopen("bireyselMusteri.txt", "a");
+	pf2 = fopen("ticariMusteri.txt", "a");
+	for (i=0; i<baHa.mSayisi; i++){
+		if (baHa.musteri[i].mTuru == 0){
+			//bireysel
+		}else if (baHa.musteri[i].mTuru == 1){
+			//ticari
+		}
+	}
+	
 
 }
