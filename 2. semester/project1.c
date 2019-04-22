@@ -58,6 +58,7 @@ void VeriAl(){
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
 	char temp[200], temp2[100];   
+	baHa.mSayisi=0;
 	while(!feof(pf)){
 		fscanf(pf, " Musteri: %d", &mNo);
 		fscanf(pf, " Tc-No: %lf", &baHa.musteri[mNo-1].tcNo);
@@ -67,7 +68,7 @@ void VeriAl(){
 			fscanf(pf, " Hesap No: %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &baHa.musteri[mNo-1].hesap[i].bakiye);
 		}
-		mSayisi++;
+		baHa.mSayisi++;
 	}
 	printf("%d\n", baHa.musteri[3].hesap[4].hesapNo);
 }
