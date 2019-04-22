@@ -21,7 +21,8 @@ typedef struct{
 typedef struct{
 
 	Musteri musteri[1000];
-	int mSayisi;
+	int bMusteriSayisi;
+	int tMusteriSayisi;
 }Banka;
 
 Banka baHa;
@@ -58,35 +59,20 @@ void VeriAl(){
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
 	char temp[200], temp2[100];
-	while(fgets(temp, 200, pf)!=NULL){
-		if (sscanf(temp, "%s %d", temp2, &baHa.mSayisi)&&strstr(temp2, "Musteri:")){
-			printf("%d\n", baHa.mSayisi);
+	baHa.bMusteriSayisi=0;
+	baHa.tMusteriSayisi=0;
+	while(!feof(pf)){
+		fscanf(pf, " Musteri: %d", &t);
+		fscanf(pf, " Tc-No: %lf", &baHa.musteri[baHa.bMusteriSayisi].tcNo);
+		fscanf(pf, " Hesap Sayisi: %d", &hSayi);
+		for (i=0; i<hSayi; i++){
+			fscanf(pf, " Hesap: %d", &hNo);
+			fscanf(pf, " Hesap No: %d", &baHa.musteri[baHa.bMusteriSayisi].hesap[i].hesapNo);
+			fscanf(pf, " Bakiye: %lf", &baHa.musteri[baHa.bMusteriSayisi].hesap[i].bakiye);
 		}
-		if (strstr(temp, "Ad-Soyad: ")){
-			for (i=14; i<strlen(temp); i++){
-				baHa.musteri[baHa.mSayisi-1].Ad[i-14] = *(temp+i);
-			}
-		}
-		if (sscanf(temp, "%s %lf", temp2, &baHa.musteri[baHa.mSayisi-1].tcNo)&&strstr(temp2, "Tc-No:")){
-			printf("%.lf\n", baHa.musteri[baHa.mSayisi-1].tcNo);
-		}
-		if (strstr(temp, "Musteri-Turu: ")){
-			if (strstr(temp, "Bireysel")){
-				printf("bireysel\n");
-			}else if(strstr(temp, "Ticari")){
-				printf("ticari\n");
-			}
-		}
-		if (sscanf(temp, "%s %d", temp2, &hSayi)&&strstr(temp2, "Hesap:")){
-			printf("%d\n", hSayi);
-		}
-		if (sscanf(temp, "%s %d", temp2, &hNo)&&strstr(temp2, "Hesap-No:")){
-			printf("%d\n", hNo);
-		}
-		if (sscanf(temp, "%s %lf", temp2, &b)&&strstr(temp2, "Bakiye:")){
-			printf("%.2lf\n", b);
-		}
+		baHa.bMusteriSayisi++;
 	}
+	printf("%d\n", baHa.musteri[2].hesap[1].hesapNo);
 }
 
 void Guncelle(){
