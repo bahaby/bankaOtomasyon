@@ -21,8 +21,7 @@ typedef struct{
 typedef struct{
 
 	Musteri musteri[1000];
-	int bMusteriSayisi;
-	int tMusteriSayisi;
+	int mSayisi;
 }Banka;
 
 Banka baHa;
@@ -58,21 +57,19 @@ void VeriAl(){
 	double b;
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
-	char temp[200], temp2[100];
-	baHa.bMusteriSayisi=0;
-	baHa.tMusteriSayisi=0;
+	char temp[200], temp2[100];   
 	while(!feof(pf)){
-		fscanf(pf, " Musteri: %d", &t);
-		fscanf(pf, " Tc-No: %lf", &baHa.musteri[baHa.bMusteriSayisi].tcNo);
+		fscanf(pf, " Musteri: %d", &mNo);
+		fscanf(pf, " Tc-No: %lf", &baHa.musteri[mNo-1].tcNo);
 		fscanf(pf, " Hesap Sayisi: %d", &hSayi);
 		for (i=0; i<hSayi; i++){
 			fscanf(pf, " Hesap: %d", &hNo);
-			fscanf(pf, " Hesap No: %d", &baHa.musteri[baHa.bMusteriSayisi].hesap[i].hesapNo);
-			fscanf(pf, " Bakiye: %lf", &baHa.musteri[baHa.bMusteriSayisi].hesap[i].bakiye);
+			fscanf(pf, " Hesap No: %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
+			fscanf(pf, " Bakiye: %lf", &baHa.musteri[mNo-1].hesap[i].bakiye);
 		}
-		baHa.bMusteriSayisi++;
+		mSayisi++;
 	}
-	printf("%d\n", baHa.musteri[2].hesap[1].hesapNo);
+	printf("%d\n", baHa.musteri[3].hesap[4].hesapNo);
 }
 
 void Guncelle(){
