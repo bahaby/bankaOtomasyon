@@ -57,7 +57,6 @@ void VeriAl(){
 	double b;
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
-	char temp[200], temp2[100];   
 	baHa.mSayisi=0;
 	while(!feof(pf)){
 		fscanf(pf, " Musteri: %d", &mNo);
