@@ -1,0 +1,39 @@
+Musteri: 2
+    Tc-No: 21964552113
+    Hesap Sayisi: 2
+    Hesap: 1
+        Hesap No: 214536874
+        Bakiye: 4000
+    Hesap: 2
+        Hesap No: 365487585
+        Bakiye: 8444
+Musteri: 3
+    Tc-No: 21964552113
+    Hesap Sayisi: 6
+    Hesap: 1
+        Hesap No: 21453687
+        Bakiye: 4000
+    Hesap: 2
+        Hesap No: 365487589
+        Bakiye: 8444
+    Hesap: 3
+        Hesap No: 214536874
+        Bakiye: 4000
+    Hesap: 4
+        Hesap No: 365487587
+        Bakiye: 8444
+    Hesap: 5
+        Hesap No: 21888888
+        Bakiye: 4000
+    Hesap: 6
+        Hesap No: 365487585
+        Bakiye: 8444
+Musteri: 5
+    Tc-No: 21964552113
+    Hesap Sayisi: 2
+    Hesap: 1
+        Hesap No: 214536874
+        Bakiye: 4000
+    Hesap: 2
+        Hesap No: 365487585
+        Bakiye: 8444
