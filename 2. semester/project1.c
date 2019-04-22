@@ -63,8 +63,7 @@ void VeriAl(){
 		fscanf(pf, " Tc-No: %lf", &baHa.musteri[mNo-1].tcNo);
 		fscanf(pf, " Hesap Sayisi: %d", &hSayi);
 		for (i=0; i<hSayi; i++){
-			fscanf(pf, " Hesap: %d", &hNo);
-			fscanf(pf, " Hesap No: %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
+			fscanf(pf, " Hesap %*d : %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &baHa.musteri[mNo-1].hesap[i].bakiye);
 		}
 		baHa.musteri[mNo-1].mTuru = 0;
@@ -77,8 +76,7 @@ void VeriAl(){
 		fscanf(pf, " Tc-No: %lf", &baHa.musteri[mNo-1].tcNo);
 		fscanf(pf, " Hesap Sayisi: %d", &hSayi);
 		for (i=0; i<hSayi; i++){
-			fscanf(pf, " Hesap: %d", &hNo);
-			fscanf(pf, " Hesap No: %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
+			fscanf(pf, " Hesap %*d : %d", &baHa.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &baHa.musteri[mNo-1].hesap[i].bakiye);
 		}
 		baHa.musteri[mNo-1].mTuru = 1;
