@@ -54,13 +54,60 @@ void VeriAl();
 void HesapNoOlustur();
 
 int main(){
-	// int i;
-	// srand(time(NULL));
-	// for (i=0; i<100; i++){
-	// 	HesapNoOlustur();
-	// }
-	VeriAl();
-	Guncelle();
+	aBank.mSayisi=0;
+	int sorgu;
+	printf(".............aBank.............\n");
+	printf("1-)	Hesap Açma\n");
+	printf("2-)	Hesap Islemleri\n");
+	printf("Secim: ");
+	do{
+		scanf("%d", &sorgu);
+		if(sorgu<1 || sorgu>2) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<1 || sorgu>2);
+	system("@cls||clear");
+	switch (sorgu){
+		case 1:{
+			int t;
+			char temp;
+			printf(".............aBank.............\n");
+			printf("Ad Soyad: ");
+			scanf("%s", aBank.musteri[aBank.mSayisi].Ad);
+			t = strlen(aBank.musteri[aBank.mSayisi].Ad);
+			do{
+				scanf("%c", &temp);
+				if (temp == ' ') temp = '-';
+				aBank.musteri[aBank.mSayisi].Ad[t++] = temp;
+			}while (temp != '\n');
+			aBank.musteri[aBank.mSayisi].Ad[t-1] = 0;
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Tc Numaranizi Giriniz: ");
+			do{
+				scanf("%lf", &aBank.musteri[aBank.mSayisi].tcNo);
+				if (!(aBank.musteri[aBank.mSayisi].tcNo>10000000000&&aBank.musteri[aBank.mSayisi].tcNo<99999999999)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
+			}while(!(aBank.musteri[aBank.mSayisi].tcNo>10000000000&&aBank.musteri[aBank.mSayisi].tcNo<99999999999));
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Hesabiniz kuruldu\n1-)	Ana Menu\n2-)	Cikis\nSecim: ");
+			do{
+				scanf("%d", &sorgu);
+				if(sorgu<1 || sorgu>2) {
+					printf("Hatali Giris!\nTekrar Deneyiniz: ");
+				}
+			}while(sorgu<1 || sorgu>2);
+			if (sorgu == 1){
+				system("@cls||clear");
+				main();
+			}
+			else if (sorgu == 2) exit(1);
+		}break;
+		case 2:{
+			
+		}break;
+	}
+
 }
 void HesapNoOlustur(){
 	int temp, islem=0;
@@ -80,7 +127,6 @@ int HesapNoKontrol(int hesapNo){
 void VeriAl(){
 	int i, j, mNo, kontrol;
 	FILE *pf;
-	aBank.mSayisi=0;
 	pf = fopen("bireyselMusteri.txt", "r");
 	while(!feof(pf)){
 		fscanf(pf, " Musteri: %d", &mNo);
