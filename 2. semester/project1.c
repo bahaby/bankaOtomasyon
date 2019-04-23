@@ -14,11 +14,13 @@ typedef struct{
 typedef struct{
 	int iTuru; //1->para çekme, 2->para yatırma, 3->Havale
 	int iHesap;
+	double iTutar;
 	Tarih tarih;
 }Islem;
 
 typedef struct{
 	int hesapNo;
+	int islemSayisi;
 	double bakiye;
 	Islem islem[100];
 }Hesap;
@@ -36,6 +38,7 @@ typedef struct{
 	char Ad[50];
 	double tcNo;
 	int hesapSayisi;
+	int tHesapSayisi;
 	int mTuru;//1->bireysel || 2->ticari
 }Musteri;
 
@@ -57,7 +60,6 @@ int main(){
 	// 	HesapNoOlustur();
 	// }
 	VeriAl();
-	Guncelle();
 }
 void HesapNoOlustur(){
 	int temp, islem=0;
@@ -75,7 +77,7 @@ int HesapNoKontrol(int hesapNo){
 }
 
 void VeriAl(){
-	int i, mNo, kontrol;
+	int i, j, mNo, kontrol;
 	FILE *pf;
 	aBank.mSayisi=0;
 	pf = fopen("bireyselMusteri.txt", "r");
@@ -87,6 +89,24 @@ void VeriAl(){
 		for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
 			fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &aBank.musteri[mNo-1].hesap[i].bakiye);
+			fscanf(pf, " Islem Sayisi: %d", &aBank.musteri[mNo-1].hesap[i].islemSayisi);
+			for (j=0; j<aBank.musteri[mNo-1].hesap[i].islemSayisi; j++){
+				fscanf(pf, " %d.%d.%d - %d:%d / %lf", 
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Gun,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Ay,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Yil,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Saat,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Dk,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].iTutar);
+				fscanf(pf, " %d - %d", 
+					&aBank.musteri[mNo-1].hesap[i].islem[j].iTuru,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].iHesap);
+			}
+		}
+		fscanf(pf, " Kayitli Havale Hesap Sayisi: %d", &aBank.musteri[mNo-1].tHesapSayisi);
+		for (i=0; i<aBank.musteri[mNo-1].tHesapSayisi; i++){
+			fscanf(pf, " Hesap %*d: %d", &aBank.musteri[mNo-1].tHesap[i].hesapNo);
+			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tHesap[i].tcNo);
 		}
 		aBank.musteri[mNo-1].mTuru = 1;
 		if (kontrol == 1) aBank.mSayisi++;
@@ -101,12 +121,30 @@ void VeriAl(){
 		for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
 			fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
 			fscanf(pf, " Bakiye: %lf", &aBank.musteri[mNo-1].hesap[i].bakiye);
+			fscanf(pf, " Islem Sayisi: %d", &aBank.musteri[mNo-1].hesap[i].islemSayisi);
+			for (j=0; j<aBank.musteri[mNo-1].hesap[i].islemSayisi; j++){
+				fscanf(pf, " %d.%d.%d - %d:%d / %lf", 
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Gun,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Ay,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Yil,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Saat,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Dk,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].iTutar);
+				fscanf(pf, " %d - %d", 
+					&aBank.musteri[mNo-1].hesap[i].islem[j].iTuru,
+					&aBank.musteri[mNo-1].hesap[i].islem[j].iHesap);
+			}
+		}
+		fscanf(pf, " Kayitli Havale Hesap Sayisi: %d", &aBank.musteri[mNo-1].tHesapSayisi);
+		for (i=0; i<aBank.musteri[mNo-1].tHesapSayisi; i++){
+			fscanf(pf, " Hesap %*d: %d", &aBank.musteri[mNo-1].tHesap[i].hesapNo);
+			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tHesap[i].tcNo);
 		}
 		aBank.musteri[mNo-1].mTuru = 2;
 		if (kontrol == 1) aBank.mSayisi++;
 	}
 	fclose(pf);
-	printf("%d\n", aBank.musteri[3].hesap[4].hesapNo);
+	printf("%.2lf\n", aBank.musteri[3].hesap[0].islem[0].iTutar);
 }
 
 void Guncelle(){
