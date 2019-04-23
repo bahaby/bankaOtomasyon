@@ -4,8 +4,22 @@ Musteri: 1
 	Hesap Sayisi: 2
 		Hesap 1: 214536874
 		Bakiye: 4000.00
+		Islem Sayisi: 2
+			11.12.2019 - 12:16	+5000
+				3 - 215463526
+			12.12.2019 - 14:12	-2200
+				1 - 65645123
 		Hesap 2: 365487585
 		Bakiye: 8444.00
+	Kayitli Havale Hesap Sayisi: 1
+		Hesap 1: 65645123
+		Tc-No: 21645435413
+		Ad Soyad: baHa by 
+	Hesap Ozeti Islem Sayisi: 2
+		11.12.2019 - 12:16	+5000
+			3 - 215463526
+		12.12.2019 - 14:12	-2200
+			1 - 65645123
 Musteri: 4
 	Tc-No: 21964552113
 	Ad Soyad: baHa-by

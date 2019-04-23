@@ -4,9 +4,23 @@
 #include <string.h>
 
 typedef struct{
+	int Gun;
+	int Ay;
+	int Yil;
+	int Saat;
+	int Dk;
+}Tarih;
+
+typedef struct{
+	int iTuru; //1->para çekme, 2->para yatırma, 3->Havale
+	int iHesap;
+	Tarih tarih;
+}Islem;
+
+typedef struct{
 	int hesapNo;
 	double bakiye;
-
+	Islem islem[100];
 }Hesap;
 
 typedef struct{
