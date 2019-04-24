@@ -60,21 +60,6 @@ int main(){
 	aBank.mSayisi=0;
 	AnaMenu();
 }
-int HesapNoOlustur(int mSira, int hSira ){
-	srand(time(NULL));
-	int hesapNo;
-	mSira = 999-mSira;
-	hSira = 100-hSira;
-	hesapNo = ((rand()%90)+10)*10000000;
-	hesapNo += ((rand()%90)+10)*100;
-	hesapNo += mSira * 10000;
-	hesapNo += hSira;
-	return hesapNo;
-}
-
-void HesapIslem(){
-
-}
 
 void AnaMenu(){
 	int sorgu;
@@ -99,6 +84,11 @@ void AnaMenu(){
 	}
 
 }
+
+void HesapIslem(){
+
+}
+
 
 void YeniMusteri(){
 	int sorgu, t;
@@ -294,4 +284,16 @@ void Guncelle(){
 		}
 	}
 
+}
+
+int HesapNoOlustur(int mSira, int hSira ){
+	srand(time(NULL));
+	int hesapNo;
+	mSira = 999-mSira;
+	hSira = 100-hSira;
+	hesapNo = ((rand()%90)+10)*10000000;
+	hesapNo += ((rand()%90)+10)*100;
+	hesapNo += mSira * 10000;
+	hesapNo += hSira;
+	return hesapNo;
 }
