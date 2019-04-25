@@ -43,7 +43,6 @@ typedef struct{
 }Musteri;
 
 typedef struct{
-
 	Musteri musteri[1000];
 	int mSayisi;
 }Banka;
@@ -55,6 +54,8 @@ void HesapIslem();
 void Guncelle();
 void VeriAl();
 int HesapNoOlustur(int mSira, int hSira);
+int tcNoKontrol(double tcNo);
+char *isimDuzelt(char isim[50]);
 
 int main(){
 	aBank.mSayisi=0;
@@ -79,20 +80,30 @@ void AnaMenu(){
 			YeniMusteri();
 		}break;
 		case 2:{
-			printf("%d\n", HesapNoOlustur(1, 0) );
+			HesapIslem();
 		}break;
 	}
 
 }
 
 void HesapIslem(){
+	double dTemp;
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Tc Numaranizi Giriniz: ");
+	do{
+		scanf("%lf", &dTemp);
+		if (!(dTemp>10000000000&&dTemp<99999999999)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
+	}while(!(dTemp>10000000000&&dTemp<99999999999));
+	printf("%d\n", tcNoKontrol(dTemp));
 
 }
 
 
 void YeniMusteri(){
 	int sorgu, t;
-	char temp;
+	double dTemp;
+	char cTemp;
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n");
 	printf("2-)\tTicari Musteri\n");
@@ -110,18 +121,20 @@ void YeniMusteri(){
 	scanf("%s", aBank.musteri[aBank.mSayisi].Ad);
 	t = strlen(aBank.musteri[aBank.mSayisi].Ad);
 	do{
-		scanf("%c", &temp);
-		if (temp == ' ') temp = '-';
-		aBank.musteri[aBank.mSayisi].Ad[t++] = temp;
-	}while (temp != '\n');
+		scanf("%c", &cTemp);
+		if (cTemp == ' ') cTemp = '-';
+		aBank.musteri[aBank.mSayisi].Ad[t++] = cTemp;
+	}while (cTemp != '\n');
 	aBank.musteri[aBank.mSayisi].Ad[t-1] = 0;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Tc Numaranizi Giriniz: ");
 	do{
-		scanf("%lf", &aBank.musteri[aBank.mSayisi].tcNo);
-		if (!(aBank.musteri[aBank.mSayisi].tcNo>10000000000&&aBank.musteri[aBank.mSayisi].tcNo<99999999999)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
-	}while(!(aBank.musteri[aBank.mSayisi].tcNo>10000000000&&aBank.musteri[aBank.mSayisi].tcNo<99999999999));
+		scanf("%lf", &dTemp);
+		if (!(dTemp>10000000000&&dTemp<99999999999)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
+	}while(!(dTemp>10000000000&&dTemp<99999999999&&tcNoKontrol(dTemp) == -1));
+	aBank.musteri[aBank.mSayisi].tcNo = dTemp;
 
 	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
 	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur(aBank.mSayisi, 1);
@@ -130,8 +143,12 @@ void YeniMusteri(){
 	aBank.mSayisi++;
 
 	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Hesabiniz kuruldu\n1-)\tAna Menu\n2-)\tCikis\nSecim: ");
+	printf(".............aBank.............\n\n");
+	printf("Hesabiniz kuruldu...\n");
+	printf("Adiniz: %s\n", isimDuzelt(aBank.musteri[aBank.mSayisi-1].Ad));
+	printf("Tc Numaraniz: %.lf\n", aBank.musteri[aBank.mSayisi-1].tcNo);
+	printf("Hesap Numaraniz: %d\n\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
+	printf("1-)\tAna Menu\n2-)\tCikis\nSecim: ");
 	do{
 		scanf("%d", &sorgu);
 		if(sorgu<1 || sorgu>2) {
@@ -212,7 +229,6 @@ void VeriAl(){
 		if (kontrol == 1) aBank.mSayisi++;
 	}
 	fclose(pf);
-	printf("%.2lf\n", aBank.musteri[3].hesap[0].islem[0].iTutar);
 }
 
 void Guncelle(){
@@ -296,4 +312,29 @@ int HesapNoOlustur(int mSira, int hSira ){
 	hesapNo += mSira * 10000;
 	hesapNo += hSira;
 	return hesapNo;
+}
+
+int tcNoKontrol(double tcNo){
+	int i;
+	for (i=0; i<aBank.mSayisi; i++){
+		if (aBank.musteri[i].tcNo == tcNo) return i;
+	}
+	return -1;
+}
+
+char *isimDuzelt(char isim[50]){
+	int i;
+	for (i=0; i<(int)strlen(isim); i++){
+		if (isim[i] == '-') isim[i] = ' ';
+	}
+	return isim;
+}
+
+void tarihEkle(int mSira, int hSira){
+
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+
+	printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	//düzenlenecek
 }
