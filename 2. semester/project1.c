@@ -52,8 +52,9 @@ void YeniMusteri();
 void HesapIslem();
 void Guncelle();
 void VeriAl();
-int HesapNoOlustur(int mSira, int hSira);
+int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
+int hNoKontrol(int hesapNo, int n);
 char *isimDuzelt(char isim[50]);
 
 int main(){
@@ -147,7 +148,7 @@ void YeniMusteri(){
 
 	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
 	aBank.musteri[aBank.mSayisi].tHesapSayisi = 0;
-	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur(aBank.mSayisi, 1);
+	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur();
 	aBank.musteri[aBank.mSayisi].hesap[0].bakiye = 0;
 	aBank.musteri[aBank.mSayisi].hesap[0].islemSayisi = 0;
 	aBank.mSayisi++;
@@ -327,15 +328,13 @@ void Guncelle(){
 
 }
 
-int HesapNoOlustur(int mSira, int hSira ){
-	srand(time(NULL));
+int HesapNoOlustur(){
 	int hesapNo;
-	mSira = 999-mSira;
-	hSira = 100-hSira;
-	hesapNo = ((rand()%90)+10)*10000000;
-	hesapNo += ((rand()%90)+10)*100;
-	hesapNo += mSira * 10000;
-	hesapNo += hSira;
+	srand(time(NULL));
+	do{
+		hesapNo = rand()%899999999 + 100000000;
+		
+	}while(hNoKontrol(hesapNo, 1)!=-1);
 	return hesapNo;
 }
 
@@ -343,6 +342,16 @@ int tcNoKontrol(double tcNo){
 	int i;
 	for (i=0; i<aBank.mSayisi; i++){
 		if (aBank.musteri[i].tcNo == tcNo) return i;
+	}
+	return -1;
+}
+
+int hNoKontrol(int hesapNo, int n){
+	int mS, hS;
+	for (mS=0; mS<aBank.mSayisi; mS++){
+		for (hS=0; hS<aBank.musteri[mS].hesapSayisi; hS++){
+			if (aBank.musteri[mS].hesap[hS].hesapNo == hesapNo) return (n==1)?mS:hS;
+		}
 	}
 	return -1;
 }

@@ -61,3 +61,19 @@ Musteri: 6
 	Kayitli Havale Hesap Sayisi: 1
 		Hesap 1: 65645123
 		Tc-No: 21645435413
+Musteri: 7
+	Tc-No: 21964332525
+	Ad Soyad: asd
+	Hesap Sayisi: 1
+		Hesap 1: 340808596
+		Bakiye: 0.00
+		Islem Sayisi: 0
+	Kayitli Havale Hesap Sayisi: 0
+Musteri: 8
+	Tc-No: 21964332121
+	Ad Soyad: bahadir-by
+	Hesap Sayisi: 1
+		Hesap 1: 202047464
+		Bakiye: 0.00
+		Islem Sayisi: 0
+	Kayitli Havale Hesap Sayisi: 0
