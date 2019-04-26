@@ -61,7 +61,7 @@ char *sifrele(char sifre[50]);
 void strAl(char str[50]);
 
 int main(){
-	AnaMenu();
+	VeriAl();
 }
 
 void AnaMenu(){
@@ -89,7 +89,7 @@ void AnaMenu(){
 }
 
 void HesapIslem(){
-	int sonuc, sorgu, t;
+	int sonuc, sorgu, t=0;
 	double dTemp;
 	char sifre[50];
 	system("@cls||clear");
@@ -175,11 +175,12 @@ void YeniMusteri(){
 	Guncelle();
 
 	system("@cls||clear");
-	printf(".............aBank.............\n\n");
-	printf("Hesabiniz kuruldu...\n");
+	printf(".............aBank.............\n");
+	printf("Hesabiniz kuruldu...\n\n");
 	printf("Adiniz: %s\n", isimDuzelt(aBank.musteri[aBank.mSayisi-1].Ad));
 	printf("Tc Numaraniz: %.lf\n", aBank.musteri[aBank.mSayisi-1].tcNo);
-	printf("Hesap Numaraniz: %d\n\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
+	printf("Hesap Numaraniz: %d\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
+	printf("Sifreniz: %s\n\n", s2);
 	printf("1-)\tAna Menu\n2-)\tCikis\nSecim: ");
 	do{
 		scanf("%d", &sorgu);
@@ -415,3 +416,10 @@ void tarihEkle(int mSira, int hSira){
 	printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	//düzenlenecek
 }
+
+//--Havale menüsünde kayıtlı havale hesabı varsa kayıtlı havale hesaplarına
+//yollama seçeneği ve hesap no ile gönderme seçenekleri gelecek yoksa direk 
+//hesap no ile gönderme ekranı gelecek
+//--Hesap silmede struct elemanı eşitleme kullanılacak
+//--Güncelle fonksiyonu geliştirilip rapor yazdırmada yaptırılacak
+//--veriAl fonksiyonu geliştirilip rapor okumasıda yaptırılacak
