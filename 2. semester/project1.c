@@ -58,10 +58,10 @@ int tcNoKontrol(double tcNo);
 int hNoKontrol(int hesapNo, int n);
 char *isimDuzelt(char isim[50]);
 char *sifrele(char sifre[50]);
+void strAl(char str[50]);
 
 int main(){
-	VeriAl();
-	//AnaMenu();
+	AnaMenu();
 }
 
 void AnaMenu(){
@@ -89,8 +89,9 @@ void AnaMenu(){
 }
 
 void HesapIslem(){
-	int sonuc, sorgu;
+	int sonuc, sorgu, t;
 	double dTemp;
+	char sifre[50];
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Tc Numaranizi Giriniz: ");
@@ -99,6 +100,14 @@ void HesapIslem(){
 		sonuc = tcNoKontrol(dTemp);
 		if (!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
 	}while(!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1));
+	do{
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		if (t!=0) printf("Hatali sifre!\n");
+		printf("Şifrenizi Giriniz: ");
+		strAl(sifre);
+		t = strcmp(aBank.musteri[sonuc].Sifre, sifrele(sifre));
+	}while(t!=0);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[sonuc].Ad));
@@ -114,9 +123,9 @@ void HesapIslem(){
 
 
 void YeniMusteri(){
-	int sorgu, t;
+	int sorgu;
 	double dTemp;
-	char cTemp;
+	char s1[50], s2[50];
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n");
 	printf("2-)\tTicari Musteri\n");
@@ -131,14 +140,7 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Ad Soyad: ");
-	scanf("%s", aBank.musteri[aBank.mSayisi].Ad);
-	t = strlen(aBank.musteri[aBank.mSayisi].Ad);
-	do{
-		scanf("%c", &cTemp);
-		if (cTemp == ' ') cTemp = '-';
-		aBank.musteri[aBank.mSayisi].Ad[t++] = cTemp;
-	}while (cTemp != '\n');
-	aBank.musteri[aBank.mSayisi].Ad[t-1] = 0;
+	strAl(aBank.musteri[aBank.mSayisi].Ad);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Tc Numaranizi Giriniz: ");
@@ -148,6 +150,21 @@ void YeniMusteri(){
 		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
 	}while(!(dTemp>10000000000&&dTemp<99999999999&&tcNoKontrol(dTemp) == -1));
 	aBank.musteri[aBank.mSayisi].tcNo = dTemp;
+
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	do{
+		if (strcmp(s1,s2) != 0){
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Hatali Giris!\n");
+		}
+		printf("Sifrenizi Giriniz: ");
+		strAl(s1);
+		printf("Tekrar Giriniz: ");
+		strAl(s2);
+	}while(strcmp(s1,s2) != 0);
+	strcpy(aBank.musteri[aBank.mSayisi].Sifre, sifrele(s1));
 
 	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
 	aBank.musteri[aBank.mSayisi].tHesapSayisi = 0;
@@ -186,7 +203,6 @@ void VeriAl(){
 		while(!feof(pf)){
 			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
 			strcpy(aBank.musteri[mNo-1].Sifre, temp);
-			printf("%s\n", aBank.musteri[mNo-1].Sifre);
 			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
 			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
 			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
@@ -270,7 +286,7 @@ void Guncelle(){
 			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));
 			pf1 = fopen("bireyselMusteri.txt", "a");
 			if (b!=0) fprintf(pf1, "\n");
-			fprintf(pf1, "Musteri: %d", i+1);
+			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, aBank.musteri[i].Sifre);
 			fprintf(pf1, "\n\tTc-No: %.lf", aBank.musteri[i].tcNo);
 			fprintf(pf1, "\n\tAd Soyad: %s", aBank.musteri[i].Ad);
 			fprintf(pf1, "\n\tHesap Sayisi: %d", aBank.musteri[i].hesapSayisi);
@@ -302,7 +318,7 @@ void Guncelle(){
 			if (t==0) fclose(fopen("ticariMusteri.txt", "w"));
 			pf2 = fopen("ticariMusteri.txt", "a");
 			if (t!=0) fprintf(pf2, "\n");
-			fprintf(pf2, "Musteri: %d", i+1);
+			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, aBank.musteri[i].Sifre);
 			fprintf(pf2, "\n\tTc-No: %.lf", aBank.musteri[i].tcNo);
 			fprintf(pf2, "\n\tAd Soyad: %s", aBank.musteri[i].Ad);
 			fprintf(pf2, "\n\tHesap Sayisi: %d", aBank.musteri[i].hesapSayisi);
@@ -346,9 +362,9 @@ int HesapNoOlustur(){
 }
 char *sifrele(char sifre[50]){
 	int i;
-	char secret[8] = { 22, 53, 44, 71, 66, 95, 39, 122};
-	for(i = 0; i < (int)strlen(sifre); i++)
-		sifre[i] ^= secret[i%8];
+	for (i=0; i<(int)strlen(sifre); i++){
+		sifre[i] = sifre[i] + 40 + i;
+	}
 	return sifre;
 }
 
@@ -376,6 +392,19 @@ char *isimDuzelt(char isim[50]){
 		if (isim[i] == '-') isim[i] = ' ';
 	}
 	return isim;
+}
+
+void strAl(char str[50]){
+	int t;
+	char cTemp;
+	scanf("%s", str);
+	t = strlen(str);
+	do{
+		scanf("%c", &cTemp);
+		if (cTemp == ' ') cTemp = '-';
+		str[t++] = cTemp;
+	}while (cTemp != '\n');
+	str[t-1] = 0;
 }
 
 void tarihEkle(int mSira, int hSira){

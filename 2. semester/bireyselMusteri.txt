@@ -1,63 +1,8 @@
-Musteri: 1 / [ asdasasdd ] 
-	Tc-No: 21964552113
-	Ad Soyad: Bahadir-Bayraktar
-	Hesap Sayisi: 2
-		Hesap 1: 214536874
-		Bakiye: 4000.00
-		Islem Sayisi: 2
-			11.12.2019 - 12:16 / 5000.00
-				3 - 65645123
-			12.12.2019 - 14:12 / -2200.00
-				1 - 215463526
-		Hesap 2: 365487585
-		Bakiye: 8444.00
-		Islem Sayisi: 2
-			11.12.2019 - 12:16 / 5000.00
-				3 - 65645123
-			12.12.2019 - 14:12 / -2200.00
-				1 - 365487585
-	Kayitli Havale Hesap Sayisi: 1
-		Hesap 1: 65645123
-		Tc-No: 21645435413
-Musteri: 3 / [ asdasd ]
-	Tc-No: 21964552113
-	Ad Soyad: Bahadir-Bayraktar
-	Hesap Sayisi: 2
-		Hesap 1: 214536874
-		Bakiye: 4000.00
-		Islem Sayisi: 2
-			11.12.2019 - 12:16 / 5000.00
-				3 - 65645123
-			12.12.2019 - 14:12 / -2201.00
-				1 - 215463526
-		Hesap 2: 365487585
-		Bakiye: 8444.00
-		Islem Sayisi: 2
-			11.12.2019 - 12:16 / 5000.00
-				3 - 65645123
-			12.12.2019 - 14:12 / -2200.00
-				1 - 365487585
-	Kayitli Havale Hesap Sayisi: 1
-		Hesap 1: 65645123
-		Tc-No: 21645435413
-Musteri: 6 / [ asdasd ]
-	Tc-No: 21964552113
-	Ad Soyad: Bahadir-Bayraktar
-	Hesap Sayisi: 2
-		Hesap 1: 214536874
-		Bakiye: 4000.00
-		Islem Sayisi: 2
-			11.12.2019 - 12:16 / 5000.00
-				3 - 65645123
-			12.12.2019 - 14:12 / -2200.00
-				1 - 215463526
-		Hesap 2: 365487585
-		Bakiye: 8444.00
-		Islem Sayisi: 2
-			11.12.2019 - 12:16 / 5000.00
-				3 - 65645123
-			12.12.2019 - 14:12 / -2200.00
-				1 - 365487585
-	Kayitli Havale Hesap Sayisi: 1
-		Hesap 1: 65645123
-		Tc-No: 21645435413
+Musteri: 1 / [ ^^^^^^ ]
+	Tc-No: 21964331818
+	Ad Soyad: baha-by
+	Hesap Sayisi: 1
+		Hesap 1: 969393190
+		Bakiye: 0.00
+		Islem Sayisi: 0
+	Kayitli Havale Hesap Sayisi: 0
