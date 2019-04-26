@@ -1,4 +1,4 @@
-Musteri: 1
+Musteri: 1 / [ asdasasdd ] 
 	Tc-No: 21964552113
 	Ad Soyad: Bahadir-Bayraktar
 	Hesap Sayisi: 2
@@ -19,7 +19,7 @@ Musteri: 1
 	Kayitli Havale Hesap Sayisi: 1
 		Hesap 1: 65645123
 		Tc-No: 21645435413
-Musteri: 3
+Musteri: 3 / [ asdasd ]
 	Tc-No: 21964552113
 	Ad Soyad: Bahadir-Bayraktar
 	Hesap Sayisi: 2
@@ -40,7 +40,7 @@ Musteri: 3
 	Kayitli Havale Hesap Sayisi: 1
 		Hesap 1: 65645123
 		Tc-No: 21645435413
-Musteri: 6
+Musteri: 6 / [ asdasd ]
 	Tc-No: 21964552113
 	Ad Soyad: Bahadir-Bayraktar
 	Hesap Sayisi: 2
@@ -61,19 +61,3 @@ Musteri: 6
 	Kayitli Havale Hesap Sayisi: 1
 		Hesap 1: 65645123
 		Tc-No: 21645435413
-Musteri: 7
-	Tc-No: 21964332525
-	Ad Soyad: asd
-	Hesap Sayisi: 1
-		Hesap 1: 340808596
-		Bakiye: 0.00
-		Islem Sayisi: 0
-	Kayitli Havale Hesap Sayisi: 0
-Musteri: 8
-	Tc-No: 21964332121
-	Ad Soyad: bahadir-by
-	Hesap Sayisi: 1
-		Hesap 1: 202047464
-		Bakiye: 0.00
-		Islem Sayisi: 0
-	Kayitli Havale Hesap Sayisi: 0

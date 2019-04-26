@@ -35,6 +35,7 @@ typedef struct{
 	Hesap hesap[100];
 	transferHesap tHesap[100];
 	char Ad[50];
+	char Sifre[50];
 	double tcNo;
 	int hesapSayisi;
 	int tHesapSayisi;
@@ -56,9 +57,11 @@ int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
 int hNoKontrol(int hesapNo, int n);
 char *isimDuzelt(char isim[50]);
+char *sifrele(char sifre[50]);
 
 int main(){
-	AnaMenu();
+	VeriAl();
+	//AnaMenu();
 }
 
 void AnaMenu(){
@@ -174,15 +177,18 @@ void YeniMusteri(){
 	else if (sorgu == 2) exit(1);
 }
 void VeriAl(){
-	int i, j, mNo, kontrol;
+	int i, j, mNo;
+	char temp[50];
 	aBank.mSayisi=0;
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
 	if (pf!=NULL){
 		while(!feof(pf)){
-			fscanf(pf, " Musteri: %d", &mNo);
-			kontrol = fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
+			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
+			strcpy(aBank.musteri[mNo-1].Sifre, temp);
+			printf("%s\n", aBank.musteri[mNo-1].Sifre);
 			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
+			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
 			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
 			for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
 				fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
@@ -211,16 +217,17 @@ void VeriAl(){
 				}
 			}
 			aBank.musteri[mNo-1].mTuru = 1;
-			if (kontrol == 1) aBank.mSayisi++;
+			aBank.mSayisi++;
 		}
 		fclose(pf);
 	}
 	pf = fopen("ticariMusteri.txt", "r");
 	if (pf!=NULL){
 		while(!feof(pf)){
-			fscanf(pf, " Musteri: %d", &mNo);
-			kontrol = fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
+			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
+			strcpy(aBank.musteri[mNo-1].Sifre, temp);
 			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
+			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
 			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
 			for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
 				fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
@@ -249,7 +256,7 @@ void VeriAl(){
 				}
 			}
 			aBank.musteri[mNo-1].mTuru = 2;
-			if (kontrol == 1) aBank.mSayisi++;
+			aBank.mSayisi++;
 		}
 		fclose(pf);
 	}
@@ -336,6 +343,13 @@ int HesapNoOlustur(){
 		
 	}while(hNoKontrol(hesapNo, 1)!=-1);
 	return hesapNo;
+}
+char *sifrele(char sifre[50]){
+	int i;
+	char secret[8] = { 22, 53, 44, 71, 66, 95, 39, 122};
+	for(i = 0; i < (int)strlen(sifre); i++)
+		sifre[i] ^= secret[i%8];
+	return sifre;
 }
 
 int tcNoKontrol(double tcNo){
