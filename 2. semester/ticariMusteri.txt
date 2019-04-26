@@ -1,8 +1,8 @@
-Musteri: 2 / [ Y]a]aeaei’ ]
-	Tc-No: 11111111111
-	Ad Soyad: deneme
+Musteri: 3 / [ ,.(.-!%5* ]
+	Tc-No: 98765432102
+	Ad Soyad: deneme3
 	Hesap Sayisi: 1
-		Hesap 1: 488399078
+		Hesap 1: 859408655
 		Bakiye: 0.00
 		Islem Sayisi: 0
 	Kayitli Havale Hesap Sayisi: 0

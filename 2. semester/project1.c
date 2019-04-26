@@ -61,7 +61,7 @@ char *sifrele(char sifre[50]);
 void strAl(char str[50]);
 
 int main(){
-	VeriAl();
+	AnaMenu();
 }
 
 void AnaMenu(){
@@ -111,13 +111,14 @@ void HesapIslem(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[sonuc].Ad));
-	printf("1-)\tPara Cekme\n2-)\tPara Yatırma\n3-)\tHavale Hesabi Ekle\n4-)\tHavale Gonder\nSecim: ");
+	printf("1-)\tPara Cekme\n2-)\tPara Yatırma\n3-)\tHavale Gonder\n4-)\tHavale Hesabi Kaydet\n");
+	printf("5-)\tHesap Aç\n6-)\tHesap Sil\nSecim: ");
 	do{
 		scanf("%d", &sorgu);
-		if(sorgu<1 || sorgu>4) {
+		if(sorgu<1 || sorgu>6) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
-	}while(sorgu<1 || sorgu>4);
+	}while(sorgu<1 || sorgu>6);
 	printf("%d\n", sorgu);
 }
 
@@ -362,9 +363,10 @@ int HesapNoOlustur(){
 	return hesapNo;
 }
 char *sifrele(char sifre[50]){
-	int i;
-	for (i=0; i<(int)strlen(sifre); i++){
-		sifre[i] = sifre[i] + 40 + i;
+	int i, temp = sifre[0], len = strlen(sifre);
+	for (i=0; i<len; i++){
+		temp += ((i+1) * (sifre[i] + 11) + sifre[len-i-1] + i);
+		sifre[i] = temp%21 + 33;
 	}
 	return sifre;
 }
@@ -408,7 +410,7 @@ void strAl(char str[50]){
 	str[t-1] = 0;
 }
 
-void tarihEkle(int mSira, int hSira){
+void tarihEkle(Banka aBank, int mSira, int hSira, int iSira){
 
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
