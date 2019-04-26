@@ -53,14 +53,14 @@ void YeniMusteri();
 void MusteriIslem();
 void Guncelle();
 void VeriAl();
-void hesapIslem();
-void hesapSec();
-void paraCek();
-void paraYatir();
-void havaleGonder();
-void hHesapKayit();
-void hesapAc();
-void hesapSil();
+void hesapIslem(int mS);
+void paraCek(int mS, int hS);
+void paraYatir(int mS, int hS);
+void havaleGonder(int mS, int hS);
+void hHesapKayit(int mS);
+void hesapAc(int mS);
+void hesapSil(int mS);
+int hesapSec(int mS);
 int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
 int hNoKontrol(int hesapNo, int n);
@@ -134,16 +134,16 @@ void MusteriIslem(){
 			AnaMenu();
 		}break;
 		case 1:{
-			hesapSec();
+			hesapIslem(sonuc);
 		}break;
 		case 2:{
-			hesapAc();
+			hesapAc(sonuc);
 		}break;
 		case 3:{
-			hesapSil();
+			hesapSil(sonuc);
 		}break;
 		case 4:{
-			hHesapKayit();
+			hHesapKayit(sonuc);
 		}break;
 	}
 }
@@ -380,29 +380,66 @@ void Guncelle(){
 	}
 
 }
-void hesapIslem(){
+void hesapIslem(int mS){
+	int sorgu, hS = hesapSec(mS);
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("1-)\tPara Cekme\n2-)\tPara Yatırma\n3-)\tHavale\nSecim: ");
+	do{
+		scanf("%d", &sorgu);
+		if(sorgu<1 || sorgu>3) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<1 || sorgu>3);
+	switch (sorgu){
+		case 1:{
+			paraCek(mS, hS);
+		}break;
+		case 2:{
+			paraYatir(mS, hS);
+		}break;
+		case 3:{
+			havaleGonder(mS, hS);
+		}break;
+	}
+}
+void paraCek(int mS, int hS){
+	printf("para cek\n");
+}
+void paraYatir(int mS, int hS){
+	printf("para yatir\n");
+}
+void havaleGonder(int mS, int hS){
+	printf("havale gonder\n");
+}
+void hHesapKayit(int mS){
 
 }
-void hesapSec(){
+void hesapAc(int mS){
 
 }
-void paraCek(){
+void hesapSil(int mS){
 
 }
-void paraYatir(){
-
-}
-void havaleGonder(){
-
-}
-void hHesapKayit(){
-
-}
-void hesapAc(){
-
-}
-void hesapSil(){
-
+int hesapSec(int mS){
+	int i, sorgu, n = aBank.musteri[mS].hesapSayisi;
+	if (n==1) return 0;
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Islem Yapilacak Hesap Numarasini Seciniz...\n\n");
+	for (i=0; i<n; i++){
+		printf("%d-) %d\t",i+1, aBank.musteri[mS].hesap[i].hesapNo);
+		if (i%3 == 2) printf("\n");
+	}
+	if (i%3 != 0) printf("\n");
+	printf("\nSecim: ");
+	do{
+		scanf("%d", &sorgu);
+		if(sorgu<1 || sorgu>n) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<1 || sorgu>n);
+	return sorgu-1;
 }
 
 int HesapNoOlustur(){
