@@ -6,3 +6,11 @@ Musteri: 3 / [ ,.(.-!%5* ]
 		Bakiye: 0.00
 		Islem Sayisi: 0
 	Kayitli Havale Hesap Sayisi: 0
+Musteri: 5 / [ .30.1(,*-'0- ]
+	Tc-No: 98765432122
+	Ad Soyad: deneme6
+	Hesap Sayisi: 1
+		Hesap 1: 200258107
+		Bakiye: 0.00
+		Islem Sayisi: 0
+	Kayitli Havale Hesap Sayisi: 0

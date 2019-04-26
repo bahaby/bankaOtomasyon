@@ -50,9 +50,17 @@ typedef struct{
 Banka aBank;
 void AnaMenu();
 void YeniMusteri();
-void HesapIslem();
+void MusteriIslem();
 void Guncelle();
 void VeriAl();
+void hesapIslem();
+void hesapSec();
+void paraCek();
+void paraYatir();
+void havaleGonder();
+void hHesapKayit();
+void hesapAc();
+void hesapSil();
 int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
 int hNoKontrol(int hesapNo, int n);
@@ -67,28 +75,31 @@ int main(){
 void AnaMenu(){
 	VeriAl();
 	int sorgu;
+	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("1-)\tHesap Acma\n");
-	printf("2-)\tHesap Islemleri\n");
+	printf("1-)\tYeni Musteri Kaydi\n");
+	printf("2-)\tMusteri Islemleri\n");
+	printf("0-)\tCikis\n");
 	printf("Secim: ");
 	do{
 		scanf("%d", &sorgu);
-		if(sorgu<1 || sorgu>2) {
+		if(sorgu<0 || sorgu>2) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
-	}while(sorgu<1 || sorgu>2);
+	}while(sorgu<0 || sorgu>2);
 	system("@cls||clear");
 	switch (sorgu){
+		case 0: exit(1); break;
 		case 1:{
 			YeniMusteri();
 		}break;
 		case 2:{
-			HesapIslem();
+			MusteriIslem();
 		}break;
 	}
 }
 
-void HesapIslem(){
+void MusteriIslem(){
 	int sonuc, sorgu, t=0;
 	double dTemp;
 	char sifre[50];
@@ -111,15 +122,30 @@ void HesapIslem(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[sonuc].Ad));
-	printf("1-)\tPara Cekme\n2-)\tPara Yatırma\n3-)\tHavale Gonder\n4-)\tHavale Hesabi Kaydet\n");
-	printf("5-)\tHesap Aç\n6-)\tHesap Sil\nSecim: ");
+	printf("1-)\tHesap Sec\n2-)\tHesap Aç\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n0-)\tAna Menu\nSecim: ");
 	do{
 		scanf("%d", &sorgu);
-		if(sorgu<1 || sorgu>6) {
+		if(sorgu<0 || sorgu>4) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
-	}while(sorgu<1 || sorgu>6);
-	printf("%d\n", sorgu);
+	}while(sorgu<0 || sorgu>4);
+	switch (sorgu){
+		case 0:{
+			AnaMenu();
+		}break;
+		case 1:{
+			hesapSec();
+		}break;
+		case 2:{
+			hesapAc();
+		}break;
+		case 3:{
+			hesapSil();
+		}break;
+		case 4:{
+			hHesapKayit();
+		}break;
+	}
 }
 
 
@@ -130,13 +156,15 @@ void YeniMusteri(){
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n");
 	printf("2-)\tTicari Musteri\n");
+	printf("0-)\tAna Menu\n");
 	printf("Secim: ");
 	do{
 		scanf("%d", &sorgu);
-		if(sorgu<1 || sorgu>2) {
+		if(sorgu<0 || sorgu>2) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
-	}while(sorgu<1 || sorgu>2);
+	}while(sorgu<0 || sorgu>2);
+	if (sorgu == 0) AnaMenu();
 	aBank.musteri[aBank.mSayisi].mTuru = sorgu;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -350,6 +378,30 @@ void Guncelle(){
 			t=1;
 		}
 	}
+
+}
+void hesapIslem(){
+
+}
+void hesapSec(){
+
+}
+void paraCek(){
+
+}
+void paraYatir(){
+
+}
+void havaleGonder(){
+
+}
+void hHesapKayit(){
+
+}
+void hesapAc(){
+
+}
+void hesapSil(){
 
 }
 
