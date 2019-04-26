@@ -1,7 +1,7 @@
 Musteri: 1 / [ ,/*&2*,#'2 ]
 	Tc-No: 98765432100
 	Ad Soyad: deneme1
-	Hesap Sayisi: 5
+	Hesap Sayisi: 7
 		Hesap 1: 785225446
 		Bakiye: 0.00
 		Islem Sayisi: 0
@@ -15,6 +15,12 @@ Musteri: 1 / [ ,/*&2*,#'2 ]
 		Bakiye: 0.00
 		Islem Sayisi: 0
 		Hesap 5: 785225465
+		Bakiye: 0.00
+		Islem Sayisi: 0
+		Hesap 6: 874277059
+		Bakiye: 0.00
+		Islem Sayisi: 0
+		Hesap 7: 317712303
 		Bakiye: 0.00
 		Islem Sayisi: 0
 	Kayitli Havale Hesap Sayisi: 0
