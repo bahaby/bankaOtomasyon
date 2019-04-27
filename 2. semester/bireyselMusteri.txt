@@ -3,14 +3,20 @@ Musteri: 1 / [ ,/*&2*,#'2 ]
 	Ad Soyad: deneme1
 	Hesap Sayisi: 9
 		Hesap 1: 785225446
-		Bakiye: 50.00
-		Islem Sayisi: 0
+		Bakiye: 0.00
+		Islem Sayisi: 1
+			27.4.2019 - 5:30 / -50.00
+				1 - 785225446
 		Hesap 2: 785225465
-		Bakiye: 156.00
-		Islem Sayisi: 0
+		Bakiye: 12.00
+		Islem Sayisi: 1
+			27.4.2019 - 5:30 / -144.00
+				1 - 785225465
 		Hesap 3: 785225465
-		Bakiye: 356.00
-		Islem Sayisi: 0
+		Bakiye: 0.00
+		Islem Sayisi: 1
+			27.4.2019 - 5:30 / -356.00
+				1 - 785225465
 		Hesap 4: 785225465
 		Bakiye: 0.00
 		Islem Sayisi: 0

@@ -54,13 +54,14 @@ void YeniMusteri();
 void MusteriIslem(int mS);
 void Guncelle();
 void VeriAl();
-void hesapIslem(int mS);
+void hesapIslem(int mS, int hS);
 void paraCek(int mS, int hS);
 void paraYatir(int mS, int hS);
 void havaleGonder(int mS, int hS);
 void hHesapKayit(int mS);
 void hesapAc(int mS);
 void hesapSil(int mS);
+void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);
 int hesapSec(int mS);
 int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
@@ -144,7 +145,7 @@ void MusteriIslem(int mS){
 			AnaMenu();
 		}break;
 		case 1:{
-			hesapIslem(mS);
+			hesapIslem(mS, -1);
 		}break;
 		case 2:{
 			hesapAc(mS);
@@ -399,9 +400,10 @@ void Guncelle(){
 	}
 
 }
-void hesapIslem(int mS){
+void hesapIslem(int mS, int hS){
 	char temp[50];
-	int sorgu, kontrol, hS = hesapSec(mS);
+	int sorgu, kontrol;
+	if (hS == -1) hS = hesapSec(mS);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("1-)\tPara Cekme\n2-)\tPara Yatırma\n3-)\tHavale\n4-)\tMusteri Islemleri\n0-)\tAna Menu\nSecim: ");
@@ -431,21 +433,40 @@ void hesapIslem(int mS){
 	}
 }
 void paraCek(int mS, int hS){
-	int kontrol;
+	int i, kontrol;
 	char temp[50];
 	double dTemp;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hesabinizdaki bakiyeniz: %.2lf TL'dir.\n", aBank.musteri[mS].hesap[hS].bakiye);
 	printf("Toplam bakiyeniz: %.2lf TL'dir.\n", aBank.musteri[mS].tBakiye);
-	printf("Cekmek istediğiniz tutari giriniz: ");
+	printf("Cekmek istediğiniz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%lf", &dTemp);
+		if (dTemp == 0) hesapIslem(mS, hS);
 		if (dTemp>aBank.musteri[mS].tBakiye) printf("Bakiyeniz yetersiz!\nFarkli bir miktar giriniz: ");
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && kontrol==1));
-	printf("\n%lf\n\n", dTemp);
+	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye){
+		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
+		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -dTemp);
+	}else if (dTemp>aBank.musteri[mS].hesap[hS].bakiye){
+		dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
+		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
+		aBank.musteri[mS].hesap[hS].bakiye = 0;
+		for (i=0; i<aBank.musteri[mS].hesapSayisi && aBank.musteri[mS].hesap[i].bakiye != 0; i++){
+			if (dTemp<=aBank.musteri[mS].hesap[i].bakiye){
+				aBank.musteri[mS].hesap[i].bakiye -= dTemp;
+				islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -dTemp);
+			}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye){
+				dTemp -= aBank.musteri[mS].hesap[i].bakiye;
+				islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
+				aBank.musteri[mS].hesap[i].bakiye = 0;
+			}
+		}
+	}
+	Guncelle();
 }
 void paraYatir(int mS, int hS){
 	printf("para yatir\n");
@@ -566,13 +587,21 @@ void strAl(char str[50]){
 	str[t-1] = 0;
 }
 
-void tarihEkle(Banka aBank, int mSira, int hSira, int iSira){
-
+void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
+	int iS = aBank.musteri[mS].hesap[hS].islemSayisi;
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
+	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Yil = tm.tm_year + 1900;
+	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Ay = tm.tm_mon + 1;
+	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Gun = tm.tm_mday;
+	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Saat = tm.tm_hour;
+	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Dk = tm.tm_min;
 
-	printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	//düzenlenecek
+	aBank.musteri[mS].hesap[hS].islem[iS].iTuru = iT;
+	aBank.musteri[mS].hesap[hS].islem[iS].iTutar = iTutar;
+	aBank.musteri[mS].hesap[hS].islem[iS].iHesap = iH;
+	
+	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
 
 //--Havale menüsünde kayıtlı havale hesabı varsa kayıtlı havale hesaplarına
