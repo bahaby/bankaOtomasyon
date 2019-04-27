@@ -451,6 +451,7 @@ void paraCek(int mS, int hS){
 		else if (dTemp>limit) printf("Para cekme limitiniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", limit);
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && dTemp<=limit && kontrol==1));
+	dTemp = ((int)(dTemp*100)) / 100.0;
 	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
 		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -dTemp);
@@ -512,6 +513,7 @@ void paraYatir(int mS, int hS){
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && kontrol==1));
+	dTemp = ((int)(dTemp*100)) / 100.0;
 
 	aBank.musteri[mS].hesap[hS].bakiye += dTemp;
 	islemKaydi(mS, hS, 2, aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
@@ -542,7 +544,7 @@ void paraYatir(int mS, int hS){
 	}
 }
 void havaleGonder(int mS, int hS){
-	double dTemp;
+	double dTemp, kesinti;
 	int i, tHesapS, hhS, hmS, tHesapNo, sorgu, kontrol;
 	char temp[50];
 	system("@cls||clear");
@@ -598,19 +600,22 @@ void havaleGonder(int mS, int hS){
 		if (dTemp>aBank.musteri[mS].tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", aBank.musteri[mS].tBakiye);
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && kontrol==1));
+	dTemp = ((int)(dTemp*100)) / 100.0;
 	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
 		islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
+		kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
 
-		aBank.musteri[hmS].hesap[hhS].bakiye += dTemp;
-		islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
+		aBank.musteri[hmS].hesap[hhS].bakiye += (dTemp - kesinti);
+		islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, dTemp - kesinti);
 	}else{
 		if (dTemp>aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 			dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
 			islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
+			kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(aBank.musteri[mS].hesap[hS].bakiye*2)) / 100.0 : 0;
 			
-			aBank.musteri[hmS].hesap[hhS].bakiye += aBank.musteri[mS].hesap[hS].bakiye;
-			islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye);
+			aBank.musteri[hmS].hesap[hhS].bakiye += (aBank.musteri[mS].hesap[hS].bakiye - kesinti);
+			islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye - kesinti);
 			aBank.musteri[mS].hesap[hS].bakiye = 0;
 		}
 		for (i=0; i<aBank.musteri[mS].hesapSayisi; i++){
@@ -618,16 +623,18 @@ void havaleGonder(int mS, int hS){
 				if (dTemp<=aBank.musteri[mS].hesap[i].bakiye){
 					aBank.musteri[mS].hesap[i].bakiye -= dTemp;
 					islemKaydi(mS, i, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
+					kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
 
-					aBank.musteri[hmS].hesap[hhS].bakiye += dTemp;
-					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, dTemp);
+					aBank.musteri[hmS].hesap[hhS].bakiye += (dTemp - kesinti);
+					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, dTemp - kesinti);
 
 				}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye){
 					dTemp -= aBank.musteri[mS].hesap[i].bakiye;
 					islemKaydi(mS, i, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
+					kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(aBank.musteri[mS].hesap[i].bakiye*2)) / 100.0 : 0;
 					
-					aBank.musteri[hmS].hesap[hhS].bakiye += aBank.musteri[mS].hesap[i].bakiye;
-					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye);
+					aBank.musteri[hmS].hesap[hhS].bakiye += (aBank.musteri[mS].hesap[i].bakiye - kesinti);
+					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye - kesinti);
 					aBank.musteri[mS].hesap[i].bakiye = 0;
 				}
 			}
@@ -635,6 +642,7 @@ void havaleGonder(int mS, int hS){
 	}
 	Guncelle();
 	system("@cls||clear");
+	printf("%lf", kesinti);
 	printf(".............aBank.............\n");
 	printf("Islem basarili...\n\n");
 	printf("1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
@@ -791,9 +799,6 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
 
-//--Havale menüsünde kayıtlı havale hesabı varsa kayıtlı havale hesaplarına
-//yollama seçeneği ve hesap no ile gönderme seçenekleri gelecek yoksa direk 
-//hesap no ile gönderme ekranı gelecek
 //--Hesap silmede struct elemanı eşitleme kullanılacak
 //--Güncelle fonksiyonu geliştirilip rapor yazdırmada yaptırılacak
 //--veriAl fonksiyonu geliştirilip rapor okumasıda yaptırılacak
