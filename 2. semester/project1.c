@@ -544,10 +544,10 @@ int HesapNoOlustur(){
 	return hesapNo;
 }
 char *sifrele(char sifre[50]){
-	int i, temp = sifre[0], len = strlen(sifre);
+	int i, temp = *sifre, len = strlen(sifre);
 	for (i=0; i<len; i++){
-		temp += ((i+1) * (sifre[i] + 11) + sifre[len-i-1] + i);
-		sifre[i] = temp%21 + 33;
+		temp += ((i+1) * (*(sifre+i) + 11) + *(sifre+len-i-1) + i);
+		*(sifre+i) = temp%21 + 33;
 	}
 	return sifre;
 }
@@ -573,7 +573,7 @@ int hNoKontrol(int hesapNo, int n){
 char *isimDuzelt(char isim[50]){
 	int i;
 	for (i=0; i<(int)strlen(isim); i++){
-		if (isim[i] == '-') isim[i] = ' ';
+		if (*(isim+i) == '-') *(isim+i) = ' ';
 	}
 	return isim;
 }
@@ -586,9 +586,9 @@ void strAl(char str[50]){
 	do{
 		scanf("%c", &cTemp);
 		if (cTemp == ' ') cTemp = '-';
-		str[t++] = cTemp;
+		*(str + t++) = cTemp;
 	}while (cTemp != '\n');
-	str[t-1] = 0;
+	*(str+t-1) = 0;
 }
 
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
