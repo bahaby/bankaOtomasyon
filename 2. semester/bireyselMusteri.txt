@@ -3,8 +3,10 @@ Musteri: 2 / [ +-'-,4"11 ]
 	Ad Soyad: deneme2
 	Hesap Sayisi: 2
 		Hesap 1: 659823979
-		Bakiye: 0.00
-		Islem Sayisi: 0
+		Bakiye: 501.93
+		Islem Sayisi: 1
+			27.4.2019 - 20:18 / 501.93
+				3 - 785225498
 		Hesap 2: 422832875
 		Bakiye: 601.49
 		Islem Sayisi: 5
