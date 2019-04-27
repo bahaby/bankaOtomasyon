@@ -6,13 +6,17 @@ Musteri: 3 / [ ,.(.-!%5* ]
 		Bakiye: 0.00
 		Islem Sayisi: 0
 	Kayitli Havale Hesap Sayisi: 0
-Musteri: 5 / [ ,/*&2*,#'2 ]
+Musteri: 4 / [ ,/*&2*,#'2 ]
 	Tc-No: 98765432122
 	Ad Soyad: deneme6
 	Hesap Sayisi: 1
 		Hesap 1: 200258107
-		Bakiye: 0.00
-		Islem Sayisi: 1
+		Bakiye: 150.00
+		Islem Sayisi: 3
 			27.4.2019 - 15:17 / -1500.00
+				1 - 200258107
+			27.4.2019 - 15:53 / 500.00
+				2 - 200258107
+			27.4.2019 - 16:8 / -350.00
 				1 - 200258107
 	Kayitli Havale Hesap Sayisi: 0
