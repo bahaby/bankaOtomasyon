@@ -448,21 +448,25 @@ void paraCek(int mS, int hS){
 		if (dTemp>aBank.musteri[mS].tBakiye) printf("Bakiyeniz yetersiz!\nFarkli bir miktar giriniz: ");
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && kontrol==1));
-	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye){
+	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
 		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -dTemp);
-	}else if (dTemp>aBank.musteri[mS].hesap[hS].bakiye){
-		dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
-		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
-		aBank.musteri[mS].hesap[hS].bakiye = 0;
-		for (i=0; i<aBank.musteri[mS].hesapSayisi && aBank.musteri[mS].hesap[i].bakiye != 0; i++){
-			if (dTemp<=aBank.musteri[mS].hesap[i].bakiye){
-				aBank.musteri[mS].hesap[i].bakiye -= dTemp;
-				islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -dTemp);
-			}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye){
-				dTemp -= aBank.musteri[mS].hesap[i].bakiye;
-				islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
-				aBank.musteri[mS].hesap[i].bakiye = 0;
+	}else{
+		if (dTemp>aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
+			dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
+			islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
+			aBank.musteri[mS].hesap[hS].bakiye = 0;
+		}
+		for (i=0; i<aBank.musteri[mS].hesapSayisi; i++){
+			if (aBank.musteri[mS].hesap[i].bakiye != 0){
+				if (dTemp<=aBank.musteri[mS].hesap[i].bakiye){
+					aBank.musteri[mS].hesap[i].bakiye -= dTemp;
+					islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -dTemp);
+				}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye){
+					dTemp -= aBank.musteri[mS].hesap[i].bakiye;
+					islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
+					aBank.musteri[mS].hesap[i].bakiye = 0;
+				}
 			}
 		}
 	}
