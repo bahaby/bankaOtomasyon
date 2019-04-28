@@ -86,8 +86,7 @@ char *sifrele(char sifre[120]);
 void strAl(char str[120]);
 
 int main(){
-	VeriAl();
-	hesapOzeti(0, 1);
+	AnaMenu();
 }
 
 void AnaMenu(){
@@ -946,21 +945,26 @@ void strAl(char str[120]){
 
 void hesapOzeti(int mS, int hS){
 	FILE *pf;
-	int i, j, t1, t2, t3, iS, aralik, ihNo, imS;
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+	int i, j, k, n, t1, t2, t3, iS, aralik, ihNo, imS, iA, iY, sorgu, kontrol;
 	double kesinti;
+	char c, temp[120];
 	iS = aBank.musteri[mS].hesap[hS].islemSayisi;
-	t1 = aBank.musteri[mS].hesap[hS].islem[0].tarih.Yil * 12 + aBank.musteri[mS].hesap[hS].islem[0].tarih.Ay;
-	t2 = aBank.musteri[mS].hesap[hS].islem[iS-1].tarih.Yil * 12 + aBank.musteri[mS].hesap[hS].islem[iS-1].tarih.Ay;
+	t1 = (aBank.musteri[mS].hesap[hS].islem[0].tarih.Yil - 1900) * 12 + aBank.musteri[mS].hesap[hS].islem[0].tarih.Ay;
+	t2 = tm.tm_year * 12 + tm.tm_mon+1 ;
 	aralik = t2-t1;
 	Dekont dekont[aralik+1];
+	int index[aralik+1];
 	
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	for (i=0; i<aralik+1; i++){
+		*(index+i) = -1;
 		dekont[i].islemSayisi = 0;
 		dekont[i].islem[0].Tutar = 0;
 		for (j=iS-1; j>=0; j--){
-			t3 = aBank.musteri[mS].hesap[hS].islem[j].tarih.Yil * 12 + aBank.musteri[mS].hesap[hS].islem[j].tarih.Ay;
+			t3 = (aBank.musteri[mS].hesap[hS].islem[j].tarih.Yil - 1900) * 12 + aBank.musteri[mS].hesap[hS].islem[j].tarih.Ay;
 			if ((t2-t3) == i){
 				ihNo = aBank.musteri[mS].hesap[hS].islem[j].iHesap;
 				imS = hNoKontrol(ihNo, 1);
@@ -974,30 +978,104 @@ void hesapOzeti(int mS, int hS){
 			}
 		}
 	}
-	fclose(fopen("dekont.txt", "w"));
-	pf = fopen("dekont.txt", "a");
+	k=0;
 	for (i=0; i<aralik+1; i++){
 		if (dekont[i].islem[0].Tutar != 0){
-			for (j=0; j<dekont[i].islemSayisi; j++){
-				if (dekont[i].islem[j].iTuru == 1){
-					fprintf(pf, "%2d.%2d.%4d - %2d:%2d\tPara Yatirma\t%.2lf", 
-						dekont[i].islem[j].tarih.Gun,
-						dekont[i].islem[j].tarih.Ay,
-						dekont[i].islem[j].tarih.Yil,
-						dekont[i].islem[j].tarih.Saat,
-						dekont[i].islem[j].tarih.Dk,
-						dekont[i].islem[j].Tutar);
-				}else if (dekont[i].islem[j].iTuru == 2){
-
-				}else if (dekont[i].islem[j].iTuru == 3){
-					if (dekont[i].islem[j].Tutar<0 && dekont[i].islem[j].mTuru == 1)
-						kesinti = ((int)(-dekont[i].islem[j].Tutar*2)) / 100.0;
-				}
-				
-			}
+			iY = (t2 - i) / 12 + 1900;
+			iA = (t2 - i -1) % 12 +1; 
+			n = i-k+1;
+			if (i==0) printf("%2d-)\t%0.2d - %0.2d\t", n, iY, iA);
+			else printf("%2d-)\t%d - %0.2d/%0.2d\t", n, iY, iA, iA%12+1);
+			if ((i-k)%2 == 1) printf("\n");
+			*(index+i-k+1) = i;
+		}else{
+			k++;
 		}
 	}
+	printf("\n\nSecim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<1 || sorgu>n || kontrol == 0) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<1 || sorgu>n || kontrol == 0);
+	
+
+	fclose(fopen("dekont.txt", "w"));
+	pf = fopen("dekont.txt", "a");
+	printf("\n\ndeneme %d\n", dekont[0].islem[0].iTuru);
+	i = *(index + sorgu);
+	for (j=dekont[i].islemSayisi-1; j>=0; j--){
+		if (dekont[i].islem[j].iTuru == 1){
+			fprintf(pf, "%0.2d.%0.2d.%0.4d - %0.2d:%0.2d  Para Cekme    %.2lf\n", 
+				dekont[i].islem[j].tarih.Gun,
+				dekont[i].islem[j].tarih.Ay,
+				dekont[i].islem[j].tarih.Yil,
+				dekont[i].islem[j].tarih.Saat,
+				dekont[i].islem[j].tarih.Dk,
+				-dekont[i].islem[j].Tutar);
+		}else if (dekont[i].islem[j].iTuru == 2){
+			fprintf(pf, "%0.2d.%0.2d.%0.4d - %0.2d:%0.2d  Para Yatirma  %.2lf\n", 
+				dekont[i].islem[j].tarih.Gun,
+				dekont[i].islem[j].tarih.Ay,
+				dekont[i].islem[j].tarih.Yil,
+				dekont[i].islem[j].tarih.Saat,
+				dekont[i].islem[j].tarih.Dk,
+				dekont[i].islem[j].Tutar);
+		}else if (dekont[i].islem[j].iTuru == 3){
+			if (dekont[i].islem[j].Tutar<0){
+				if (dekont[i].islem[j].mTuru == 1)
+					kesinti = ((int)(-dekont[i].islem[j].Tutar*2)) / 100.0;
+				fprintf(pf, "%0.2d.%0.2d.%0.4d - %0.2d:%0.2d  Giden Havale  %.2lf (-%.2lf)\n", 
+					dekont[i].islem[j].tarih.Gun,
+					dekont[i].islem[j].tarih.Ay,
+					dekont[i].islem[j].tarih.Yil,
+					dekont[i].islem[j].tarih.Saat,
+					dekont[i].islem[j].tarih.Dk,
+					-dekont[i].islem[j].Tutar,
+					kesinti);
+				fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", dekont[i].islem[j].Ad, dekont[i].islem[j].hesapNo);
+			}else if (dekont[i].islem[j].Tutar>0){
+				fprintf(pf, "%0.2d.%0.2d.%0.4d - %0.2d:%0.2d  Gelen Havale  %.2lf\n", 
+					dekont[i].islem[j].tarih.Gun,
+					dekont[i].islem[j].tarih.Ay,
+					dekont[i].islem[j].tarih.Yil,
+					dekont[i].islem[j].tarih.Saat,
+					dekont[i].islem[j].tarih.Dk,
+					dekont[i].islem[j].Tutar);
+				fprintf(pf, "\tGonderen kisi:    %s (%d)\n", dekont[i].islem[j].Ad, dekont[i].islem[j].hesapNo);
+			}
+		}
+		
+	}
 	fclose(pf);
+	pf = fopen("dekont.txt", "r");
+	system("@cls||clear");
+	printf(".............aBank.............\n\n");
+	while ((c=fgetc(pf))!=EOF){
+		printf("%c", c);
+	}
+	fclose(pf);
+	printf("\n1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<0 || sorgu>2 || kontrol == 0) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<0 || sorgu>2 || kontrol == 0);
+	switch (sorgu){
+		case 0:{
+			exit(1);
+		}
+		case 1:{
+			hesapIslem(mS, hS);
+		}break;
+		case 2:{
+			AnaMenu();
+		}break;
+	}
 }
 
 void bankaRapor(int mS){
@@ -1045,5 +1123,3 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
-
-//--hesapOzeti struct yapısından verileri alıp dekont.txt'ye yazdıracak
