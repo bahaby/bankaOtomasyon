@@ -53,6 +53,7 @@ void YeniMusteri();
 void MusteriIslem(int mS);
 void Guncelle();
 void VeriAl();
+void bankaRapor();
 void hesapIslem(int mS, int hS);
 void paraCek(int mS, int hS);
 void paraYatir(int mS, int hS);
@@ -60,6 +61,7 @@ void havaleGonder(int mS, int hS);
 void hHesapKayit(int mS);
 void hesapAc(int mS);
 void hesapSil(int mS, int s);
+void hesapOzeti(int mS, int hS);
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);
 int hesapSec(int mS, int s);
 int HesapNoOlustur();
@@ -892,6 +894,14 @@ void strAl(char str[50]){
 	*(str+t-1) = 0;
 }
 
+void hesapOzeti(int mS, int hS){
+
+}
+
+void bankaRapor(){
+
+}
+
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	int iS = aBank.musteri[mS].hesap[hS].islemSayisi;
 	time_t t = time(NULL);
@@ -909,5 +919,6 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
 
-//--Güncelle fonksiyonu geliştirilip rapor yazdırmada yaptırılacak
-//--veriAl fonksiyonu geliştirilip rapor okumasıda yaptırılacak
+//--Güncelle fonksiyonu geliştirilip rapor.txt yazdırma yaptırılacak
+//--bankaRapor oluşturulan rapor dosyasını okuyacak sadece
+//--hesapOzeti struct yapısından verileri alıp dekont.txt'ye yazdıracak
