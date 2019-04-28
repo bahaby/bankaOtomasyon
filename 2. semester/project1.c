@@ -53,7 +53,7 @@ void YeniMusteri();
 void MusteriIslem(int mS);
 void Guncelle();
 void VeriAl();
-void bankaRapor();
+void bankaRapor(int mS);
 void hesapIslem(int mS, int hS);
 void paraCek(int mS, int hS);
 void paraYatir(int mS, int hS);
@@ -123,7 +123,7 @@ void MusteriIslem(int mS){
 		do{
 			system("@cls||clear");
 			printf(".............aBank.............\n");
-			if (t!=0) printf("Hatali sifre!\n%d\n%s\n", t, sifrele(sifre));
+			if (t!=0) printf("Hatali sifre!\n");
 			printf("Sifrenizi Giriniz: ");
 			strAl(sifre);
 			t = strcmp(aBank.musteri[mS].Sifre, sifrele(sifre));
@@ -166,7 +166,7 @@ void MusteriIslem(int mS){
 			hesapSil(mS, 2);
 		}break;
 		case 6:{
-			bankaRapor();
+			bankaRapor(mS);
 		}break;
 	}
 }
@@ -214,7 +214,6 @@ void YeniMusteri(){
 		strAl(s2);
 		if (strcmp(s1, s2) != 0){
 			system("@cls||clear");
-			printf("%d\n", strlen(s1));
 			printf(".............aBank.............\n");
 			printf("Hatali Giris!\n");
 		}else if ((int)strlen(s1)<4){
@@ -934,8 +933,33 @@ void hesapOzeti(int mS, int hS){
 	printf("hesap ozeti\n");
 }
 
-void bankaRapor(){
-	
+void bankaRapor(int mS){
+	FILE *pf;
+	int sorgu, kontrol;
+	char temp[120];
+	system("@cls||clear");
+	printf(".............aBank.............\n\n");
+	char c;
+	pf = fopen("rapor.txt", "r");
+	while((c = fgetc(pf)) != EOF){
+		printf("%c", c);
+	}
+	printf("\n\n1-)\tGeri Don\n2-)\tAna Menu\nSecim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<1 || sorgu>2 || kontrol == 0) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<1 || sorgu>2 || kontrol == 0);
+	switch (sorgu){
+		case 1:{
+			MusteriIslem(mS);
+		}break;
+		case 2:{
+			AnaMenu();
+		}break;
+	}
 }
 
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
