@@ -104,6 +104,9 @@ void AnaMenu(){
 		kontrol = sscanf(temp, "%d", &sorgu);
 		if(sorgu<0 || sorgu>2 || kontrol == 0) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}else if(sorgu == 2 && aBank.mSayisi==0){
+			printf("Herhangi bir musteri yok henuz.\nTekrar Deneyiniz: ");
+			kontrol = 0;
 		}
 	}while(sorgu<0 || sorgu>2 || kontrol == 0);
 	system("@cls||clear");
