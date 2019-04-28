@@ -44,7 +44,23 @@ Musteri: 1 / [ eYWG7`(<|hH4gsk ]
 				3 - 565422770
 		Hesap 3: 223006028
 		Bakiye: 0.00
-		Islem Sayisi: 0
+		Islem Sayisi: 3
+			29.4.2019 - 1:5 / 250.00
+				2 - 223006028
+			29.4.2019 - 1:5 / -125.00
+				3 - 741579647
+			29.4.2019 - 1:5 / -125.00
+				3 - 565422770
 	Kayitli Havale Hesap Sayisi: 2
 		Hesap 1: 741579647
 		Hesap 2: 565422770
+Musteri: 3 / [ eYWG7`(<|hH4gsk ]
+	Tc-No: 98765432102
+	Ad Soyad: baha3
+	Hesap Sayisi: 1
+		Hesap 1: 396062921
+		Bakiye: 250.00
+		Islem Sayisi: 1
+			29.4.2019 - 1:8 / 250.00
+				3 - 131369962
+	Kayitli Havale Hesap Sayisi: 0
