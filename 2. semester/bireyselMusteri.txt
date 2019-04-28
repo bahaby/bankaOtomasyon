@@ -3,11 +3,13 @@ Musteri: 1 / [ eYWG7`(<|hH4gsk ]
 	Ad Soyad: baha1
 	Hesap Sayisi: 3
 		Hesap 1: 546071833
-		Bakiye: 0.00
-		Islem Sayisi: 0
+		Bakiye: 250.00
+		Islem Sayisi: 1
+			29.4.2019 - 0:59 / 250.00
+				2 - 546071833
 		Hesap 2: 247872201
-		Bakiye: 400.51
-		Islem Sayisi: 15
+		Bakiye: 150.51
+		Islem Sayisi: 16
 			25.11.2018 - 17:56 / 1500.00
 				3 - 247872201
 			26.11.2018 - 17:56 / -1500.00
@@ -37,6 +39,8 @@ Musteri: 1 / [ eYWG7`(<|hH4gsk ]
 			28.4.2019 - 23:14 / 250.00
 				2 - 247872201
 			28.4.2019 - 23:14 / -360.00
+				3 - 565422770
+			29.4.2019 - 0:43 / -250.00
 				3 - 565422770
 		Hesap 3: 223006028
 		Bakiye: 0.00

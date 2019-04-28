@@ -466,6 +466,9 @@ void hesapIslem(int mS, int hS){
 		else if ((sorgu == 1 || sorgu == 3) && aBank.musteri[mS].tBakiye == 0){
 			printf("Bu islem icin hesaplarinizda yeterli para yok!\nTekrar Deneyiniz: ");
 			kontrol = 0;
+		}else if (sorgu == 5 && aBank.musteri[mS].hesap[hS].islemSayisi==0){
+			printf("Hesabinizda herhangi bir islem yapılmadi!\nTekrar Deneyiniz: ");
+			kontrol = 0;
 		}
 	}while(sorgu<0 || sorgu>5 || kontrol == 0);
 	switch (sorgu){
