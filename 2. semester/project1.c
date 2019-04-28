@@ -176,7 +176,7 @@ void MusteriIslem(int mS){
 void YeniMusteri(){
 	int sorgu, kontrol;
 	double dTemp;
-	char s1[50], s2[50], temp[50];
+	char s1[50]={}, s2[50]={}, temp[50];
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n");
 	printf("2-)\tTicari Musteri\n");
@@ -204,7 +204,7 @@ void YeniMusteri(){
 		if (!(dTemp>10000000000 && dTemp<99999999999 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
 	}while(!(dTemp>10000000000&&dTemp<99999999999&&tcNoKontrol(dTemp) == -1 && kontrol==1));
-
+	aBank.musteri[aBank.mSayisi].tcNo = dTemp;
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -538,7 +538,7 @@ void paraCek(int mS, int hS){
 	}
 }
 void paraYatir(int mS, int hS){
-	int i, kontrol, sorgu;
+	int kontrol, sorgu;
 	char temp[50];
 	double dTemp;
 	system("@cls||clear");
@@ -950,6 +950,5 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
 
-//--Güncelle fonksiyonu geliştirilip rapor.txt yazdırma yaptırılacak
 //--bankaRapor oluşturulan rapor dosyasını okuyacak sadece
 //--hesapOzeti struct yapısından verileri alıp dekont.txt'ye yazdıracak

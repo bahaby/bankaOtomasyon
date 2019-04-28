@@ -37,3 +37,11 @@ Musteri: 1 / [ ,/*&2*,#'2 ]
 		Hesap 1: 422832875
 		Hesap 2: 785225446
 		Hesap 3: 785225498
+Musteri: 3 / [ .3! ]
+	Tc-No: 12345678999
+	Ad Soyad: deneme
+	Hesap Sayisi: 1
+		Hesap 1: 437781944
+		Bakiye: 0.00
+		Islem Sayisi: 0
+	Kayitli Havale Hesap Sayisi: 0
