@@ -1,25 +1,39 @@
-Musteri: 2 / [ +-'-,4"11 ]
-	Tc-No: 98765432101
-	Ad Soyad: deneme2
-	Hesap Sayisi: 2
-		Hesap 1: 659823979
-		Bakiye: 501.93
+Musteri: 1 / [ ,/*&2*,#'2 ]
+	Tc-No: 98765432100
+	Ad Soyad: deneme1
+	Hesap Sayisi: 7
+		Hesap 1: 785225446
+		Bakiye: 41.00
+		Islem Sayisi: 4
+			28.4.2019 - 8:14 / 1000.00
+				2 - 785225446
+			28.4.2019 - 8:14 / -359.00
+				3 - 422832875
+			28.4.2019 - 8:15 / -500.00
+				1 - 785225446
+			28.4.2019 - 8:15 / -100.00
+				3 - 785225498
+		Hesap 2: 785225447
+		Bakiye: 0.00
+		Islem Sayisi: 0
+		Hesap 3: 785225489
+		Bakiye: 0.00
+		Islem Sayisi: 0
+		Hesap 4: 785225490
+		Bakiye: 0.00
+		Islem Sayisi: 0
+		Hesap 5: 785225497
+		Bakiye: 0.00
+		Islem Sayisi: 0
+		Hesap 6: 785225498
+		Bakiye: 98.00
 		Islem Sayisi: 1
-			27.4.2019 - 20:18 / 501.93
-				3 - 785225498
-		Hesap 2: 422832875
-		Bakiye: 951.49
-		Islem Sayisi: 6
-			27.4.2019 - 19:19 / 99.97
+			28.4.2019 - 8:15 / 98.00
 				3 - 785225446
-			27.4.2019 - 19:19 / 156.00
-				3 - 785225447
-			27.4.2019 - 19:19 / 156.00
-				3 - 785225490
-			27.4.2019 - 19:19 / 35.45
-				3 - 785225497
-			27.4.2019 - 19:19 / 154.07
-				3 - 785225498
-			28.4.2019 - 2:58 / 350.00
-				3 - 785225446
-	Kayitli Havale Hesap Sayisi: 0
+		Hesap 7: 539032612
+		Bakiye: 0.00
+		Islem Sayisi: 0
+	Kayitli Havale Hesap Sayisi: 3
+		Hesap 1: 422832875
+		Hesap 2: 785225446
+		Hesap 3: 785225498

@@ -1,0 +1,6 @@
+aBank gelir-gider raporu...
+
+Bankada bulunan toplam para: 509.18
+Gelen toplam para:           1000.00
+Giden toplam para:           500.00
+Toplam kar:                  9.18

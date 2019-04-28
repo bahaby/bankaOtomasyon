@@ -339,7 +339,8 @@ void VeriAl(){
 }
 
 void Guncelle(){
-	int i, j, k, b=0, t=0;
+	int i, j, k, iTuru, b=0, t=0;
+	double gelen=0, giden=0, kar=0, kesinti;
 	FILE *pf1, *pf2;
 	for (i=0; i<aBank.mSayisi; i++){
 		if (aBank.musteri[i].mTuru == 1){
@@ -407,6 +408,30 @@ void Guncelle(){
 		}
 	}
 
+	for (i=0; i<aBank.mSayisi; i++){
+		for (j=0; j<aBank.musteri[i].hesapSayisi; j++){
+			for (k=0; k<aBank.musteri[i].hesap[j].islemSayisi; k++){
+				iTuru = aBank.musteri[i].hesap[j].islem[k].iTuru;
+				if (iTuru == 1) giden += aBank.musteri[i].hesap[j].islem[k].iTutar;
+				else if (iTuru == 2) gelen += aBank.musteri[i].hesap[j].islem[k].iTutar;
+				else if (iTuru == 3 && aBank.musteri[i].mTuru == 1){
+					if (aBank.musteri[i].hesap[j].islem[k].iTutar < 0){
+						kesinti = ((int)(-aBank.musteri[i].hesap[j].islem[k].iTutar*2)) / 100.0;
+						kar += kesinti;
+					}
+				}
+			}
+		}
+	}
+	fclose(fopen("rapor.txt", "w"));
+	pf1 = fopen("rapor.txt", "a");
+	fprintf(pf1, "aBank gelir-gider raporu...\n\n");
+	fprintf(pf1, "Bankada bulunan toplam para: %.2lf\n", gelen + giden + kar);
+	fprintf(pf1, "Gelen toplam para:           %.2lf\n", gelen);
+	fprintf(pf1, "Giden toplam para:           %.2lf\n", (giden == 0)?giden:-giden);
+	fprintf(pf1, "Toplam kar:                  %.2lf", kar);
+	fclose(pf1);
+	
 }
 void hesapIslem(int mS, int hS){
 	char temp[50];
@@ -627,7 +652,7 @@ void havaleGonder(int mS, int hS){
 		strAl(temp);
 		kontrol = sscanf(temp, "%lf", &dTemp);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (dTemp>aBank.musteri[mS].tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", aBank.musteri[mS].tBakiye);
+		if (dTemp>aBank.musteri[mS].tBakiye && kontrol == 1) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", aBank.musteri[mS].tBakiye);
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && kontrol==1));
 	dTemp = ((int)(dTemp*100)) / 100.0;
@@ -905,7 +930,7 @@ void hesapOzeti(int mS, int hS){
 }
 
 void bankaRapor(){
-	printf("rapor al\n");
+	
 }
 
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
