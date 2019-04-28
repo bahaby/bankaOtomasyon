@@ -47,6 +47,20 @@ typedef struct{
 	int mSayisi;
 }Banka;
 
+typedef struct{
+	char Ad[120];
+	int hesapNo;
+	int iTuru;
+	int mTuru;
+	double Tutar;
+	Tarih tarih;
+}dIslem;
+
+typedef struct{
+	dIslem islem[1000];
+	int islemSayisi;
+}Dekont;
+
 Banka aBank;
 void AnaMenu();
 void YeniMusteri();
@@ -72,7 +86,8 @@ char *sifrele(char sifre[120]);
 void strAl(char str[120]);
 
 int main(){
-	AnaMenu();
+	VeriAl();
+	hesapOzeti(0, 1);
 }
 
 void AnaMenu(){
@@ -898,7 +913,7 @@ int tcNoKontrol(double tcNo){
 	return -1;
 }
 
-int hNoKontrol(int hesapNo, int n){
+int hNoKontrol(int hesapNo, int n){ // n 1 ise müsteri no, 2 ise hesap no
 	int mS, hS;
 	for (mS=0; mS<aBank.mSayisi; mS++){
 		for (hS=0; hS<aBank.musteri[mS].hesapSayisi; hS++){
@@ -930,7 +945,59 @@ void strAl(char str[120]){
 }
 
 void hesapOzeti(int mS, int hS){
-	printf("hesap ozeti\n");
+	FILE *pf;
+	int i, j, t1, t2, t3, iS, aralik, ihNo, imS;
+	double kesinti;
+	iS = aBank.musteri[mS].hesap[hS].islemSayisi;
+	t1 = aBank.musteri[mS].hesap[hS].islem[0].tarih.Yil * 12 + aBank.musteri[mS].hesap[hS].islem[0].tarih.Ay;
+	t2 = aBank.musteri[mS].hesap[hS].islem[iS-1].tarih.Yil * 12 + aBank.musteri[mS].hesap[hS].islem[iS-1].tarih.Ay;
+	aralik = t2-t1;
+	Dekont dekont[aralik+1];
+	
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	for (i=0; i<aralik+1; i++){
+		dekont[i].islemSayisi = 0;
+		dekont[i].islem[0].Tutar = 0;
+		for (j=iS-1; j>=0; j--){
+			t3 = aBank.musteri[mS].hesap[hS].islem[j].tarih.Yil * 12 + aBank.musteri[mS].hesap[hS].islem[j].tarih.Ay;
+			if ((t2-t3) == i){
+				ihNo = aBank.musteri[mS].hesap[hS].islem[j].iHesap;
+				imS = hNoKontrol(ihNo, 1);
+				strcpy(dekont[i].islem[dekont[i].islemSayisi].Ad, aBank.musteri[imS].Ad);
+				dekont[i].islem[dekont[i].islemSayisi].hesapNo = ihNo;
+				dekont[i].islem[dekont[i].islemSayisi].mTuru = aBank.musteri[mS].mTuru;
+				dekont[i].islem[dekont[i].islemSayisi].iTuru = aBank.musteri[mS].hesap[hS].islem[j].iTuru;
+				dekont[i].islem[dekont[i].islemSayisi].Tutar = aBank.musteri[mS].hesap[hS].islem[j].iTutar;
+				dekont[i].islem[dekont[i].islemSayisi].tarih = aBank.musteri[mS].hesap[hS].islem[j].tarih;
+				dekont[i].islemSayisi++;
+			}
+		}
+	}
+	fclose(fopen("dekont.txt", "w"));
+	pf = fopen("dekont.txt", "a");
+	for (i=0; i<aralik+1; i++){
+		if (dekont[i].islem[0].Tutar != 0){
+			for (j=0; j<dekont[i].islemSayisi; j++){
+				if (dekont[i].islem[j].iTuru == 1){
+					fprintf(pf, "%2d.%2d.%4d - %2d:%2d\tPara Yatirma\t%.2lf", 
+						dekont[i].islem[j].tarih.Gun,
+						dekont[i].islem[j].tarih.Ay,
+						dekont[i].islem[j].tarih.Yil,
+						dekont[i].islem[j].tarih.Saat,
+						dekont[i].islem[j].tarih.Dk,
+						dekont[i].islem[j].Tutar);
+				}else if (dekont[i].islem[j].iTuru == 2){
+
+				}else if (dekont[i].islem[j].iTuru == 3){
+					if (dekont[i].islem[j].Tutar<0 && dekont[i].islem[j].mTuru == 1)
+						kesinti = ((int)(-dekont[i].islem[j].Tutar*2)) / 100.0;
+				}
+				
+			}
+		}
+	}
+	fclose(pf);
 }
 
 void bankaRapor(int mS){
@@ -979,5 +1046,4 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
 
-//--bankaRapor oluşturulan rapor dosyasını okuyacak sadece
 //--hesapOzeti struct yapısından verileri alıp dekont.txt'ye yazdıracak
