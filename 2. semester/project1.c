@@ -34,8 +34,8 @@ typedef struct{
 	Hesap hesap[100];
 	transferHesap tHesap[100];
 	double tBakiye;
-	char Ad[50];
-	char Sifre[50];
+	char Ad[120];
+	char Sifre[120];
 	double tcNo;
 	int hesapSayisi;
 	int tHesapSayisi;
@@ -67,9 +67,9 @@ int hesapSec(int mS, int s);
 int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
 int hNoKontrol(int hesapNo, int n);
-char *isimDuzelt(char isim[50]);
-char *sifrele(char sifre[50]);
-void strAl(char str[50]);
+char *isimDuzelt(char isim[120]);
+char *sifrele(char sifre[120]);
+void strAl(char str[120]);
 
 int main(){
 	AnaMenu();
@@ -78,7 +78,7 @@ int main(){
 void AnaMenu(){
 	VeriAl();
 	int sorgu, kontrol;
-	char temp[50];
+	char temp[120];
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("1-)\tYeni Musteri Kaydi\n");
@@ -106,10 +106,10 @@ void AnaMenu(){
 
 void MusteriIslem(int mS){
 	int sonuc, sorgu, kontrol, t=0;
-	char temp[50];
+	char temp[120];
 	double dTemp;
 	if (mS == -1){
-		char sifre[50];
+		char sifre[120];
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Tc Numaranizi Giriniz: ");
@@ -119,21 +119,20 @@ void MusteriIslem(int mS){
 			sonuc = tcNoKontrol(dTemp);
 			if (!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}while(!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1 && kontrol==1));
-
+		mS=sonuc;
 		do{
 			system("@cls||clear");
 			printf(".............aBank.............\n");
-			if (t!=0) printf("Hatali sifre!\n");
-			printf("Şifrenizi Giriniz: ");
+			if (t!=0) printf("Hatali sifre!\n%d\n%s\n", t, sifrele(sifre));
+			printf("Sifrenizi Giriniz: ");
 			strAl(sifre);
-			t = strcmp(aBank.musteri[sonuc].Sifre, sifrele(sifre));
+			t = strcmp(aBank.musteri[mS].Sifre, sifrele(sifre));
 		}while(t!=0);
-		mS=sonuc;
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[mS].Ad));
-	printf("1-)\tHesap Sec\n2-)\tHesap Aç\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n6-)\tRapor Al\n0-)\tAna Menu\nSecim: ");
+	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n6-)\tRapor Al\n0-)\tAna Menu\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -176,7 +175,7 @@ void MusteriIslem(int mS){
 void YeniMusteri(){
 	int sorgu, kontrol;
 	double dTemp;
-	char s1[50]={}, s2[50]={}, temp[50];
+	char s1[120]={}, s2[120]={}, temp[120];
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n");
 	printf("2-)\tTicari Musteri\n");
@@ -209,16 +208,21 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	do{
-		if (strcmp(s1,s2) != 0){
-			system("@cls||clear");
-			printf(".............aBank.............\n");
-			printf("Hatali Giris!\n");
-		}
 		printf("Sifrenizi Giriniz: ");
 		strAl(s1);
 		printf("Tekrar Giriniz: ");
 		strAl(s2);
-	}while(strcmp(s1,s2) != 0);
+		if (strcmp(s1, s2) != 0){
+			system("@cls||clear");
+			printf("%d\n", strlen(s1));
+			printf(".............aBank.............\n");
+			printf("Hatali Giris!\n");
+		}else if ((int)strlen(s1)<4){
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Sifreniz en az 4 haneli olmali!\n");
+		}
+	}while(strcmp(s1, s2) != 0 || (int)strlen(s1)<4);
 	strcpy(aBank.musteri[aBank.mSayisi].Sifre, sifrele(s1));
 
 	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
@@ -251,7 +255,7 @@ void YeniMusteri(){
 }
 void VeriAl(){
 	int i, j, mNo;
-	char temp[50];
+	char temp[120];
 	aBank.mSayisi=0;
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
@@ -434,14 +438,14 @@ void Guncelle(){
 	
 }
 void hesapIslem(int mS, int hS){
-	char temp[50];
+	char temp[120];
 	int sorgu, kontrol;
 	if (hS == -1) hS = hesapSec(mS, 1);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hesabinizdaki bakiyeniz: %.2lf TL'dir.\n", aBank.musteri[mS].hesap[hS].bakiye);
 	printf("Toplam bakiyeniz: %.2lf TL'dir.\n\n", aBank.musteri[mS].tBakiye);
-	printf("1-)\tPara Cekme\n2-)\tPara Yatırma\n3-)\tHavale\n4-)\tMusteri Islemleri\n5-)\tHesap Ozeti\n0-)\tAna Menu\nSecim: ");
+	printf("1-)\tPara Cekme\n2-)\tPara Yatirma\n3-)\tHavale\n4-)\tMusteri Islemleri\n5-)\tHesap Ozeti\n0-)\tAna Menu\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -474,12 +478,12 @@ void hesapIslem(int mS, int hS){
 }
 void paraCek(int mS, int hS){
 	int i, kontrol, sorgu;
-	char temp[50];
+	char temp[120];
 	double dTemp, limit;
 	limit = (aBank.musteri[mS].mTuru == 1) ? 750 : 1500;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Cekmek istediğiniz tutari giriniz(Iptal etmek icin 0 giriniz): ");
+	printf("Cekmek istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%lf", &dTemp);
@@ -539,11 +543,11 @@ void paraCek(int mS, int hS){
 }
 void paraYatir(int mS, int hS){
 	int kontrol, sorgu;
-	char temp[50];
+	char temp[120];
 	double dTemp;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Yatirmak istediğiniz tutari giriniz(Iptal etmek icin 0 giriniz): ");
+	printf("Yatirmak istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%lf", &dTemp);
@@ -583,7 +587,7 @@ void paraYatir(int mS, int hS){
 void havaleGonder(int mS, int hS){
 	double dTemp, kesinti;
 	int i, tHesapS, hhS, hmS, tHesapNo, sorgu, kontrol;
-	char temp[50];
+	char temp[120];
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	if (aBank.musteri[mS].tHesapSayisi != 0){
@@ -647,7 +651,7 @@ void havaleGonder(int mS, int hS){
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Gondermek istediğiniz tutari giriniz(Iptal etmek icin 0 giriniz): ");
+	printf("Gondermek istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%lf", &dTemp);
@@ -722,7 +726,7 @@ void havaleGonder(int mS, int hS){
 }
 void hHesapKayit(int mS){
 	int sorgu, kontrol;
-	char temp[50];
+	char temp[120];
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hesap numarasini giriniz: ");
@@ -759,7 +763,7 @@ void hHesapKayit(int mS){
 }
 void hesapAc(int mS){
 	int sorgu, kontrol, hS = aBank.musteri[mS].hesapSayisi;
-	char temp[50];
+	char temp[120];
 	aBank.musteri[mS].hesap[hS].hesapNo = HesapNoOlustur();
 	aBank.musteri[mS].hesap[hS].bakiye = 0;
 	aBank.musteri[mS].hesap[hS].islemSayisi = 0;
@@ -787,7 +791,7 @@ void hesapAc(int mS){
 }
 void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 	int i, n, sorgu, kontrol, shS;
-	char temp[50];
+	char temp[120];
 	shS =  hesapSec(mS, s);
 	n = (s==1) ? aBank.musteri[mS].hesapSayisi : aBank.musteri[mS].tHesapSayisi;
 	if (s==1 && aBank.musteri[mS].hesap[shS].bakiye!=0){
@@ -844,7 +848,7 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 }
 int hesapSec(int mS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
 	int i, sorgu, kontrol, hNo, n;
-	char temp[50];
+	char temp[120];
 	n = (s==1) ? aBank.musteri[mS].hesapSayisi : aBank.musteri[mS].tHesapSayisi;
 	if (n==1) return 0;
 	else if(n==0) return -1;
@@ -877,12 +881,13 @@ int HesapNoOlustur(){
 	}while(hNoKontrol(hesapNo, 1)!=-1);
 	return hesapNo;
 }
-char *sifrele(char sifre[50]){
+char *sifrele(char sifre[120]){
 	int i, temp = *sifre, len = strlen(sifre);
-	for (i=0; i<len; i++){
-		temp += ((i+1) * (*(sifre+i) + 11) + *(sifre+len-i-1) + i);
-		*(sifre+i) = temp%21 + 33;
+	for (i=0; i<15; i++){
+		temp += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
+		*(sifre+i) = temp%93 + 33;
 	}
+	*(sifre+15) = '\0';
 	return sifre;
 }
 
@@ -904,7 +909,7 @@ int hNoKontrol(int hesapNo, int n){
 	return -1;
 }
 
-char *isimDuzelt(char isim[50]){
+char *isimDuzelt(char isim[120]){
 	int i;
 	for (i=0; i<(int)strlen(isim); i++){
 		if (*(isim+i) == '-') *(isim+i) = ' ';
@@ -912,7 +917,7 @@ char *isimDuzelt(char isim[50]){
 	return isim;
 }
 
-void strAl(char str[50]){
+void strAl(char str[120]){
 	int t;
 	char cTemp;
 	scanf("%s", str);

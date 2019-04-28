@@ -1,13 +1,17 @@
-Musteri: 2 / [ +-'-,4"11 ]
+Musteri: 2 / [ eYWG7`(<|hH4gsk ]
 	Tc-No: 98765432101
-	Ad Soyad: deneme2
+	Ad Soyad: baha2
 	Hesap Sayisi: 2
-		Hesap 1: 659823979
-		Bakiye: 0.00
-		Islem Sayisi: 0
-		Hesap 2: 422832875
-		Bakiye: 351.82
+		Hesap 1: 741579647
+		Bakiye: 773.71
 		Islem Sayisi: 1
-			28.4.2019 - 8:14 / 351.82
-				3 - 785225446
+			28.4.2019 - 18:1 / 773.71
+				3 - 247872201
+		Hesap 2: 565422770
+		Bakiye: 100.00
+		Islem Sayisi: 2
+			28.4.2019 - 17:58 / 550.00
+				2 - 565422770
+			28.4.2019 - 17:58 / -450.00
+				1 - 565422770
 	Kayitli Havale Hesap Sayisi: 0
