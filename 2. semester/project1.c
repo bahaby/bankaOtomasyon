@@ -903,10 +903,12 @@ int HesapNoOlustur(){
 	return hesapNo;
 }
 char *sifrele(char sifre[120]){
-	int i, temp = *sifre, len = strlen(sifre);
+	int i, temp[120], len = strlen(sifre);
+	for (i=0; i<120; i++){
+		*(temp+(i%15)) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
+	}
 	for (i=0; i<15; i++){
-		temp += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
-		*(sifre+i) = temp%93 + 33;
+		*(sifre+i) = *(temp+i)%93 + 33;
 	}
 	*(sifre+15) = '\0';
 	return sifre;
