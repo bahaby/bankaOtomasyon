@@ -62,6 +62,8 @@ typedef struct{
 }Dekont;
 
 Banka aBank;
+Dekont dekont[1000];
+
 void AnaMenu();
 void YeniMusteri();
 void MusteriIslem(int mS);
@@ -960,7 +962,6 @@ void hesapOzeti(int mS, int hS){
 	t1 = (aBank.musteri[mS].hesap[hS].islem[0].tarih.Yil - 1900) * 12 + aBank.musteri[mS].hesap[hS].islem[0].tarih.Ay;
 	t2 = tm.tm_year * 12 + tm.tm_mon+1 ;
 	aralik = t2-t1;
-	Dekont dekont[aralik+1];
 	int index[aralik+1];
 	
 	system("@cls||clear");
