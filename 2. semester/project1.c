@@ -91,209 +91,6 @@ int main(){
 	AnaMenu();
 }
 
-void AnaMenu(){
-	VeriAl();
-	int sorgu, kontrol;
-	char temp[120];
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("1-)\tYeni Musteri Kaydi\n");
-	printf("2-)\tMusteri Islemleri\n");
-	printf("0-)\tCikis\n");
-	printf("Secim: ");
-	do{
-		strAl(temp);
-		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<0 || sorgu>2 || kontrol == 0) {
-			printf("Hatali Giris!\nTekrar Deneyiniz: ");
-		}else if(sorgu == 2 && aBank.mSayisi==0){
-			printf("Herhangi bir musteri yok henuz.\nTekrar Deneyiniz: ");
-			kontrol = 0;
-		}
-	}while(sorgu<0 || sorgu>2 || kontrol == 0);
-	system("@cls||clear");
-	switch (sorgu){
-		case 0:{
-			printf("Cikis Basarili\n\n");
-			exit(0);
-		}break;
-		case 1:{
-			YeniMusteri();
-		}break;
-		case 2:{
-			MusteriIslem(-1);
-		}break;
-	}
-}
-
-void MusteriIslem(int mS){
-	int sonuc, sorgu, kontrol, t=0;
-	char temp[120];
-	double dTemp;
-	if (mS == -1){
-		char sifre[120];
-		system("@cls||clear");
-		printf(".............aBank.............\n");
-		printf("Tc Numaranizi Giriniz (Iptal etmek icin 0 giriniz): ");
-		do{
-			strAl(temp);
-			kontrol = sscanf(temp, "%lf", &dTemp);
-			if (dTemp == 0 && kontrol == 1) AnaMenu();
-			sonuc = tcNoKontrol(dTemp);
-			if (!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
-		}while(!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1 && kontrol==1));
-		mS=sonuc;
-		do{
-			system("@cls||clear");
-			printf(".............aBank.............\n");
-			if (t!=0) printf("Hatali sifre!\n");
-			printf("Sifrenizi Giriniz: ");
-			strAl(sifre);
-			t = strcmp(aBank.musteri[mS].Sifre, sifrele(sifre));
-		}while(t!=0);
-	}
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[mS].Ad));
-	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n6-)\tRapor Al\n7-)\tAna Menu\n0-)\tCikis\nSecim: ");
-	do{
-		strAl(temp);
-		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<0 || sorgu>7 || kontrol == 0) printf("Hatali giris!\nTekrar Deneyiniz: ");
-		else if (sorgu == 3 && aBank.musteri[mS].hesapSayisi == 1){
-			printf("Son Hesabinizi silemezsiniz!\nTekrar Deneyiniz: ");
-			kontrol = 0;
-		}else if(sorgu == 5 && aBank.musteri[mS].tHesapSayisi == 0){
-			printf("Kayitli hesabiniz kalmamistir!\nTekrar Deneyiniz: ");
-			kontrol = 0;
-		}
-	}while(sorgu<0 || sorgu>7 || kontrol == 0);
-
-	switch (sorgu){
-		case 0:{
-			printf("Cikis Basarili\n\n");
-			exit(0);
-		}break;
-		case 1:{
-			hesapIslem(mS, -1);
-		}break;
-		case 2:{
-			hesapAc(mS);
-		}break;
-		case 3:{
-			hesapSil(mS, 1);
-		}break;
-		case 4:{
-			hHesapKayit(mS);
-		}break;
-		case 5:{
-			hesapSil(mS, 2);
-		}break;
-		case 6:{
-			bankaRapor(mS);
-		}break;
-		case 7:{
-			AnaMenu();
-		}break;
-	}
-}
-
-
-void YeniMusteri(){
-	int sorgu, kontrol;
-	double dTemp;
-	char s1[120]={}, s2[120]={}, temp[120];
-	printf(".............aBank.............\n");
-	printf("1-)\tBireysel Musteri\n2-)\tTicari Musteri\n3-)\tAna Menu\n0-)\tCikis\nSecim: ");
-	do{
-		strAl(temp);
-		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<0 || sorgu>3 || kontrol == 0) {
-			printf("Hatali Giris!\nTekrar Deneyiniz: ");
-		}
-	}while(sorgu<0 || sorgu>3 || kontrol == 0);
-	switch (sorgu){
-		case 0:{
-			printf("Cikis Basarili\n\n");
-			exit(0);
-		}break;
-		case 1:
-		case 2:{
-			aBank.musteri[aBank.mSayisi].mTuru = sorgu;
-		}break;
-		case 3:{
-			AnaMenu();
-		}break;
-	}
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Ad Soyad: ");
-	strAl(aBank.musteri[aBank.mSayisi].Ad);
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Tc Numaranizi Giriniz: ");
-	do{
-		strAl(temp);
-		kontrol = sscanf(temp, "%lf", &dTemp);
-		if (!(dTemp>10000000000 && dTemp<99999999999 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
-		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
-	}while(!(dTemp>10000000000&&dTemp<99999999999&&tcNoKontrol(dTemp) == -1 && kontrol==1));
-	aBank.musteri[aBank.mSayisi].tcNo = dTemp;
-
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	do{
-		printf("Sifrenizi Giriniz: ");
-		strAl(s1);
-		printf("Tekrar Giriniz: ");
-		strAl(s2);
-		if (strcmp(s1, s2) != 0){
-			system("@cls||clear");
-			printf(".............aBank.............\n");
-			printf("Hatali Giris!\n");
-		}else if ((int)strlen(s1)<4){
-			system("@cls||clear");
-			printf(".............aBank.............\n");
-			printf("Sifreniz en az 4 haneli olmali!\n");
-		}
-	}while(strcmp(s1, s2) != 0 || (int)strlen(s1)<4);
-	strcpy(aBank.musteri[aBank.mSayisi].Sifre, sifrele(s1));
-
-	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
-	aBank.musteri[aBank.mSayisi].tHesapSayisi = 0;
-	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur();
-	aBank.musteri[aBank.mSayisi].hesap[0].bakiye = 0;
-	aBank.musteri[aBank.mSayisi].hesap[0].islemSayisi = 0;
-	aBank.mSayisi++;
-	Guncelle();
-
-	system("@cls||clear");
-	printf(".............aBank.............\nHesabiniz kuruldu...\n\n");
-	printf("Adiniz: %s\n", isimDuzelt(aBank.musteri[aBank.mSayisi-1].Ad));
-	printf("Tc Numaraniz: %.lf\n", aBank.musteri[aBank.mSayisi-1].tcNo);
-	printf("Hesap Numaraniz: %d\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
-	printf("Sifreniz: %s\n\n", s2);
-	printf("1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
-	do{
-		strAl(temp);
-		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<0 || sorgu>2 || kontrol == 0) {
-			printf("Hatali Giris!\nTekrar Deneyiniz: ");
-		}
-	}while(sorgu<0 || sorgu>2 || kontrol == 0);
-	switch (sorgu){
-		case 0:{
-			printf("Cikis Basarili\n\n");
-			exit(0);
-		}break;
-		case 1:{
-			MusteriIslem(aBank.mSayisi-1);
-		}break;
-		case 2:{
-			AnaMenu();
-		}break;
-	}
-}
 void VeriAl(){
 	int i, j, mNo;
 	char temp[120];
@@ -478,6 +275,208 @@ void Guncelle(){
 	fclose(pf1);
 	
 }
+void AnaMenu(){
+	VeriAl();
+	int sorgu, kontrol;
+	char temp[120];
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("1-)\tYeni Musteri Kaydi\n");
+	printf("2-)\tMusteri Islemleri\n");
+	printf("0-)\tCikis\n");
+	printf("Secim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<0 || sorgu>2 || kontrol == 0) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}else if(sorgu == 2 && aBank.mSayisi==0){
+			printf("Herhangi bir musteri yok henuz.\nTekrar Deneyiniz: ");
+			kontrol = 0;
+		}
+	}while(sorgu<0 || sorgu>2 || kontrol == 0);
+	system("@cls||clear");
+	switch (sorgu){
+		case 0:{
+			printf("Cikis Basarili\n\n");
+			exit(0);
+		}break;
+		case 1:{
+			YeniMusteri();
+		}break;
+		case 2:{
+			MusteriIslem(-1);
+		}break;
+	}
+}
+
+void YeniMusteri(){
+	int sorgu, kontrol;
+	double dTemp;
+	char s1[120]={}, s2[120]={}, temp[120];
+	printf(".............aBank.............\n");
+	printf("1-)\tBireysel Musteri\n2-)\tTicari Musteri\n3-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<0 || sorgu>3 || kontrol == 0) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<0 || sorgu>3 || kontrol == 0);
+	switch (sorgu){
+		case 0:{
+			printf("Cikis Basarili\n\n");
+			exit(0);
+		}break;
+		case 1:
+		case 2:{
+			aBank.musteri[aBank.mSayisi].mTuru = sorgu;
+		}break;
+		case 3:{
+			AnaMenu();
+		}break;
+	}
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Ad Soyad: ");
+	strAl(aBank.musteri[aBank.mSayisi].Ad);
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Tc Numaranizi Giriniz: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%lf", &dTemp);
+		if (!(dTemp>10000000000 && dTemp<99999999999 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
+	}while(!(dTemp>10000000000&&dTemp<99999999999&&tcNoKontrol(dTemp) == -1 && kontrol==1));
+	aBank.musteri[aBank.mSayisi].tcNo = dTemp;
+
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	do{
+		printf("Sifrenizi Giriniz: ");
+		strAl(s1);
+		printf("Tekrar Giriniz: ");
+		strAl(s2);
+		if (strcmp(s1, s2) != 0){
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Hatali Giris!\n");
+		}else if ((int)strlen(s1)<4){
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Sifreniz en az 4 haneli olmali!\n");
+		}
+	}while(strcmp(s1, s2) != 0 || (int)strlen(s1)<4);
+	strcpy(aBank.musteri[aBank.mSayisi].Sifre, sifrele(s1));
+
+	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
+	aBank.musteri[aBank.mSayisi].tHesapSayisi = 0;
+	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur();
+	aBank.musteri[aBank.mSayisi].hesap[0].bakiye = 0;
+	aBank.musteri[aBank.mSayisi].hesap[0].islemSayisi = 0;
+	aBank.mSayisi++;
+	Guncelle();
+
+	system("@cls||clear");
+	printf(".............aBank.............\nHesabiniz kuruldu...\n\n");
+	printf("Adiniz: %s\n", isimDuzelt(aBank.musteri[aBank.mSayisi-1].Ad));
+	printf("Tc Numaraniz: %.lf\n", aBank.musteri[aBank.mSayisi-1].tcNo);
+	printf("Hesap Numaraniz: %d\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
+	printf("Sifreniz: %s\n\n", s2);
+	printf("1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<0 || sorgu>2 || kontrol == 0) {
+			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}
+	}while(sorgu<0 || sorgu>2 || kontrol == 0);
+	switch (sorgu){
+		case 0:{
+			printf("Cikis Basarili\n\n");
+			exit(0);
+		}break;
+		case 1:{
+			MusteriIslem(aBank.mSayisi-1);
+		}break;
+		case 2:{
+			AnaMenu();
+		}break;
+	}
+}
+
+void MusteriIslem(int mS){
+	int sonuc, sorgu, kontrol, t=0;
+	char temp[120];
+	double dTemp;
+	if (mS == -1){
+		char sifre[120];
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		printf("Tc Numaranizi Giriniz (Iptal etmek icin 0 giriniz): ");
+		do{
+			strAl(temp);
+			kontrol = sscanf(temp, "%lf", &dTemp);
+			if (dTemp == 0 && kontrol == 1) AnaMenu();
+			sonuc = tcNoKontrol(dTemp);
+			if (!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}while(!(dTemp>10000000000 && dTemp<99999999999 && sonuc != -1 && kontrol==1));
+		mS=sonuc;
+		do{
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			if (t!=0) printf("Hatali sifre!\n");
+			printf("Sifrenizi Giriniz: ");
+			strAl(sifre);
+			t = strcmp(aBank.musteri[mS].Sifre, sifrele(sifre));
+		}while(t!=0);
+	}
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[mS].Ad));
+	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n6-)\tRapor Al\n7-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	do{
+		strAl(temp);
+		kontrol = sscanf(temp, "%d", &sorgu);
+		if(sorgu<0 || sorgu>7 || kontrol == 0) printf("Hatali giris!\nTekrar Deneyiniz: ");
+		else if (sorgu == 3 && aBank.musteri[mS].hesapSayisi == 1){
+			printf("Son Hesabinizi silemezsiniz!\nTekrar Deneyiniz: ");
+			kontrol = 0;
+		}else if(sorgu == 5 && aBank.musteri[mS].tHesapSayisi == 0){
+			printf("Kayitli hesabiniz kalmamistir!\nTekrar Deneyiniz: ");
+			kontrol = 0;
+		}
+	}while(sorgu<0 || sorgu>7 || kontrol == 0);
+	switch (sorgu){
+		case 0:{
+			printf("Cikis Basarili\n\n");
+			exit(0);
+		}break;
+		case 1:{
+			hesapIslem(mS, -1);
+		}break;
+		case 2:{
+			hesapAc(mS);
+		}break;
+		case 3:{
+			hesapSil(mS, 1);
+		}break;
+		case 4:{
+			hHesapKayit(mS);
+		}break;
+		case 5:{
+			hesapSil(mS, 2);
+		}break;
+		case 6:{
+			bankaRapor(mS);
+		}break;
+		case 7:{
+			AnaMenu();
+		}break;
+	}
+}
+
 void hesapIslem(int mS, int hS){
 	char temp[120];
 	int sorgu, kontrol;
@@ -486,7 +485,7 @@ void hesapIslem(int mS, int hS){
 	printf(".............aBank.............\n");
 	printf("Hesabinizdaki bakiyeniz: %.2lf TL'dir.\n", aBank.musteri[mS].hesap[hS].bakiye);
 	printf("Toplam bakiyeniz: %.2lf TL'dir.\n\n", aBank.musteri[mS].tBakiye);
-	printf("1-)\tPara Cekme\n2-)\tPara Yatirma\n3-)\tHavale\n4-)\tHesap Ozeti\n5-)\tMusteri Islemleri\n6-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("1-)\tPara Cekme\n2-)\tPara Yatirma\n3-)\tHavale\n4-)\tHesap Ozeti\n5-)\tGeri Don\n6-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -540,6 +539,9 @@ void paraCek(int mS, int hS){
 		else if (dTemp>limit) printf("Para cekme limitiniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", limit);
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && dTemp<=limit && kontrol==1));
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Islem basarili...\n\n");
 	dTemp = ((int)(dTemp*100)) / 100.0;
 	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
@@ -555,20 +557,18 @@ void paraCek(int mS, int hS){
 				if (dTemp<=aBank.musteri[mS].hesap[i].bakiye){
 					aBank.musteri[mS].hesap[i].bakiye -= dTemp;
 					islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -dTemp);
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, dTemp);
 				}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye){
 					dTemp -= aBank.musteri[mS].hesap[i].bakiye;
 					islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye);
 					aBank.musteri[mS].hesap[i].bakiye = 0;
 				}
 			}
 		}
 	}
 	Guncelle();
-
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Islem basarili...\n\n");
-	printf("1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("\n1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -710,6 +710,9 @@ void havaleGonder(int mS, int hS){
 		else if (!(dTemp>0 && kontrol==1)) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && kontrol==1));
 	dTemp = ((int)(dTemp*100)) / 100.0;
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Islem basarili...\n\n");
 	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
 		islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
@@ -733,6 +736,7 @@ void havaleGonder(int mS, int hS){
 					aBank.musteri[mS].hesap[i].bakiye -= dTemp;
 					islemKaydi(mS, i, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
 					kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, dTemp);
 
 					aBank.musteri[hmS].hesap[hhS].bakiye += (dTemp - kesinti);
 					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, dTemp - kesinti);
@@ -741,6 +745,7 @@ void havaleGonder(int mS, int hS){
 					dTemp -= aBank.musteri[mS].hesap[i].bakiye;
 					islemKaydi(mS, i, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
 					kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(aBank.musteri[mS].hesap[i].bakiye*2)) / 100.0 : 0;
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye);
 					
 					aBank.musteri[hmS].hesap[hhS].bakiye += (aBank.musteri[mS].hesap[i].bakiye - kesinti);
 					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye - kesinti);
@@ -750,10 +755,7 @@ void havaleGonder(int mS, int hS){
 		}
 	}
 	Guncelle();
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Islem basarili...\n\n");
-	printf("1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("\n1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -780,10 +782,11 @@ void hHesapKayit(int mS){
 	char temp[120];
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Hesap numarasini giriniz: ");
+	printf("Hesap numarasini giriniz (Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
+		if (sorgu == 0 && kontrol == 1) MusteriIslem(mS);
 		if (!(sorgu>100000000 && sorgu<999999999 && kontrol==1)) printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		else if (hNoKontrol(sorgu, 1) == -1) printf("Boyle bir hesap numarasi yok!\nTekrar Deneyiniz: ");
 	}while(!(sorgu>100000000 && sorgu<999999999 && hNoKontrol(sorgu, 1) != -1 && kontrol==1));
@@ -826,14 +829,14 @@ void hesapAc(int mS){
 	Guncelle();
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Hesabiniz Acildi..\n1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("Hesabiniz Acildi..\n1-)\tGeri Don\n2-)\tHesap Islemleri\n3-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<0 || sorgu>2 || kontrol == 0) {
+		if(sorgu<0 || sorgu>3 || kontrol == 0) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
-	}while(sorgu<0 || sorgu>2 || kontrol == 0);
+	}while(sorgu<0 || sorgu>3 || kontrol == 0);
 	switch (sorgu){
 		case 0:{
 			printf("Cikis Basarili\n\n");
@@ -844,6 +847,10 @@ void hesapAc(int mS){
 			MusteriIslem(mS);
 		}break;
 		case 2:{
+			VeriAl();
+			hesapIslem(mS, aBank.musteri[mS].hesapSayisi-1);
+		}break;
+		case 3:{
 			AnaMenu();
 		}break;
 	}
@@ -916,23 +923,24 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 int hesapSec(int mS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
 	int i, sorgu, kontrol, hNo, n;
 	char temp[120];
-	n = (s==1) ? aBank.musteri[mS].hesapSayisi : aBank.musteri[mS].tHesapSayisi;
-	if (n==1) return 0;
-	else if(n==0) return -1;
+	if (s==1){
+		n = aBank.musteri[mS].hesapSayisi;
+		if (n==1) return 0;
+	}else n = aBank.musteri[mS].tHesapSayisi;
+	if(n==0) return -1;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Islem Yapilacak Hesap Numarasini Seciniz...\n\n");
+	printf("Islem Yapilacak Hesap No Seciniz (Iptal etmek icin 0 giriniz): \n\n");
 	for (i=0; i<n; i++){
 		hNo = (s==1) ? aBank.musteri[mS].hesap[i].hesapNo : aBank.musteri[mS].tHesap[i].hesapNo;
-		printf("%d-) %d\t",i+1, hNo);
-		if (i%3 == 2) printf("\n");
+		printf("%d-) %d (%.2lf TL)\n", i+1, hNo, aBank.musteri[mS].hesap[i].bakiye);
 	}
-	if (i%3 != 0) printf("\n");
 	printf("\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<1 || sorgu>n || kontrol == 0) {
+		if (sorgu == 0 && kontrol == 1) MusteriIslem(mS);
+		if (sorgu<1 || sorgu>n || kontrol == 0) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
 	}while(sorgu<1 || sorgu>n || kontrol == 0);
@@ -1047,20 +1055,24 @@ void hesapOzeti(int mS, int hS){
 			k++;
 		}
 	}
-	printf("\n\nSecim: ");
+	printf("\n\nSecim (Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
-		if(sorgu<1 || sorgu>n || kontrol == 0) {
+		if (sorgu == 0 && kontrol == 1) hesapIslem(mS, hS);
+		if(sorgu<0 || sorgu>n || kontrol == 0) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		}
-	}while(sorgu<1 || sorgu>n || kontrol == 0);
+	}while(sorgu<0 || sorgu>n || kontrol == 0);
 	
 
 	fclose(fopen("dekont.txt", "w"));
 	pf = fopen("dekont.txt", "a");
-	printf("\n\ndeneme %d\n", dekont[0].islem[0].iTuru);
 	i = *(index + sorgu);
+	iY = (t2 - i) / 12 + 1900;
+	iA = (t2 - i -1) % 12 +1; 
+	if (i==0) fprintf(pf, "%0.2d - %0.2d\t Donemi Hesap Ozeti\n\n", iY, iA);
+	else fprintf(pf, "%d - %0.2d/%0.2d\t Donemi Hesap Ozeti\n\n", iY, iA, iA%12+1);
 	for (j=dekont[i].islemSayisi-1; j>=0; j--){
 		if (dekont[i].islem[j].iTuru == 1){
 			fprintf(pf, "%0.2d.%0.2d.%0.4d - %0.2d:%0.2d  Para Cekme    %.2lf\n", 
@@ -1126,7 +1138,7 @@ void hesapOzeti(int mS, int hS){
 			exit(0);
 		}break;
 		case 1:{
-			hesapIslem(mS, hS);
+			hesapOzeti(mS, hS);
 		}break;
 		case 2:{
 			AnaMenu();
@@ -1183,3 +1195,5 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
+
+//Ana menude musteri giris yaptıysa musteri islemleri giris yapmadıysa musteri giris menusu yapılacak
