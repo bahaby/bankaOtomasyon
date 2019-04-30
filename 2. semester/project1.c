@@ -45,6 +45,7 @@ typedef struct{
 typedef struct{
 	Musteri musteri[1000];
 	int mSayisi;
+	int girisYapan;
 }Banka;
 
 typedef struct{
@@ -88,6 +89,7 @@ char *sifrele(char sifre[120]);
 void strAl(char str[120]);
 
 int main(){
+	aBank.girisYapan = -1;
 	AnaMenu();
 }
 
@@ -281,8 +283,13 @@ void AnaMenu(){
 	char temp[120];
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("1-)\tYeni Musteri Kaydi\n");
-	printf("2-)\tMusteri Islemleri\n");
+	if (aBank.girisYapan == -1){
+		printf("1-)\tYeni Musteri Kaydi\n");
+		printf("2-)\tMusteri Girisi\n");
+	}else{
+		printf("1-)\tMusteri Islemleri\n");
+		printf("2-)\tMusteri Cikisi\n");
+	}
 	printf("0-)\tCikis\n");
 	printf("Secim: ");
 	do{
@@ -302,10 +309,19 @@ void AnaMenu(){
 			exit(0);
 		}break;
 		case 1:{
-			YeniMusteri();
+			if (aBank.girisYapan == -1){
+				YeniMusteri();
+			}else{
+				MusteriIslem(aBank.girisYapan);
+			}
 		}break;
 		case 2:{
-			MusteriIslem(-1);
+			if (aBank.girisYapan == -1){
+				MusteriIslem(aBank.girisYapan);
+			}else{
+				aBank.girisYapan = -1;
+				AnaMenu();
+			}
 		}break;
 	}
 }
@@ -375,6 +391,7 @@ void YeniMusteri(){
 	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur();
 	aBank.musteri[aBank.mSayisi].hesap[0].bakiye = 0;
 	aBank.musteri[aBank.mSayisi].hesap[0].islemSayisi = 0;
+	aBank.girisYapan = aBank.mSayisi;
 	aBank.mSayisi++;
 	Guncelle();
 
@@ -398,7 +415,7 @@ void YeniMusteri(){
 			exit(0);
 		}break;
 		case 1:{
-			MusteriIslem(aBank.mSayisi-1);
+			MusteriIslem(aBank.girisYapan);
 		}break;
 		case 2:{
 			AnaMenu();
@@ -431,11 +448,14 @@ void MusteriIslem(int mS){
 			strAl(sifre);
 			t = strcmp(aBank.musteri[mS].Sifre, sifrele(sifre));
 		}while(t!=0);
+		aBank.girisYapan = mS;
+		AnaMenu();
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[mS].Ad));
-	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n6-)\tRapor Al\n7-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n");
+	printf("6-)\tRapor Al\n7-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -564,11 +584,12 @@ void paraCek(int mS, int hS){
 					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye);
 					aBank.musteri[mS].hesap[i].bakiye = 0;
 				}
+				printf("\n");
 			}
 		}
 	}
 	Guncelle();
-	printf("\n1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -751,11 +772,12 @@ void havaleGonder(int mS, int hS){
 					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye - kesinti);
 					aBank.musteri[mS].hesap[i].bakiye = 0;
 				}
+				printf("\n");
 			}
 		}
 	}
 	Guncelle();
-	printf("\n1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp);
 		kontrol = sscanf(temp, "%d", &sorgu);
@@ -877,8 +899,7 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 				exit(0);
 			}break;
 			case 1:{
-				VeriAl();
-				MusteriIslem(mS);
+				hesapSil(mS, 1);
 			}break;
 			case 2:{
 				AnaMenu();
@@ -921,7 +942,7 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 	}
 }
 int hesapSec(int mS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
-	int i, sorgu, kontrol, hNo, n;
+	int i, sorgu, kontrol, hNo, n, tmS;
 	char temp[120];
 	if (s==1){
 		n = aBank.musteri[mS].hesapSayisi;
@@ -933,7 +954,12 @@ int hesapSec(int mS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
 	printf("Islem Yapilacak Hesap No Seciniz (Iptal etmek icin 0 giriniz): \n\n");
 	for (i=0; i<n; i++){
 		hNo = (s==1) ? aBank.musteri[mS].hesap[i].hesapNo : aBank.musteri[mS].tHesap[i].hesapNo;
-		printf("%d-) %d (%.2lf TL)\n", i+1, hNo, aBank.musteri[mS].hesap[i].bakiye);
+		if (s==1){
+			printf("%d-) %d (%.2lf TL)\n", i+1, hNo, aBank.musteri[mS].hesap[i].bakiye);
+		}else{
+			tmS = hNoKontrol(hNo, 1);
+			printf("%d-) %d (%s)\n", i+1, hNo, aBank.musteri[tmS].Ad);
+		}
 	}
 	printf("\nSecim: ");
 	do{
@@ -1195,5 +1221,3 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	
 	aBank.musteri[mS].hesap[hS].islemSayisi++;
 }
-
-//Ana menude musteri giris yaptıysa musteri islemleri giris yapmadıysa musteri giris menusu yapılacak
