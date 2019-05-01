@@ -84,7 +84,6 @@ int hesapSec(int mS, int hS, int s);// s 1 ise normal hesap 2 ise kayitli hesap
 int HesapNoOlustur();
 int tcNoKontrol(double tcNo);
 int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri sırası 2 ise hesap sırası
-char *isimDuzelt(char isim[120]);
 char *sifrele(char sifre[120]);
 void strAl(char str[], int min, int max);
 
@@ -104,7 +103,11 @@ void VeriAl(){
 			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
 			strcpy(aBank.musteri[mNo-1].Sifre, temp);
 			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
-			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
+			i=0;
+			while((c = fgetc(pf))!='\n'){
+				if (i>9) aBank.musteri[mNo-1].Ad[i-10] = c;
+				i++;
+			}
 			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
 			for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
 				fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
@@ -142,7 +145,11 @@ void VeriAl(){
 			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
 			strcpy(aBank.musteri[mNo-1].Sifre, temp);
 			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
-			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
+			i=0;
+			while((c = fgetc(pf))!='\n'){
+				if (i>9) aBank.musteri[mNo-1].Ad[i-10] = c;
+				i++;
+			}
 			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
 			for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
 				fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
@@ -395,7 +402,7 @@ void YeniMusteri(){
 
 	system("@cls||clear");
 	printf(".............aBank.............\nHesabiniz kuruldu...\n\n");
-	printf("Adiniz: %s\n", isimDuzelt(aBank.musteri[aBank.mSayisi-1].Ad));
+	printf("Adiniz: %s\n", aBank.musteri[aBank.mSayisi-1].Ad);
 	printf("Tc Numaraniz: %.lf\n", aBank.musteri[aBank.mSayisi-1].tcNo);
 	printf("Hesap Numaraniz: %d\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
 	printf("Sifreniz: %d\n\n", is1);
@@ -451,7 +458,7 @@ void MusteriIslem(int mS){
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Hosgeldin, %s\n", isimDuzelt(aBank.musteri[mS].Ad));
+	printf("Hosgeldin, %s\n", aBank.musteri[mS].Ad);
 	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n");
 	printf("6-)\tRapor Al\n7-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
@@ -966,7 +973,7 @@ int hesapSec(int mS, int hS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
 			printf("%d-) %d (%.2lf TL)\n", i+1, hNo, aBank.musteri[mS].hesap[i].bakiye);
 		}else{
 			tmS = hNoKontrol(hNo, 1);
-			printf("%d-) %d (%s)\n", i+1, hNo, isimDuzelt(aBank.musteri[tmS].Ad));
+			printf("%d-) %d (%s)\n", i+1, hNo, aBank.musteri[tmS].Ad);
 		}
 	}
 	printf("\nSecim: ");
@@ -1020,14 +1027,6 @@ int hNoKontrol(int hesapNo, int n){ // n 1 ise müsteri no, 2 ise hesap no
 	return -1;
 }
 
-char *isimDuzelt(char isim[120]){
-	int i;
-	for (i=0; i<(int)strlen(isim); i++){
-		if (*(isim+i) == '-') *(isim+i) = ' ';
-	}
-	return isim;
-}
-
 void strAl(char str[], int min, int max){
 	int t;
 	char cTemp;
@@ -1036,7 +1035,6 @@ void strAl(char str[], int min, int max){
 		t = strlen(str);
 		do{
 			scanf("%c", &cTemp);
-			if (cTemp == ' ') cTemp = '-';
 			*(str + t++) = cTemp;
 		}while (cTemp != '\n');
 		*(str+t-1) = 0;
@@ -1070,7 +1068,7 @@ void hesapOzeti(int mS, int hS){
 			if ((t2-t3) == i){
 				ihNo = aBank.musteri[mS].hesap[hS].islem[j].iHesap;
 				imS = hNoKontrol(ihNo, 1);
-				strcpy(dekont[i].islem[dekont[i].islemSayisi].Ad, isimDuzelt(aBank.musteri[imS].Ad));
+				strcpy(dekont[i].islem[dekont[i].islemSayisi].Ad, aBank.musteri[imS].Ad);
 				dekont[i].islem[dekont[i].islemSayisi].hesapNo = ihNo;
 				dekont[i].islem[dekont[i].islemSayisi].mTuru = aBank.musteri[mS].mTuru;
 				dekont[i].islem[dekont[i].islemSayisi].iTuru = aBank.musteri[mS].hesap[hS].islem[j].iTuru;
