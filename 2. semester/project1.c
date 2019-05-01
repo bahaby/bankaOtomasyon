@@ -35,7 +35,7 @@ typedef struct{
 	transferHesap tHesap[100];
 	double tBakiye;
 	char Ad[120];
-	char Sifre[120];
+	char Sifre[8];
 	double tcNo;
 	int hesapSayisi;
 	int tHesapSayisi;
@@ -995,15 +995,12 @@ int HesapNoOlustur(){
 	}while(hNoKontrol(hesapNo, 1)!=-1);
 	return hesapNo;
 }
-char *sifrele(char sifre[120]){
-	int i, temp[120], len = strlen(sifre);
-	for (i=0; i<120; i++){
-		*(temp+(i%15)) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
-	}
-	for (i=0; i<15; i++){
+char *sifrele(char sifre[8]){
+	int i, temp[8]={}, len = strlen(sifre);
+	for (i=0; i<8; i++){
+		*(temp+i) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
 		*(sifre+i) = *(temp+i)%93 + 33;
 	}
-	*(sifre+15) = '\0';
 	return sifre;
 }
 
