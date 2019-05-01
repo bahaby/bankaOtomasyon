@@ -566,11 +566,13 @@ void paraCek(int mS, int hS){
 	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
 		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -dTemp);
+		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
 		dTemp = 0;
 	}else{
 		if (dTemp>aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
 			dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
 			islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
+			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye);
 			aBank.musteri[mS].hesap[hS].bakiye = 0;
 		}
 		for (i=0; i<aBank.musteri[mS].hesapSayisi; i++){
@@ -742,6 +744,7 @@ void havaleGonder(int mS, int hS){
 		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
 		islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
 		kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
+		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
 
 		aBank.musteri[hmS].hesap[hhS].bakiye += (dTemp - kesinti);
 		islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, dTemp - kesinti);
@@ -751,6 +754,7 @@ void havaleGonder(int mS, int hS){
 			dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
 			islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
 			kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(aBank.musteri[mS].hesap[hS].bakiye*2)) / 100.0 : 0;
+			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye);
 			
 			aBank.musteri[hmS].hesap[hhS].bakiye += (aBank.musteri[mS].hesap[hS].bakiye - kesinti);
 			islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye - kesinti);
