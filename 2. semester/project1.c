@@ -15,14 +15,14 @@ typedef struct{
 	int iTuru; //1->para çekme, 2->para yatırma, 3->Havale
 	int iHesap;
 	double iTutar;
-	Tarih tarih;
+	Tarih tarih, *pTarih;
 }Islem;
 
 typedef struct{
 	int hesapNo;
 	int islemSayisi;
 	double bakiye;
-	Islem islem[1000];
+	Islem islem[500], *pIslem[500];
 }Hesap;
 
 typedef struct{
@@ -31,8 +31,8 @@ typedef struct{
 
 typedef struct{
 
-	Hesap hesap[100];
-	transferHesap tHesap[100];
+	Hesap hesap[100], *pHesap[100];
+	transferHesap tHesap[100], *ptHesap[100];
 	double tBakiye;
 	char Ad[120];
 	char Sifre[8];
@@ -43,7 +43,7 @@ typedef struct{
 }Musteri;
 
 typedef struct{
-	Musteri musteri[1000];
+	Musteri musteri[500], *pMusteri[500];
 	int mSayisi;
 	int girisYapan;
 }Banka;
@@ -54,16 +54,16 @@ typedef struct{
 	int iTuru;
 	int mTuru;
 	double Tutar;
-	Tarih tarih;
+	Tarih tarih, *pTarih;
 }dIslem;
 
 typedef struct{
-	dIslem islem[1000];
+	dIslem islem[500], *pIslem[500];
 	int islemSayisi;
 }Dekont;
 
-Banka aBank;
-Dekont dekont[1000];
+Banka aBank, *paBank;
+Dekont dekont[500], *pDekont[500];
 
 void AnaMenu();
 void YeniMusteri();
@@ -88,10 +88,39 @@ char *sifrele(char sifre[120]);
 void strAl(char str[], int min, int max);
 double cekilenPara(int mS);
 void isimDuzelt(char ad[120]);
+void pTanimla();
+
+
 
 int main(){
-	aBank.girisYapan = -1;
+	pTanimla();
+	paBank->girisYapan = -1;
 	AnaMenu();
+}
+
+
+void pTanimla(){
+	int i, j, k;
+	paBank = &aBank;
+	for (i=0; i<500; i++){
+		paBank->pMusteri[i] = &aBank.musteri[i];
+		pDekont[i] = &dekont[i]; 
+		for (j=0; j<500; j++){
+			pDekont[i]->pIslem[j] = &dekont[i].islem[j];
+			pDekont[i]->pIslem[j]->pTarih = &dekont[i].islem[j].tarih;
+		}
+		for (j=0; j<100; j++){
+			paBank->pMusteri[i]->pHesap[j] = &aBank.musteri[i].hesap[j];
+			paBank->pMusteri[i]->ptHesap[j] = &aBank.musteri[i].tHesap[j];
+			for (k=0; k<500; k++){
+				paBank->pMusteri[i]->pHesap[j]->pIslem[k] = &aBank.musteri[i].hesap[j].islem[k];
+				paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih = &aBank.musteri[i].hesap[j].islem[k].tarih;
+			}
+		}
+	}
+	for(i=0; i<500; i++){
+		pDekont[i] = &dekont[i];
+	}
 }
 
 void VeriAl(){
@@ -103,36 +132,36 @@ void VeriAl(){
 	if (pf!=NULL){
 		while(!feof(pf)){
 			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
-			strcpy(aBank.musteri[mNo-1].Sifre, temp);
-			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
-			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
-			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
-			for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
-				fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
-				fscanf(pf, " Bakiye: %lf", &aBank.musteri[mNo-1].hesap[i].bakiye);
-				fscanf(pf, " Islem Sayisi: %d", &aBank.musteri[mNo-1].hesap[i].islemSayisi);
-				if (aBank.musteri[mNo-1].hesap[i].islemSayisi!=0){
-					for (j=0; j<aBank.musteri[mNo-1].hesap[i].islemSayisi; j++){
+			strcpy(paBank->pMusteri[mNo-1]->Sifre, temp);
+			fscanf(pf, " Tc-No: %lf", &paBank->pMusteri[mNo-1]->tcNo);
+			fscanf(pf, " Ad Soyad: %s", paBank->pMusteri[mNo-1]->Ad);
+			fscanf(pf, " Hesap Sayisi: %d", &paBank->pMusteri[mNo-1]->hesapSayisi);
+			for (i=0; i<paBank->pMusteri[mNo-1]->hesapSayisi; i++){
+				fscanf(pf, " Hesap %*d : %d", &paBank->pMusteri[mNo-1]->pHesap[i]->hesapNo);
+				fscanf(pf, " Bakiye: %lf", &paBank->pMusteri[mNo-1]->pHesap[i]->bakiye);
+				fscanf(pf, " Islem Sayisi: %d", &paBank->pMusteri[mNo-1]->pHesap[i]->islemSayisi);
+				if (paBank->pMusteri[mNo-1]->pHesap[i]->islemSayisi!=0){
+					for (j=0; j<paBank->pMusteri[mNo-1]->pHesap[i]->islemSayisi; j++){
 						fscanf(pf, " %d.%d.%d - %d:%d / %lf", 
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Gun,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Ay,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Yil,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Saat,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Dk,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].iTutar);
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Gun,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Ay,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Yil,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Saat,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Dk,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->iTutar);
 						fscanf(pf, " %d - %d", 
-							&aBank.musteri[mNo-1].hesap[i].islem[j].iTuru,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].iHesap);
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->iTuru,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->iHesap);
 					}
 				}
 			}
-			fscanf(pf, " Kayitli Havale Hesap Sayisi: %d", &aBank.musteri[mNo-1].tHesapSayisi);
-			if (aBank.musteri[mNo-1].tHesapSayisi != 0){
-				for (i=0; i<aBank.musteri[mNo-1].tHesapSayisi; i++){
-					fscanf(pf, " Hesap %*d: %d", &aBank.musteri[mNo-1].tHesap[i].hesapNo);
+			fscanf(pf, " Kayitli Havale Hesap Sayisi: %d", &paBank->pMusteri[mNo-1]->tHesapSayisi);
+			if (paBank->pMusteri[mNo-1]->tHesapSayisi != 0){
+				for (i=0; i<paBank->pMusteri[mNo-1]->tHesapSayisi; i++){
+					fscanf(pf, " Hesap %*d: %d", &paBank->pMusteri[mNo-1]->ptHesap[i]->hesapNo);
 				}
 			}
-			aBank.musteri[mNo-1].mTuru = 1;
+			paBank->pMusteri[mNo-1]->mTuru = 1;
 			aBank.mSayisi++;
 		}
 		fclose(pf);
@@ -141,36 +170,36 @@ void VeriAl(){
 	if (pf!=NULL){
 		while(!feof(pf)){
 			fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
-			strcpy(aBank.musteri[mNo-1].Sifre, temp);
-			fscanf(pf, " Tc-No: %lf", &aBank.musteri[mNo-1].tcNo);
-			fscanf(pf, " Ad Soyad: %s", aBank.musteri[mNo-1].Ad);
-			fscanf(pf, " Hesap Sayisi: %d", &aBank.musteri[mNo-1].hesapSayisi);
-			for (i=0; i<aBank.musteri[mNo-1].hesapSayisi; i++){
-				fscanf(pf, " Hesap %*d : %d", &aBank.musteri[mNo-1].hesap[i].hesapNo);
-				fscanf(pf, " Bakiye: %lf", &aBank.musteri[mNo-1].hesap[i].bakiye);
-				fscanf(pf, " Islem Sayisi: %d", &aBank.musteri[mNo-1].hesap[i].islemSayisi);
-				if (aBank.musteri[mNo-1].hesap[i].islemSayisi!=0){
-					for (j=0; j<aBank.musteri[mNo-1].hesap[i].islemSayisi; j++){
+			strcpy(paBank->pMusteri[mNo-1]->Sifre, temp);
+			fscanf(pf, " Tc-No: %lf", &paBank->pMusteri[mNo-1]->tcNo);
+			fscanf(pf, " Ad Soyad: %s", paBank->pMusteri[mNo-1]->Ad);
+			fscanf(pf, " Hesap Sayisi: %d", &paBank->pMusteri[mNo-1]->hesapSayisi);
+			for (i=0; i<paBank->pMusteri[mNo-1]->hesapSayisi; i++){
+				fscanf(pf, " Hesap %*d : %d", &paBank->pMusteri[mNo-1]->pHesap[i]->hesapNo);
+				fscanf(pf, " Bakiye: %lf", &paBank->pMusteri[mNo-1]->pHesap[i]->bakiye);
+				fscanf(pf, " Islem Sayisi: %d", &paBank->pMusteri[mNo-1]->pHesap[i]->islemSayisi);
+				if (paBank->pMusteri[mNo-1]->pHesap[i]->islemSayisi!=0){
+					for (j=0; j<paBank->pMusteri[mNo-1]->pHesap[i]->islemSayisi; j++){
 						fscanf(pf, " %d.%d.%d - %d:%d / %lf", 
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Gun,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Ay,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Yil,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Saat,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].tarih.Dk,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].iTutar);
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Gun,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Ay,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Yil,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Saat,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->pTarih->Dk,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->iTutar);
 						fscanf(pf, " %d - %d", 
-							&aBank.musteri[mNo-1].hesap[i].islem[j].iTuru,
-							&aBank.musteri[mNo-1].hesap[i].islem[j].iHesap);
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->iTuru,
+							&paBank->pMusteri[mNo-1]->pHesap[i]->pIslem[j]->iHesap);
 					}
 				}
 			}
-			fscanf(pf, " Kayitli Havale Hesap Sayisi: %d", &aBank.musteri[mNo-1].tHesapSayisi);
-			if (aBank.musteri[mNo-1].tHesapSayisi != 0){
-				for (i=0; i<aBank.musteri[mNo-1].tHesapSayisi; i++){
-					fscanf(pf, " Hesap %*d: %d", &aBank.musteri[mNo-1].tHesap[i].hesapNo);
+			fscanf(pf, " Kayitli Havale Hesap Sayisi: %d", &paBank->pMusteri[mNo-1]->tHesapSayisi);
+			if (paBank->pMusteri[mNo-1]->tHesapSayisi != 0){
+				for (i=0; i<paBank->pMusteri[mNo-1]->tHesapSayisi; i++){
+					fscanf(pf, " Hesap %*d: %d", &paBank->pMusteri[mNo-1]->ptHesap[i]->hesapNo);
 				}
 			}
-			aBank.musteri[mNo-1].mTuru = 2;
+			paBank->pMusteri[mNo-1]->mTuru = 2;
 			aBank.mSayisi++;
 		}
 		fclose(pf);
@@ -182,65 +211,65 @@ void Guncelle(){
 	double gelen=0, giden=0, kar=0, kesinti;
 	FILE *pf1, *pf2;
 	for (i=0; i<aBank.mSayisi; i++){
-		if (aBank.musteri[i].mTuru == 1){
+		if (paBank->pMusteri[i]->mTuru == 1){
 			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));
 			pf1 = fopen("bireyselMusteri.txt", "a");
 			if (b!=0) fprintf(pf1, "\n");
-			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, aBank.musteri[i].Sifre);
-			fprintf(pf1, "\n\tTc-No: %.lf", aBank.musteri[i].tcNo);
-			fprintf(pf1, "\n\tAd Soyad: %s", aBank.musteri[i].Ad);
-			fprintf(pf1, "\n\tHesap Sayisi: %d", aBank.musteri[i].hesapSayisi);
-			for (j=0; j<aBank.musteri[i].hesapSayisi; j++){
-				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, aBank.musteri[i].hesap[j].hesapNo);
-				fprintf(pf1, "\n\t\tBakiye: %.2lf", aBank.musteri[i].hesap[j].bakiye);
-				fprintf(pf1, "\n\t\tIslem Sayisi: %d", aBank.musteri[i].hesap[j].islemSayisi);
-				for (k=0; k<aBank.musteri[i].hesap[j].islemSayisi; k++){
+			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, paBank->pMusteri[i]->Sifre);
+			fprintf(pf1, "\n\tTc-No: %.lf", paBank->pMusteri[i]->tcNo);
+			fprintf(pf1, "\n\tAd Soyad: %s", paBank->pMusteri[i]->Ad);
+			fprintf(pf1, "\n\tHesap Sayisi: %d", paBank->pMusteri[i]->hesapSayisi);
+			for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
+				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, paBank->pMusteri[i]->pHesap[j]->hesapNo);
+				fprintf(pf1, "\n\t\tBakiye: %.2lf", paBank->pMusteri[i]->pHesap[j]->bakiye);
+				fprintf(pf1, "\n\t\tIslem Sayisi: %d", paBank->pMusteri[i]->pHesap[j]->islemSayisi);
+				for (k=0; k<paBank->pMusteri[i]->pHesap[j]->islemSayisi; k++){
 					fprintf(pf1, "\n\t\t\t%d.%d.%d - %d:%d / %.2lf", 
-						aBank.musteri[i].hesap[j].islem[k].tarih.Gun,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Ay,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Yil,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Saat,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Dk,
-						aBank.musteri[i].hesap[j].islem[k].iTutar);
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Gun,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Ay,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Yil,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Saat,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Dk,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTutar);
 					fprintf(pf1, "\n\t\t\t\t%d - %d", 
-						aBank.musteri[i].hesap[j].islem[k].iTuru,
-						aBank.musteri[i].hesap[j].islem[k].iHesap);
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTuru,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iHesap);
 				}
 			}
-			fprintf(pf1, "\n\tKayitli Havale Hesap Sayisi: %d", aBank.musteri[i].tHesapSayisi);
-			for (j=0; j<aBank.musteri[i].tHesapSayisi; j++){
-				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, aBank.musteri[i].tHesap[j].hesapNo);
+			fprintf(pf1, "\n\tKayitli Havale Hesap Sayisi: %d", paBank->pMusteri[i]->tHesapSayisi);
+			for (j=0; j<paBank->pMusteri[i]->tHesapSayisi; j++){
+				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, paBank->pMusteri[i]->ptHesap[j]->hesapNo);
 			}
 			fclose(pf1);
 			b=1;
-		}else if (aBank.musteri[i].mTuru == 2){
+		}else if (paBank->pMusteri[i]->mTuru == 2){
 			if (t==0) fclose(fopen("ticariMusteri.txt", "w"));
 			pf2 = fopen("ticariMusteri.txt", "a");
 			if (t!=0) fprintf(pf2, "\n");
-			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, aBank.musteri[i].Sifre);
-			fprintf(pf2, "\n\tTc-No: %.lf", aBank.musteri[i].tcNo);
-			fprintf(pf2, "\n\tAd Soyad: %s", aBank.musteri[i].Ad);
-			fprintf(pf2, "\n\tHesap Sayisi: %d", aBank.musteri[i].hesapSayisi);
-			for (j=0; j<aBank.musteri[i].hesapSayisi; j++){
-				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, aBank.musteri[i].hesap[j].hesapNo);
-				fprintf(pf2, "\n\t\tBakiye: %.2lf", aBank.musteri[i].hesap[j].bakiye);
-				fprintf(pf2, "\n\t\tIslem Sayisi: %d", aBank.musteri[i].hesap[j].islemSayisi);
-				for (k=0; k<aBank.musteri[i].hesap[j].islemSayisi; k++){
+			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, paBank->pMusteri[i]->Sifre);
+			fprintf(pf2, "\n\tTc-No: %.lf", paBank->pMusteri[i]->tcNo);
+			fprintf(pf2, "\n\tAd Soyad: %s", paBank->pMusteri[i]->Ad);
+			fprintf(pf2, "\n\tHesap Sayisi: %d", paBank->pMusteri[i]->hesapSayisi);
+			for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
+				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, paBank->pMusteri[i]->pHesap[j]->hesapNo);
+				fprintf(pf2, "\n\t\tBakiye: %.2lf", paBank->pMusteri[i]->pHesap[j]->bakiye);
+				fprintf(pf2, "\n\t\tIslem Sayisi: %d", paBank->pMusteri[i]->pHesap[j]->islemSayisi);
+				for (k=0; k<paBank->pMusteri[i]->pHesap[j]->islemSayisi; k++){
 					fprintf(pf2, "\n\t\t\t%d.%d.%d - %d:%d / %.2lf", 
-						aBank.musteri[i].hesap[j].islem[k].tarih.Gun,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Ay,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Yil,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Saat,
-						aBank.musteri[i].hesap[j].islem[k].tarih.Dk,
-						aBank.musteri[i].hesap[j].islem[k].iTutar);
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Gun,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Ay,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Yil,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Saat,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih->Dk,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTutar);
 					fprintf(pf2, "\n\t\t\t\t%d - %d", 
-						aBank.musteri[i].hesap[j].islem[k].iTuru,
-						aBank.musteri[i].hesap[j].islem[k].iHesap);
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTuru,
+						paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iHesap);
 				}
 			}
-			fprintf(pf2, "\n\tKayitli Havale Hesap Sayisi: %d", aBank.musteri[i].tHesapSayisi);
-			for (j=0; j<aBank.musteri[i].tHesapSayisi; j++){
-				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, aBank.musteri[i].tHesap[j].hesapNo);
+			fprintf(pf2, "\n\tKayitli Havale Hesap Sayisi: %d", paBank->pMusteri[i]->tHesapSayisi);
+			for (j=0; j<paBank->pMusteri[i]->tHesapSayisi; j++){
+				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, paBank->pMusteri[i]->ptHesap[j]->hesapNo);
 			}
 			fclose(pf2);
 			t=1;
@@ -248,21 +277,21 @@ void Guncelle(){
 	}
 
 	for (i=0; i<aBank.mSayisi; i++){
-		aBank.musteri[i].tBakiye = 0;
-		for (j=0; j<aBank.musteri[i].hesapSayisi; j++){
-			aBank.musteri[i].tBakiye += aBank.musteri[i].hesap[j].bakiye;
+		paBank->pMusteri[i]->tBakiye = 0;
+		for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
+			paBank->pMusteri[i]->tBakiye += paBank->pMusteri[i]->pHesap[j]->bakiye;
 		}
 	}
 	
 	for (i=0; i<aBank.mSayisi; i++){
-		for (j=0; j<aBank.musteri[i].hesapSayisi; j++){
-			for (k=0; k<aBank.musteri[i].hesap[j].islemSayisi; k++){
-				iTuru = aBank.musteri[i].hesap[j].islem[k].iTuru;
-				if (iTuru == 1) giden += aBank.musteri[i].hesap[j].islem[k].iTutar;
-				else if (iTuru == 2) gelen += aBank.musteri[i].hesap[j].islem[k].iTutar;
-				else if (iTuru == 3 && aBank.musteri[i].mTuru == 1){
-					if (aBank.musteri[i].hesap[j].islem[k].iTutar < 0){
-						kesinti = ((int)(-aBank.musteri[i].hesap[j].islem[k].iTutar*2)) / 100.0;
+		for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
+			for (k=0; k<paBank->pMusteri[i]->pHesap[j]->islemSayisi; k++){
+				iTuru = paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTuru;
+				if (iTuru == 1) giden += paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTutar;
+				else if (iTuru == 2) gelen += paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTutar;
+				else if (iTuru == 3 && paBank->pMusteri[i]->mTuru == 1){
+					if (paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTutar < 0){
+						kesinti = ((int)(-paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTutar*2)) / 100.0;
 						kar += kesinti;
 					}
 				}
@@ -348,7 +377,7 @@ void YeniMusteri(){
 		}break;
 		case 1:
 		case 2:{
-			aBank.musteri[aBank.mSayisi].mTuru = sorgu;
+			paBank->pMusteri[aBank.mSayisi]->mTuru = sorgu;
 		}break;
 		case 3:{
 			AnaMenu();
@@ -357,7 +386,7 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Ad Soyad: ");
-	strAl(aBank.musteri[aBank.mSayisi].Ad, 5, 120);
+	strAl(paBank->pMusteri[aBank.mSayisi]->Ad, 5, 120);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Tc Numaranizi Giriniz: ");
@@ -367,7 +396,7 @@ void YeniMusteri(){
 		if (kontrol!=1 || temp[0]=='0') printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
 	}while(!(tcNoKontrol(dTemp) == -1 && kontrol == 1 && temp[0] != '0'));
-	aBank.musteri[aBank.mSayisi].tcNo = dTemp;
+	paBank->pMusteri[aBank.mSayisi]->tcNo = dTemp;
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -384,24 +413,24 @@ void YeniMusteri(){
 			printf("Hatali Giris!\n");
 		}
 	}while(!(strcmp(s1, s2) == 0 && is1>=1000 && is1<=99999999 && kontrol == 1));
-	strcpy(aBank.musteri[aBank.mSayisi].Sifre, sifrele(s1));
+	strcpy(paBank->pMusteri[aBank.mSayisi]->Sifre, sifrele(s1));
 
-	aBank.musteri[aBank.mSayisi].hesapSayisi = 1;
-	aBank.musteri[aBank.mSayisi].tHesapSayisi = 0;
-	aBank.musteri[aBank.mSayisi].hesap[0].hesapNo = HesapNoOlustur();
-	aBank.musteri[aBank.mSayisi].hesap[0].bakiye = 0;
-	aBank.musteri[aBank.mSayisi].hesap[0].islemSayisi = 0;
+	paBank->pMusteri[aBank.mSayisi]->hesapSayisi = 1;
+	paBank->pMusteri[aBank.mSayisi]->tHesapSayisi = 0;
+	paBank->pMusteri[aBank.mSayisi]->pHesap[0]->hesapNo = HesapNoOlustur();
+	paBank->pMusteri[aBank.mSayisi]->pHesap[0]->bakiye = 0;
+	paBank->pMusteri[aBank.mSayisi]->pHesap[0]->islemSayisi = 0;
 	aBank.girisYapan = aBank.mSayisi;
 	aBank.mSayisi++;
 	Guncelle();
 
 	system("@cls||clear");
 	printf(".............aBank.............\nHesabiniz kuruldu...\n\n");
-	strcpy(temp, aBank.musteri[aBank.mSayisi-1].Ad);
+	strcpy(temp, paBank->pMusteri[aBank.mSayisi-1]->Ad);
 	isimDuzelt(temp);
 	printf("Adiniz: %s\n", temp);
-	printf("Tc Numaraniz: %.lf\n", aBank.musteri[aBank.mSayisi-1].tcNo);
-	printf("Hesap Numaraniz: %d\n", aBank.musteri[aBank.mSayisi-1].hesap[0].hesapNo);
+	printf("Tc Numaraniz: %.lf\n", paBank->pMusteri[aBank.mSayisi-1]->tcNo);
+	printf("Hesap Numaraniz: %d\n", paBank->pMusteri[aBank.mSayisi-1]->pHesap[0]->hesapNo);
 	printf("Sifreniz: %d\n\n", is1);
 	printf("1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
@@ -448,14 +477,14 @@ void MusteriIslem(int mS){
 			if (t!=0) printf("Hatali sifre!\n");
 			printf("Sifrenizi Giriniz: ");
 			strAl(sifre, 4, 8);
-			t = strcmp(aBank.musteri[mS].Sifre, sifrele(sifre));
+			t = strcmp(paBank->pMusteri[mS]->Sifre, sifrele(sifre));
 		}while(t!=0);
 		aBank.girisYapan = mS;
 		AnaMenu();
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	strcpy(temp, aBank.musteri[mS].Ad);
+	strcpy(temp, paBank->pMusteri[mS]->Ad);
 	isimDuzelt(temp);
 	printf("Hosgeldin, %s\n", temp);
 	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n");
@@ -464,10 +493,10 @@ void MusteriIslem(int mS){
 		strAl(temp, 1, 1);
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 		if(sorgu<0 || sorgu>7 || kontrol != 1) printf("Hatali giris!\nTekrar Deneyiniz: ");
-		else if (sorgu == 3 && aBank.musteri[mS].hesapSayisi == 1){
+		else if (sorgu == 3 && paBank->pMusteri[mS]->hesapSayisi == 1){
 			printf("Son Hesabinizi silemezsiniz!\nTekrar Deneyiniz: ");
 			kontrol = 0;
-		}else if(sorgu == 5 && aBank.musteri[mS].tHesapSayisi == 0){
+		}else if(sorgu == 5 && paBank->pMusteri[mS]->tHesapSayisi == 0){
 			printf("Kayitli hesabiniz kalmamistir!\nTekrar Deneyiniz: ");
 			kontrol = 0;
 		}
@@ -508,21 +537,21 @@ void hesapIslem(int mS, int hS){
 	if (hS == -1) hS = hesapSec(mS, -1, 1);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Hesabinizdaki bakiyeniz: %.2lf TL'dir.\n", aBank.musteri[mS].hesap[hS].bakiye);
-	printf("Toplam bakiyeniz: %.2lf TL'dir.\n\n", aBank.musteri[mS].tBakiye);
+	printf("Hesabinizdaki bakiyeniz: %.2lf TL'dir.\n", paBank->pMusteri[mS]->pHesap[hS]->bakiye);
+	printf("Toplam bakiyeniz: %.2lf TL'dir.\n\n", paBank->pMusteri[mS]->tBakiye);
 	printf("1-)\tPara Cekme\n2-)\tPara Yatirma\n3-)\tHavale\n4-)\tHesap Ozeti\n5-)\tGeri Don\n6-)\tAna Menu\n0-)\tCikis\nSecim: ");
-	limit = ((aBank.musteri[mS].mTuru == 1) ? 750 : 1500) - cekilenPara(mS);
+	limit = ((paBank->pMusteri[mS]->mTuru == 1) ? 750 : 1500) - cekilenPara(mS);
 	do{
 		strAl(temp, 1, 1);
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 		if(sorgu<0 || sorgu>6 ||kontrol != 1) printf("Hatali giris!\nTekrar Deneyiniz: ");
-		else if ((sorgu == 1 || sorgu == 3) && aBank.musteri[mS].tBakiye == 0){
+		else if ((sorgu == 1 || sorgu == 3) && paBank->pMusteri[mS]->tBakiye == 0){
 			printf("Bu islem icin hesaplarinizda yeterli para yok!\nTekrar Deneyiniz: ");
 			kontrol = 0;
 		}else if (sorgu == 1 && limit == 0){
 			printf("Gunluk para cekme limitinize ulastiniz!\nTekrar Deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu == 4 && aBank.musteri[mS].hesap[hS].islemSayisi==0){
+		}else if (sorgu == 4 && paBank->pMusteri[mS]->pHesap[hS]->islemSayisi==0){
 			printf("Hesabinizda herhangi bir islem yapılmadi!\nTekrar Deneyiniz: ");
 			kontrol = 0;
 		}
@@ -556,7 +585,7 @@ void paraCek(int mS, int hS){
 	int i, kontrol, sorgu;
 	char temp[120], c;
 	double dTemp, limit;
-	limit = ((aBank.musteri[mS].mTuru == 1) ? 750 : 1500) - cekilenPara(mS);
+	limit = ((paBank->pMusteri[mS]->mTuru == 1) ? 750 : 1500) - cekilenPara(mS);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Cekmek istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
@@ -564,38 +593,38 @@ void paraCek(int mS, int hS){
 		strAl(temp, 1, 4);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (dTemp>aBank.musteri[mS].tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", aBank.musteri[mS].tBakiye);
+		if (dTemp>paBank->pMusteri[mS]->tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", paBank->pMusteri[mS]->tBakiye);
 		else if (dTemp>limit) printf("Para cekme limitiniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", limit);
 		else if (!(dTemp>0 && kontrol == 1 && temp[0] != '0')) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
-	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && dTemp<=limit && kontrol==1 && temp[0] != '0'));
+	}while(!(dTemp>0 && dTemp<=paBank->pMusteri[mS]->tBakiye && dTemp<=limit && kontrol==1 && temp[0] != '0'));
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Islem basarili...\n\n");
 	dTemp = ((int)(dTemp*100)) / 100.0;
-	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
-		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
-		islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -dTemp);
-		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
+	if (dTemp<=paBank->pMusteri[mS]->pHesap[hS]->bakiye && paBank->pMusteri[mS]->pHesap[hS]->bakiye != 0){
+		paBank->pMusteri[mS]->pHesap[hS]->bakiye -= dTemp;
+		islemKaydi(mS, hS, 1, paBank->pMusteri[mS]->pHesap[hS]->hesapNo, -dTemp);
+		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", paBank->pMusteri[mS]->pHesap[hS]->hesapNo, dTemp);
 		dTemp = 0;
 	}else{
-		if (dTemp>aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
-			dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
-			islemKaydi(mS, hS, 1, aBank.musteri[mS].hesap[hS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
-			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye);
-			aBank.musteri[mS].hesap[hS].bakiye = 0;
+		if (dTemp>paBank->pMusteri[mS]->pHesap[hS]->bakiye && paBank->pMusteri[mS]->pHesap[hS]->bakiye != 0){
+			dTemp -= paBank->pMusteri[mS]->pHesap[hS]->bakiye;
+			islemKaydi(mS, hS, 1, paBank->pMusteri[mS]->pHesap[hS]->hesapNo, -paBank->pMusteri[mS]->pHesap[hS]->bakiye);
+			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", paBank->pMusteri[mS]->pHesap[hS]->hesapNo, paBank->pMusteri[mS]->pHesap[hS]->bakiye);
+			paBank->pMusteri[mS]->pHesap[hS]->bakiye = 0;
 		}
-		for (i=0; i<aBank.musteri[mS].hesapSayisi; i++){
-			if (aBank.musteri[mS].hesap[i].bakiye != 0){
-				if (dTemp<=aBank.musteri[mS].hesap[i].bakiye && dTemp!=0){
-					aBank.musteri[mS].hesap[i].bakiye -= dTemp;
-					islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -dTemp);
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, dTemp);
+		for (i=0; i<paBank->pMusteri[mS]->hesapSayisi; i++){
+			if (paBank->pMusteri[mS]->pHesap[i]->bakiye != 0){
+				if (dTemp<=paBank->pMusteri[mS]->pHesap[i]->bakiye && dTemp!=0){
+					paBank->pMusteri[mS]->pHesap[i]->bakiye -= dTemp;
+					islemKaydi(mS, i, 1, paBank->pMusteri[mS]->pHesap[i]->hesapNo, -dTemp);
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", paBank->pMusteri[mS]->pHesap[i]->hesapNo, dTemp);
 					dTemp = 0;
-				}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye && dTemp!=0){
-					dTemp -= aBank.musteri[mS].hesap[i].bakiye;
-					islemKaydi(mS, i, 1, aBank.musteri[mS].hesap[i].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye);
-					aBank.musteri[mS].hesap[i].bakiye = 0;
+				}else if (dTemp>paBank->pMusteri[mS]->pHesap[i]->bakiye && dTemp!=0){
+					dTemp -= paBank->pMusteri[mS]->pHesap[i]->bakiye;
+					islemKaydi(mS, i, 1, paBank->pMusteri[mS]->pHesap[i]->hesapNo, -paBank->pMusteri[mS]->pHesap[i]->bakiye);
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", paBank->pMusteri[mS]->pHesap[i]->hesapNo, paBank->pMusteri[mS]->pHesap[i]->bakiye);
+					paBank->pMusteri[mS]->pHesap[i]->bakiye = 0;
 				}
 				if (dTemp==0) printf("\n");
 			}
@@ -638,8 +667,8 @@ void paraYatir(int mS, int hS){
 	}while(!(dTemp>0 && kontrol == 1 && temp[0] != '0'));
 	dTemp = ((int)(dTemp*100)) / 100.0;
 
-	aBank.musteri[mS].hesap[hS].bakiye += dTemp;
-	islemKaydi(mS, hS, 2, aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
+	paBank->pMusteri[mS]->pHesap[hS]->bakiye += dTemp;
+	islemKaydi(mS, hS, 2, paBank->pMusteri[mS]->pHesap[hS]->hesapNo, dTemp);
 	Guncelle();
 
 	system("@cls||clear");
@@ -672,7 +701,7 @@ void havaleGonder(int mS, int hS){
 	char temp[120], c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	if (aBank.musteri[mS].tHesapSayisi != 0){
+	if (paBank->pMusteri[mS]->tHesapSayisi != 0){
 		printf("1-)\tKayitli Havale Hesabina Gonder\n2-)\tHesap No Girerek Gonder\nSecim: ");
 		do{
 			strAl(temp, 1, 1);
@@ -684,8 +713,8 @@ void havaleGonder(int mS, int hS){
 		switch (sorgu){
 			case 1:{
 				tHesapS = hesapSec(mS, hS, 2);
-				tHesapNo = aBank.musteri[mS].tHesap[tHesapS].hesapNo;
-				if (tHesapNo == aBank.musteri[mS].hesap[hS].hesapNo){
+				tHesapNo = paBank->pMusteri[mS]->ptHesap[tHesapS]->hesapNo;
+				if (tHesapNo == paBank->pMusteri[mS]->pHesap[hS]->hesapNo){
 					system("@cls||clear");
 					printf(".............aBank.............\n");
 					printf("Islem yaptiginiz hesabi secemezsiniz...\n\n");
@@ -740,54 +769,54 @@ void havaleGonder(int mS, int hS){
 		strAl(temp, 1, 9);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (dTemp>aBank.musteri[mS].tBakiye && kontrol == 1) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", aBank.musteri[mS].tBakiye);
+		if (dTemp>paBank->pMusteri[mS]->tBakiye && kontrol == 1) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", paBank->pMusteri[mS]->tBakiye);
 		else if (!(dTemp>0 && kontrol == 1 && temp[0] != '0')) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
-	}while(!(dTemp>0 && dTemp<=aBank.musteri[mS].tBakiye && kontrol==1 && temp[0] != '0'));
+	}while(!(dTemp>0 && dTemp<=paBank->pMusteri[mS]->tBakiye && kontrol==1 && temp[0] != '0'));
 	dTemp = ((int)(dTemp*100)) / 100.0;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Islem basarili...\n\n");
-	if (dTemp<=aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
-		aBank.musteri[mS].hesap[hS].bakiye -= dTemp;
-		islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
-		kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
-		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", aBank.musteri[mS].hesap[hS].hesapNo, dTemp);
+	if (dTemp<=paBank->pMusteri[mS]->pHesap[hS]->bakiye && paBank->pMusteri[mS]->pHesap[hS]->bakiye != 0){
+		paBank->pMusteri[mS]->pHesap[hS]->bakiye -= dTemp;
+		islemKaydi(mS, hS, 3, paBank->pMusteri[hmS]->pHesap[hhS]->hesapNo, -dTemp);
+		kesinti = (paBank->pMusteri[mS]->mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
+		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", paBank->pMusteri[mS]->pHesap[hS]->hesapNo, dTemp);
 
-		aBank.musteri[hmS].hesap[hhS].bakiye += (dTemp - kesinti);
-		islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, dTemp - kesinti);
+		paBank->pMusteri[hmS]->pHesap[hhS]->bakiye += (dTemp - kesinti);
+		islemKaydi(hmS, hhS, 3, paBank->pMusteri[mS]->pHesap[hS]->hesapNo, dTemp - kesinti);
 		dTemp = 0;
 	}else{
-		if (dTemp>aBank.musteri[mS].hesap[hS].bakiye && aBank.musteri[mS].hesap[hS].bakiye != 0){
-			dTemp -= aBank.musteri[mS].hesap[hS].bakiye;
-			islemKaydi(mS, hS, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -aBank.musteri[mS].hesap[hS].bakiye);
-			kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(aBank.musteri[mS].hesap[hS].bakiye*2)) / 100.0 : 0;
-			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye);
+		if (dTemp>paBank->pMusteri[mS]->pHesap[hS]->bakiye && paBank->pMusteri[mS]->pHesap[hS]->bakiye != 0){
+			dTemp -= paBank->pMusteri[mS]->pHesap[hS]->bakiye;
+			islemKaydi(mS, hS, 3, paBank->pMusteri[hmS]->pHesap[hhS]->hesapNo, -paBank->pMusteri[mS]->pHesap[hS]->bakiye);
+			kesinti = (paBank->pMusteri[mS]->mTuru == 1) ? ((int)(paBank->pMusteri[mS]->pHesap[hS]->bakiye*2)) / 100.0 : 0;
+			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", paBank->pMusteri[mS]->pHesap[hS]->hesapNo, paBank->pMusteri[mS]->pHesap[hS]->bakiye);
 			
-			aBank.musteri[hmS].hesap[hhS].bakiye += (aBank.musteri[mS].hesap[hS].bakiye - kesinti);
-			islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[hS].hesapNo, aBank.musteri[mS].hesap[hS].bakiye - kesinti);
-			aBank.musteri[mS].hesap[hS].bakiye = 0;
+			paBank->pMusteri[hmS]->pHesap[hhS]->bakiye += (paBank->pMusteri[mS]->pHesap[hS]->bakiye - kesinti);
+			islemKaydi(hmS, hhS, 3, paBank->pMusteri[mS]->pHesap[hS]->hesapNo, paBank->pMusteri[mS]->pHesap[hS]->bakiye - kesinti);
+			paBank->pMusteri[mS]->pHesap[hS]->bakiye = 0;
 		}
-		for (i=0; i<aBank.musteri[mS].hesapSayisi; i++){
-			if (aBank.musteri[mS].hesap[i].bakiye != 0){
-				if (dTemp<=aBank.musteri[mS].hesap[i].bakiye && dTemp!=0){
-					aBank.musteri[mS].hesap[i].bakiye -= dTemp;
-					islemKaydi(mS, i, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -dTemp);
-					kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, dTemp);
+		for (i=0; i<paBank->pMusteri[mS]->hesapSayisi; i++){
+			if (paBank->pMusteri[mS]->pHesap[i]->bakiye != 0){
+				if (dTemp<=paBank->pMusteri[mS]->pHesap[i]->bakiye && dTemp!=0){
+					paBank->pMusteri[mS]->pHesap[i]->bakiye -= dTemp;
+					islemKaydi(mS, i, 3, paBank->pMusteri[hmS]->pHesap[hhS]->hesapNo, -dTemp);
+					kesinti = (paBank->pMusteri[mS]->mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", paBank->pMusteri[mS]->pHesap[i]->hesapNo, dTemp);
 
-					aBank.musteri[hmS].hesap[hhS].bakiye += (dTemp - kesinti);
-					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, dTemp - kesinti);
+					paBank->pMusteri[hmS]->pHesap[hhS]->bakiye += (dTemp - kesinti);
+					islemKaydi(hmS, hhS, 3, paBank->pMusteri[mS]->pHesap[i]->hesapNo, dTemp - kesinti);
 					dTemp = 0;
 
-				}else if (dTemp>aBank.musteri[mS].hesap[i].bakiye && dTemp!=0){
-					dTemp -= aBank.musteri[mS].hesap[i].bakiye;
-					islemKaydi(mS, i, 3, aBank.musteri[hmS].hesap[hhS].hesapNo, -aBank.musteri[mS].hesap[i].bakiye);
-					kesinti = (aBank.musteri[mS].mTuru == 1) ? ((int)(aBank.musteri[mS].hesap[i].bakiye*2)) / 100.0 : 0;
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye);
+				}else if (dTemp>paBank->pMusteri[mS]->pHesap[i]->bakiye && dTemp!=0){
+					dTemp -= paBank->pMusteri[mS]->pHesap[i]->bakiye;
+					islemKaydi(mS, i, 3, paBank->pMusteri[hmS]->pHesap[hhS]->hesapNo, -paBank->pMusteri[mS]->pHesap[i]->bakiye);
+					kesinti = (paBank->pMusteri[mS]->mTuru == 1) ? ((int)(paBank->pMusteri[mS]->pHesap[i]->bakiye*2)) / 100.0 : 0;
+					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", paBank->pMusteri[mS]->pHesap[i]->hesapNo, paBank->pMusteri[mS]->pHesap[i]->bakiye);
 					
-					aBank.musteri[hmS].hesap[hhS].bakiye += (aBank.musteri[mS].hesap[i].bakiye - kesinti);
-					islemKaydi(hmS, hhS, 3, aBank.musteri[mS].hesap[i].hesapNo, aBank.musteri[mS].hesap[i].bakiye - kesinti);
-					aBank.musteri[mS].hesap[i].bakiye = 0;
+					paBank->pMusteri[hmS]->pHesap[hhS]->bakiye += (paBank->pMusteri[mS]->pHesap[i]->bakiye - kesinti);
+					islemKaydi(hmS, hhS, 3, paBank->pMusteri[mS]->pHesap[i]->hesapNo, paBank->pMusteri[mS]->pHesap[i]->bakiye - kesinti);
+					paBank->pMusteri[mS]->pHesap[i]->bakiye = 0;
 				}
 				if (dTemp==0) printf("\n");
 			}
@@ -834,8 +863,8 @@ void hHesapKayit(int mS, int hNo){
 		}while(!(hNoKontrol(sorgu, 1) != -1 && kontrol==1));
 		hNo = sorgu;
 	}
-	aBank.musteri[mS].tHesap[aBank.musteri[mS].tHesapSayisi].hesapNo = hNo;
-	aBank.musteri[mS].tHesapSayisi++;
+	paBank->pMusteri[mS]->ptHesap[paBank->pMusteri[mS]->tHesapSayisi]->hesapNo = hNo;
+	paBank->pMusteri[mS]->tHesapSayisi++;
 	Guncelle();
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -863,12 +892,12 @@ void hHesapKayit(int mS, int hNo){
 
 }
 void hesapAc(int mS){
-	int sorgu, kontrol, hS = aBank.musteri[mS].hesapSayisi;
+	int sorgu, kontrol, hS = paBank->pMusteri[mS]->hesapSayisi;
 	char temp[120], c;
-	aBank.musteri[mS].hesap[hS].hesapNo = HesapNoOlustur();
-	aBank.musteri[mS].hesap[hS].bakiye = 0;
-	aBank.musteri[mS].hesap[hS].islemSayisi = 0;
-	aBank.musteri[mS].hesapSayisi++;
+	paBank->pMusteri[mS]->pHesap[hS]->hesapNo = HesapNoOlustur();
+	paBank->pMusteri[mS]->pHesap[hS]->bakiye = 0;
+	paBank->pMusteri[mS]->pHesap[hS]->islemSayisi = 0;
+	paBank->pMusteri[mS]->hesapSayisi++;
 	Guncelle();
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -889,7 +918,7 @@ void hesapAc(int mS){
 			MusteriIslem(mS);
 		}break;
 		case 2:{
-			hesapIslem(mS, aBank.musteri[mS].hesapSayisi-1);
+			hesapIslem(mS, paBank->pMusteri[mS]->hesapSayisi-1);
 		}break;
 		case 3:{
 			AnaMenu();
@@ -900,8 +929,8 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 	int i, n, sorgu, kontrol, shS;
 	char temp[120], c;
 	shS =  hesapSec(mS, -1, s);
-	n = (s==1) ? aBank.musteri[mS].hesapSayisi : aBank.musteri[mS].tHesapSayisi;
-	if (s==1 && aBank.musteri[mS].hesap[shS].bakiye!=0){
+	n = (s==1) ? paBank->pMusteri[mS]->hesapSayisi : paBank->pMusteri[mS]->tHesapSayisi;
+	if (s==1 && paBank->pMusteri[mS]->pHesap[shS]->bakiye!=0){
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Hesabinizda para varken hesabinizi silemezsiniz!\n1-)\tGeri Don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
@@ -927,12 +956,12 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 	}else{
 		for (i=shS; i<n; i++){
 			if (s==1){
-				aBank.musteri[mS].hesap[i] = aBank.musteri[mS].hesap[i+1]; 
+				paBank->pMusteri[mS]->pHesap[i] = paBank->pMusteri[mS]->pHesap[i+1]; 
 			}else{
-				aBank.musteri[mS].tHesap[i] = aBank.musteri[mS].tHesap[i+1]; 
+				paBank->pMusteri[mS]->ptHesap[i] = paBank->pMusteri[mS]->ptHesap[i+1]; 
 			}
 		}
-		(s==1) ? aBank.musteri[mS].hesapSayisi-- : aBank.musteri[mS].tHesapSayisi--;
+		(s==1) ? paBank->pMusteri[mS]->hesapSayisi-- : paBank->pMusteri[mS]->tHesapSayisi--;
 		Guncelle();
 		system("@cls||clear");
 		printf(".............aBank.............\n");
@@ -963,20 +992,20 @@ int hesapSec(int mS, int hS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
 	int i, sorgu, kontrol, hNo, n, tmS;
 	char temp[120], c;
 	if (s==1){
-		n = aBank.musteri[mS].hesapSayisi;
+		n = paBank->pMusteri[mS]->hesapSayisi;
 		if (n==1) return 0;
-	}else n = aBank.musteri[mS].tHesapSayisi;
+	}else n = paBank->pMusteri[mS]->tHesapSayisi;
 	if(n==0) return -1;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Islem Yapilacak Hesap No Seciniz (Iptal etmek icin 0 giriniz): \n\n");
 	for (i=0; i<n; i++){
-		hNo = (s==1) ? aBank.musteri[mS].hesap[i].hesapNo : aBank.musteri[mS].tHesap[i].hesapNo;
+		hNo = (s==1) ? paBank->pMusteri[mS]->pHesap[i]->hesapNo : paBank->pMusteri[mS]->ptHesap[i]->hesapNo;
 		if (s==1){
-			printf("%d-) %d (%.2lf TL)\n", i+1, hNo, aBank.musteri[mS].hesap[i].bakiye);
+			printf("%d-) %d (%.2lf TL)\n", i+1, hNo, paBank->pMusteri[mS]->pHesap[i]->bakiye);
 		}else{
 			tmS = hNoKontrol(hNo, 1);
-			strcpy(temp, aBank.musteri[tmS].Ad);
+			strcpy(temp, paBank->pMusteri[tmS]->Ad);
 			isimDuzelt(temp);
 			printf("%d-) %d (%s)\n", i+1, hNo, temp);
 		}
@@ -1016,7 +1045,7 @@ char *sifrele(char sifre[8]){
 int tcNoKontrol(double tcNo){
 	int i;
 	for (i=0; i<aBank.mSayisi; i++){
-		if (aBank.musteri[i].tcNo == tcNo) return i;
+		if (paBank->pMusteri[i]->tcNo == tcNo) return i;
 	}
 	return -1;
 }
@@ -1024,8 +1053,8 @@ int tcNoKontrol(double tcNo){
 int hNoKontrol(int hesapNo, int n){ // n 1 ise müsteri no, 2 ise hesap no
 	int mS, hS;
 	for (mS=0; mS<aBank.mSayisi; mS++){
-		for (hS=0; hS<aBank.musteri[mS].hesapSayisi; hS++){
-			if (aBank.musteri[mS].hesap[hS].hesapNo == hesapNo) return (n==1)?mS:hS;
+		for (hS=0; hS<paBank->pMusteri[mS]->hesapSayisi; hS++){
+			if (paBank->pMusteri[mS]->pHesap[hS]->hesapNo == hesapNo) return (n==1)?mS:hS;
 		}
 	}
 	return -1;
@@ -1062,8 +1091,8 @@ void hesapOzeti(int mS, int hS){
 	int i, j, k, n, t1, t2, t3, iS, aralik, ihNo, imS, iA, iY, sorgu, kontrol;
 	double kesinti;
 	char c, temp[120];
-	iS = aBank.musteri[mS].hesap[hS].islemSayisi;
-	t1 = (aBank.musteri[mS].hesap[hS].islem[0].tarih.Yil - 1900) * 12 + aBank.musteri[mS].hesap[hS].islem[0].tarih.Ay;
+	iS = paBank->pMusteri[mS]->pHesap[hS]->islemSayisi;
+	t1 = (paBank->pMusteri[mS]->pHesap[hS]->pIslem[0]->pTarih->Yil - 1900) * 12 + paBank->pMusteri[mS]->pHesap[hS]->pIslem[0]->pTarih->Ay;
 	t2 = tm.tm_year * 12 + tm.tm_mon+1 ;
 	aralik = t2-t1;
 	int index[aralik+1];
@@ -1072,27 +1101,27 @@ void hesapOzeti(int mS, int hS){
 	printf(".............aBank.............\n");
 	for (i=0; i<aralik+1; i++){
 		*(index+i) = -1;
-		dekont[i].islemSayisi = 0;
-		dekont[i].islem[0].Tutar = 0;
+		pDekont[i]->islemSayisi = 0;
+		pDekont[i]->pIslem[0]->Tutar = 0;
 		for (j=iS-1; j>=0; j--){
-			t3 = (aBank.musteri[mS].hesap[hS].islem[j].tarih.Yil - 1900) * 12 + aBank.musteri[mS].hesap[hS].islem[j].tarih.Ay;
+			t3 = (paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->pTarih->Yil - 1900) * 12 + paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->pTarih->Ay;
 			if ((t2-t3) == i){
-				ihNo = aBank.musteri[mS].hesap[hS].islem[j].iHesap;
+				ihNo = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->iHesap;
 				imS = hNoKontrol(ihNo, 1);
-				strcpy(dekont[i].islem[dekont[i].islemSayisi].Ad, aBank.musteri[imS].Ad);
-				isimDuzelt(dekont[i].islem[dekont[i].islemSayisi].Ad);
-				dekont[i].islem[dekont[i].islemSayisi].hesapNo = ihNo;
-				dekont[i].islem[dekont[i].islemSayisi].mTuru = aBank.musteri[mS].mTuru;
-				dekont[i].islem[dekont[i].islemSayisi].iTuru = aBank.musteri[mS].hesap[hS].islem[j].iTuru;
-				dekont[i].islem[dekont[i].islemSayisi].Tutar = aBank.musteri[mS].hesap[hS].islem[j].iTutar;
-				dekont[i].islem[dekont[i].islemSayisi].tarih = aBank.musteri[mS].hesap[hS].islem[j].tarih;
-				dekont[i].islemSayisi++;
+				strcpy(pDekont[i]->pIslem[pDekont[i]->islemSayisi]->Ad, paBank->pMusteri[imS]->Ad);
+				isimDuzelt(pDekont[i]->pIslem[pDekont[i]->islemSayisi]->Ad);
+				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->hesapNo = ihNo;
+				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->mTuru = paBank->pMusteri[mS]->mTuru;
+				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->iTuru = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->iTuru;
+				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->Tutar = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->iTutar;
+				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->tarih = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->tarih;
+				pDekont[i]->islemSayisi++;
 			}
 		}
 	}
 	k=0;
 	for (i=0; i<aralik+1; i++){
-		if (dekont[i].islem[0].Tutar != 0){
+		if (pDekont[i]->pIslem[0]->Tutar != 0){
 			iY = (t2 - i) / 12 + 1900;
 			iA = (t2 - i -1) % 12 +1; 
 			n = i-k+1;
@@ -1121,56 +1150,56 @@ void hesapOzeti(int mS, int hS){
 	iA = (t2 - i -1) % 12 +1; 
 	if (i==0) fprintf(pf, "(%02d - %02d)  Donemi Hesap Ozeti", iY, iA);
 	else fprintf(pf, "(%d - %02d/%02d)  Donemi Hesap Ozeti", iY, iA, iA%12+1);
-	fprintf(pf, "  (%d)\n\n", aBank.musteri[mS].hesap[hS].hesapNo);
-	for (j=dekont[i].islemSayisi-1; j>=0; j--){
-		if (dekont[i].islem[j].iTuru == 1){
+	fprintf(pf, "  (%d)\n\n", paBank->pMusteri[mS]->pHesap[hS]->hesapNo);
+	for (j=pDekont[i]->islemSayisi-1; j>=0; j--){
+		if (pDekont[i]->pIslem[j]->iTuru == 1){
 			fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Para Cekme    %.2lf\n", 
-				dekont[i].islem[j].tarih.Gun,
-				dekont[i].islem[j].tarih.Ay,
-				dekont[i].islem[j].tarih.Yil,
-				dekont[i].islem[j].tarih.Saat,
-				dekont[i].islem[j].tarih.Dk,
-				-dekont[i].islem[j].Tutar);
-		}else if (dekont[i].islem[j].iTuru == 2){
+				pDekont[i]->pIslem[j]->pTarih->Gun,
+				pDekont[i]->pIslem[j]->pTarih->Ay,
+				pDekont[i]->pIslem[j]->pTarih->Yil,
+				pDekont[i]->pIslem[j]->pTarih->Saat,
+				pDekont[i]->pIslem[j]->pTarih->Dk,
+				-pDekont[i]->pIslem[j]->Tutar);
+		}else if (pDekont[i]->pIslem[j]->iTuru == 2){
 			fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Para Yatirma  %.2lf\n", 
-				dekont[i].islem[j].tarih.Gun,
-				dekont[i].islem[j].tarih.Ay,
-				dekont[i].islem[j].tarih.Yil,
-				dekont[i].islem[j].tarih.Saat,
-				dekont[i].islem[j].tarih.Dk,
-				dekont[i].islem[j].Tutar);
-		}else if (dekont[i].islem[j].iTuru == 3){
-			if (dekont[i].islem[j].Tutar<0){
-				if (dekont[i].islem[j].mTuru == 1){
-					kesinti = ((int)(-dekont[i].islem[j].Tutar*2)) / 100.0;
+				pDekont[i]->pIslem[j]->pTarih->Gun,
+				pDekont[i]->pIslem[j]->pTarih->Ay,
+				pDekont[i]->pIslem[j]->pTarih->Yil,
+				pDekont[i]->pIslem[j]->pTarih->Saat,
+				pDekont[i]->pIslem[j]->pTarih->Dk,
+				pDekont[i]->pIslem[j]->Tutar);
+		}else if (pDekont[i]->pIslem[j]->iTuru == 3){
+			if (pDekont[i]->pIslem[j]->Tutar<0){
+				if (pDekont[i]->pIslem[j]->mTuru == 1){
+					kesinti = ((int)(-pDekont[i]->pIslem[j]->Tutar*2)) / 100.0;
 					fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Giden Havale  %.2lf (-%.2lf)\n", 
-						dekont[i].islem[j].tarih.Gun,
-						dekont[i].islem[j].tarih.Ay,
-						dekont[i].islem[j].tarih.Yil,
-						dekont[i].islem[j].tarih.Saat,
-						dekont[i].islem[j].tarih.Dk,
-						-dekont[i].islem[j].Tutar,
+						pDekont[i]->pIslem[j]->pTarih->Gun,
+						pDekont[i]->pIslem[j]->pTarih->Ay,
+						pDekont[i]->pIslem[j]->pTarih->Yil,
+						pDekont[i]->pIslem[j]->pTarih->Saat,
+						pDekont[i]->pIslem[j]->pTarih->Dk,
+						-pDekont[i]->pIslem[j]->Tutar,
 						kesinti);
-					fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", dekont[i].islem[j].Ad, dekont[i].islem[j].hesapNo);
+					fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", pDekont[i]->pIslem[j]->Ad, pDekont[i]->pIslem[j]->hesapNo);
 				}else{
 					fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Giden Havale  %.2lf\n", 
-						dekont[i].islem[j].tarih.Gun,
-						dekont[i].islem[j].tarih.Ay,
-						dekont[i].islem[j].tarih.Yil,
-						dekont[i].islem[j].tarih.Saat,
-						dekont[i].islem[j].tarih.Dk,
-						-dekont[i].islem[j].Tutar);
-					fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", dekont[i].islem[j].Ad, dekont[i].islem[j].hesapNo);
+						pDekont[i]->pIslem[j]->pTarih->Gun,
+						pDekont[i]->pIslem[j]->pTarih->Ay,
+						pDekont[i]->pIslem[j]->pTarih->Yil,
+						pDekont[i]->pIslem[j]->pTarih->Saat,
+						pDekont[i]->pIslem[j]->pTarih->Dk,
+						-pDekont[i]->pIslem[j]->Tutar);
+					fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", pDekont[i]->pIslem[j]->Ad, pDekont[i]->pIslem[j]->hesapNo);
 				}
-			}else if (dekont[i].islem[j].Tutar>0){
+			}else if (pDekont[i]->pIslem[j]->Tutar>0){
 				fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Gelen Havale  %.2lf\n", 
-					dekont[i].islem[j].tarih.Gun,
-					dekont[i].islem[j].tarih.Ay,
-					dekont[i].islem[j].tarih.Yil,
-					dekont[i].islem[j].tarih.Saat,
-					dekont[i].islem[j].tarih.Dk,
-					dekont[i].islem[j].Tutar);
-				fprintf(pf, "\tGonderen kisi:    %s (%d)\n", dekont[i].islem[j].Ad, dekont[i].islem[j].hesapNo);
+					pDekont[i]->pIslem[j]->pTarih->Gun,
+					pDekont[i]->pIslem[j]->pTarih->Ay,
+					pDekont[i]->pIslem[j]->pTarih->Yil,
+					pDekont[i]->pIslem[j]->pTarih->Saat,
+					pDekont[i]->pIslem[j]->pTarih->Dk,
+					pDekont[i]->pIslem[j]->Tutar);
+				fprintf(pf, "\tGonderen kisi:    %s (%d)\n", pDekont[i]->pIslem[j]->Ad, pDekont[i]->pIslem[j]->hesapNo);
 			}
 		}
 		
@@ -1239,20 +1268,20 @@ void bankaRapor(int mS){
 }
 
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
-	int iS = aBank.musteri[mS].hesap[hS].islemSayisi;
+	int iS = paBank->pMusteri[mS]->pHesap[hS]->islemSayisi;
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
-	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Yil = tm.tm_year + 1900;
-	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Ay = tm.tm_mon + 1;
-	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Gun = tm.tm_mday;
-	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Saat = tm.tm_hour;
-	aBank.musteri[mS].hesap[hS].islem[iS].tarih.Dk = tm.tm_min;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->pTarih->Yil = tm.tm_year + 1900;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->pTarih->Ay = tm.tm_mon + 1;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->pTarih->Gun = tm.tm_mday;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->pTarih->Saat = tm.tm_hour;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->pTarih->Dk = tm.tm_min;
 
-	aBank.musteri[mS].hesap[hS].islem[iS].iTuru = iT;
-	aBank.musteri[mS].hesap[hS].islem[iS].iTutar = iTutar;
-	aBank.musteri[mS].hesap[hS].islem[iS].iHesap = iH;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->iTuru = iT;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->iTutar = iTutar;
+	paBank->pMusteri[mS]->pHesap[hS]->pIslem[iS]->iHesap = iH;
 	
-	aBank.musteri[mS].hesap[hS].islemSayisi++;
+	paBank->pMusteri[mS]->pHesap[hS]->islemSayisi++;
 }
 
 double cekilenPara(int mS){
@@ -1263,13 +1292,13 @@ double cekilenPara(int mS){
 	Yil = tm.tm_year + 1900;
 	Ay = tm.tm_mon + 1;
 	Gun = tm.tm_mday;
-	for (i=0; i<aBank.musteri[mS].hesapSayisi; i++){
-		for (j=0; j<aBank.musteri[mS].hesap[i].islemSayisi; j++){
-			iYil = aBank.musteri[mS].hesap[i].islem[j].tarih.Yil;
-			iAy = aBank.musteri[mS].hesap[i].islem[j].tarih.Ay;
-			iGun = aBank.musteri[mS].hesap[i].islem[j].tarih.Gun;
-			if (Yil == iYil && Ay == iAy && Gun == iGun && aBank.musteri[mS].hesap[i].islem[j].iTuru == 1){
-				limit -= aBank.musteri[mS].hesap[i].islem[j].iTutar;
+	for (i=0; i<paBank->pMusteri[mS]->hesapSayisi; i++){
+		for (j=0; j<paBank->pMusteri[mS]->pHesap[i]->islemSayisi; j++){
+			iYil = paBank->pMusteri[mS]->pHesap[i]->pIslem[j]->pTarih->Yil;
+			iAy = paBank->pMusteri[mS]->pHesap[i]->pIslem[j]->pTarih->Ay;
+			iGun = paBank->pMusteri[mS]->pHesap[i]->pIslem[j]->pTarih->Gun;
+			if (Yil == iYil && Ay == iAy && Gun == iGun && paBank->pMusteri[mS]->pHesap[i]->pIslem[j]->iTuru == 1){
+				limit -= paBank->pMusteri[mS]->pHesap[i]->pIslem[j]->iTutar;
 			}
 		}
 	}
