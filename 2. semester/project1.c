@@ -15,14 +15,14 @@ typedef struct{
 	int iTuru; //1->para çekme, 2->para yatırma, 3->Havale
 	int iHesap;
 	double iTutar;
-	Tarih tarih, *pTarih;
+	Tarih *pTarih;
 }Islem;
 
 typedef struct{
 	int hesapNo;
 	int islemSayisi;
 	double bakiye;
-	Islem islem[500], *pIslem[500];
+	Islem *pIslem[500];
 }Hesap;
 
 typedef struct{
@@ -31,8 +31,8 @@ typedef struct{
 
 typedef struct{
 
-	Hesap hesap[100], *pHesap[100];
-	transferHesap tHesap[100], *ptHesap[100];
+	Hesap *pHesap[100];
+	transferHesap *ptHesap[100];
 	double tBakiye;
 	char Ad[120];
 	char Sifre[8];
@@ -43,7 +43,7 @@ typedef struct{
 }Musteri;
 
 typedef struct{
-	Musteri musteri[500], *pMusteri[500];
+	Musteri *pMusteri[500];
 	int mSayisi;
 	int girisYapan;
 }Banka;
@@ -54,16 +54,16 @@ typedef struct{
 	int iTuru;
 	int mTuru;
 	double Tutar;
-	Tarih tarih, *pTarih;
+	Tarih *pTarih;
 }dIslem;
 
 typedef struct{
-	dIslem islem[500], *pIslem[500];
+	dIslem *pIslem[500];
 	int islemSayisi;
 }Dekont;
 
-Banka aBank, *paBank;
-Dekont dekont[500], *pDekont[500];
+Banka *paBank;
+Dekont *pDekont[500];
 
 void AnaMenu();
 void YeniMusteri();
@@ -90,31 +90,28 @@ double cekilenPara(int mS);
 void isimDuzelt(char ad[120]);
 void pTanimla();
 
-
-
 int main(){
 	pTanimla();
 	paBank->girisYapan = -1;
 	AnaMenu();
 }
 
-
 void pTanimla(){
 	int i, j, k;
-	paBank = &aBank;
+	paBank = malloc(sizeof(Banka));
 	for (i=0; i<500; i++){
-		paBank->pMusteri[i] = &aBank.musteri[i];
-		pDekont[i] = &dekont[i]; 
+		paBank->pMusteri[i] = malloc(sizeof(Musteri));
+		pDekont[i] = malloc(sizeof(Dekont)); 
 		for (j=0; j<500; j++){
-			pDekont[i]->pIslem[j] = &dekont[i].islem[j];
-			pDekont[i]->pIslem[j]->pTarih = &dekont[i].islem[j].tarih;
+			pDekont[i]->pIslem[j] = malloc(sizeof(dIslem));
+			pDekont[i]->pIslem[j]->pTarih = malloc(sizeof(Tarih));
 		}
 		for (j=0; j<100; j++){
-			paBank->pMusteri[i]->pHesap[j] = &aBank.musteri[i].hesap[j];
-			paBank->pMusteri[i]->ptHesap[j] = &aBank.musteri[i].tHesap[j];
+			paBank->pMusteri[i]->pHesap[j] = malloc(sizeof(Hesap));
+			paBank->pMusteri[i]->ptHesap[j] = malloc(sizeof(transferHesap));
 			for (k=0; k<500; k++){
-				paBank->pMusteri[i]->pHesap[j]->pIslem[k] = &aBank.musteri[i].hesap[j].islem[k];
-				paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih = &aBank.musteri[i].hesap[j].islem[k].tarih;
+				paBank->pMusteri[i]->pHesap[j]->pIslem[k] = malloc(sizeof(Islem));
+				paBank->pMusteri[i]->pHesap[j]->pIslem[k]->pTarih = malloc(sizeof(Tarih));
 			}
 		}
 	}
@@ -200,6 +197,13 @@ void VeriAl(){
 			paBank->mSayisi++;
 		}
 		fclose(pf);
+	}
+
+	for (i=0; i<paBank->mSayisi; i++){
+		paBank->pMusteri[i]->tBakiye = 0;
+		for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
+			paBank->pMusteri[i]->tBakiye += paBank->pMusteri[i]->pHesap[j]->bakiye;
+		}
 	}
 }
 
@@ -303,8 +307,8 @@ void Guncelle(){
 	fprintf(pf1, "Giden toplam para:           %.2lf\n", (giden == 0)?giden:-giden);
 	fprintf(pf1, "Bankanin kari:               %.2lf", kar);
 	fclose(pf1);
-	
 }
+
 void AnaMenu(){
 	VeriAl();
 	int sorgu, kontrol;
@@ -1111,7 +1115,7 @@ void hesapOzeti(int mS, int hS){
 				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->mTuru = paBank->pMusteri[mS]->mTuru;
 				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->iTuru = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->iTuru;
 				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->Tutar = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->iTutar;
-				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->tarih = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->tarih;
+				pDekont[i]->pIslem[pDekont[i]->islemSayisi]->pTarih = paBank->pMusteri[mS]->pHesap[hS]->pIslem[j]->pTarih;
 				pDekont[i]->islemSayisi++;
 			}
 		}
