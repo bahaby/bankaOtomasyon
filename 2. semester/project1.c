@@ -118,15 +118,12 @@ void pTanimla(){
 			}
 		}
 	}
-	for(i=0; i<500; i++){
-		pDekont[i] = &dekont[i];
-	}
 }
 
 void VeriAl(){
 	int i, j, mNo;
 	char temp[120], c;
-	aBank.mSayisi=0;
+	paBank->mSayisi=0;
 	FILE *pf;
 	pf = fopen("bireyselMusteri.txt", "r");
 	if (pf!=NULL){
@@ -162,7 +159,7 @@ void VeriAl(){
 				}
 			}
 			paBank->pMusteri[mNo-1]->mTuru = 1;
-			aBank.mSayisi++;
+			paBank->mSayisi++;
 		}
 		fclose(pf);
 	}
@@ -200,7 +197,7 @@ void VeriAl(){
 				}
 			}
 			paBank->pMusteri[mNo-1]->mTuru = 2;
-			aBank.mSayisi++;
+			paBank->mSayisi++;
 		}
 		fclose(pf);
 	}
@@ -210,7 +207,7 @@ void Guncelle(){
 	int i, j, k, iTuru, b=0, t=0;
 	double gelen=0, giden=0, kar=0, kesinti;
 	FILE *pf1, *pf2;
-	for (i=0; i<aBank.mSayisi; i++){
+	for (i=0; i<paBank->mSayisi; i++){
 		if (paBank->pMusteri[i]->mTuru == 1){
 			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));
 			pf1 = fopen("bireyselMusteri.txt", "a");
@@ -276,14 +273,14 @@ void Guncelle(){
 		}
 	}
 
-	for (i=0; i<aBank.mSayisi; i++){
+	for (i=0; i<paBank->mSayisi; i++){
 		paBank->pMusteri[i]->tBakiye = 0;
 		for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
 			paBank->pMusteri[i]->tBakiye += paBank->pMusteri[i]->pHesap[j]->bakiye;
 		}
 	}
 	
-	for (i=0; i<aBank.mSayisi; i++){
+	for (i=0; i<paBank->mSayisi; i++){
 		for (j=0; j<paBank->pMusteri[i]->hesapSayisi; j++){
 			for (k=0; k<paBank->pMusteri[i]->pHesap[j]->islemSayisi; k++){
 				iTuru = paBank->pMusteri[i]->pHesap[j]->pIslem[k]->iTuru;
@@ -314,7 +311,7 @@ void AnaMenu(){
 	char temp[120], c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	if (aBank.girisYapan == -1){
+	if (paBank->girisYapan == -1){
 		printf("1-)\tYeni Musteri Kaydi\n");
 		printf("2-)\tMusteri Girisi\n");
 	}else{
@@ -328,7 +325,7 @@ void AnaMenu(){
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 		if(sorgu<0 || sorgu>2 || kontrol != 1) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
-		}else if(sorgu == 2 && aBank.mSayisi==0){
+		}else if(sorgu == 2 && paBank->mSayisi==0){
 			printf("Herhangi bir musteri yok henuz.\nTekrar Deneyiniz: ");
 			kontrol = 0;
 		}
@@ -340,17 +337,17 @@ void AnaMenu(){
 			exit(0);
 		}break;
 		case 1:{
-			if (aBank.girisYapan == -1){
+			if (paBank->girisYapan == -1){
 				YeniMusteri();
 			}else{
-				MusteriIslem(aBank.girisYapan);
+				MusteriIslem(paBank->girisYapan);
 			}
 		}break;
 		case 2:{
-			if (aBank.girisYapan == -1){
-				MusteriIslem(aBank.girisYapan);
+			if (paBank->girisYapan == -1){
+				MusteriIslem(paBank->girisYapan);
 			}else{
-				aBank.girisYapan = -1;
+				paBank->girisYapan = -1;
 				AnaMenu();
 			}
 		}break;
@@ -377,7 +374,7 @@ void YeniMusteri(){
 		}break;
 		case 1:
 		case 2:{
-			paBank->pMusteri[aBank.mSayisi]->mTuru = sorgu;
+			paBank->pMusteri[paBank->mSayisi]->mTuru = sorgu;
 		}break;
 		case 3:{
 			AnaMenu();
@@ -386,7 +383,7 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Ad Soyad: ");
-	strAl(paBank->pMusteri[aBank.mSayisi]->Ad, 5, 120);
+	strAl(paBank->pMusteri[paBank->mSayisi]->Ad, 5, 120);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Tc Numaranizi Giriniz: ");
@@ -396,7 +393,7 @@ void YeniMusteri(){
 		if (kontrol!=1 || temp[0]=='0') printf("Hatali Giris!\nTekrar Deneyiniz: ");
 		else if (tcNoKontrol(dTemp) != -1) printf("Bu Tc Numarasi Kayitli!\nTekrar Deneyiniz: ");
 	}while(!(tcNoKontrol(dTemp) == -1 && kontrol == 1 && temp[0] != '0'));
-	paBank->pMusteri[aBank.mSayisi]->tcNo = dTemp;
+	paBank->pMusteri[paBank->mSayisi]->tcNo = dTemp;
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -413,24 +410,24 @@ void YeniMusteri(){
 			printf("Hatali Giris!\n");
 		}
 	}while(!(strcmp(s1, s2) == 0 && is1>=1000 && is1<=99999999 && kontrol == 1));
-	strcpy(paBank->pMusteri[aBank.mSayisi]->Sifre, sifrele(s1));
+	strcpy(paBank->pMusteri[paBank->mSayisi]->Sifre, sifrele(s1));
 
-	paBank->pMusteri[aBank.mSayisi]->hesapSayisi = 1;
-	paBank->pMusteri[aBank.mSayisi]->tHesapSayisi = 0;
-	paBank->pMusteri[aBank.mSayisi]->pHesap[0]->hesapNo = HesapNoOlustur();
-	paBank->pMusteri[aBank.mSayisi]->pHesap[0]->bakiye = 0;
-	paBank->pMusteri[aBank.mSayisi]->pHesap[0]->islemSayisi = 0;
-	aBank.girisYapan = aBank.mSayisi;
-	aBank.mSayisi++;
+	paBank->pMusteri[paBank->mSayisi]->hesapSayisi = 1;
+	paBank->pMusteri[paBank->mSayisi]->tHesapSayisi = 0;
+	paBank->pMusteri[paBank->mSayisi]->pHesap[0]->hesapNo = HesapNoOlustur();
+	paBank->pMusteri[paBank->mSayisi]->pHesap[0]->bakiye = 0;
+	paBank->pMusteri[paBank->mSayisi]->pHesap[0]->islemSayisi = 0;
+	paBank->girisYapan = paBank->mSayisi;
+	paBank->mSayisi++;
 	Guncelle();
 
 	system("@cls||clear");
 	printf(".............aBank.............\nHesabiniz kuruldu...\n\n");
-	strcpy(temp, paBank->pMusteri[aBank.mSayisi-1]->Ad);
+	strcpy(temp, paBank->pMusteri[paBank->mSayisi-1]->Ad);
 	isimDuzelt(temp);
 	printf("Adiniz: %s\n", temp);
-	printf("Tc Numaraniz: %.lf\n", paBank->pMusteri[aBank.mSayisi-1]->tcNo);
-	printf("Hesap Numaraniz: %d\n", paBank->pMusteri[aBank.mSayisi-1]->pHesap[0]->hesapNo);
+	printf("Tc Numaraniz: %.lf\n", paBank->pMusteri[paBank->mSayisi-1]->tcNo);
+	printf("Hesap Numaraniz: %d\n", paBank->pMusteri[paBank->mSayisi-1]->pHesap[0]->hesapNo);
 	printf("Sifreniz: %d\n\n", is1);
 	printf("1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
@@ -446,7 +443,7 @@ void YeniMusteri(){
 			exit(0);
 		}break;
 		case 1:{
-			MusteriIslem(aBank.girisYapan);
+			MusteriIslem(paBank->girisYapan);
 		}break;
 		case 2:{
 			AnaMenu();
@@ -479,7 +476,7 @@ void MusteriIslem(int mS){
 			strAl(sifre, 4, 8);
 			t = strcmp(paBank->pMusteri[mS]->Sifre, sifrele(sifre));
 		}while(t!=0);
-		aBank.girisYapan = mS;
+		paBank->girisYapan = mS;
 		AnaMenu();
 	}
 	system("@cls||clear");
@@ -1044,7 +1041,7 @@ char *sifrele(char sifre[8]){
 
 int tcNoKontrol(double tcNo){
 	int i;
-	for (i=0; i<aBank.mSayisi; i++){
+	for (i=0; i<paBank->mSayisi; i++){
 		if (paBank->pMusteri[i]->tcNo == tcNo) return i;
 	}
 	return -1;
@@ -1052,7 +1049,7 @@ int tcNoKontrol(double tcNo){
 
 int hNoKontrol(int hesapNo, int n){ // n 1 ise müsteri no, 2 ise hesap no
 	int mS, hS;
-	for (mS=0; mS<aBank.mSayisi; mS++){
+	for (mS=0; mS<paBank->mSayisi; mS++){
 		for (hS=0; hS<paBank->pMusteri[mS]->hesapSayisi; hS++){
 			if (paBank->pMusteri[mS]->pHesap[hS]->hesapNo == hesapNo) return (n==1)?mS:hS;
 		}
@@ -1127,8 +1124,8 @@ void hesapOzeti(int mS, int hS){
 			n = i-k+1;
 			if (i==0) printf("%2d-)\t%02d - %02d\t", n, iY, iA);
 			else printf("%2d-)\t%d - %02d/%02d\t", n, iY, iA, iA%12+1);
-			if ((i-k)%2 == 1) printf("\n");
-			*(index+i-k+1) = i;
+			if (n%2 == 0) printf("\n");
+			*(index+n) = i;
 		}else{
 			k++;
 		}
