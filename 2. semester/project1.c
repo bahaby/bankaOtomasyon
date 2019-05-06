@@ -43,7 +43,7 @@ typedef struct{
 }Musteri;
 
 typedef struct{
-	Musteri *pMusteri[500];
+	Musteri *pMusteri[100];
 	int mSayisi;
 	int girisYapan;
 }Banka;
@@ -99,7 +99,7 @@ int main(){
 void pTanimla(){
 	int i, j, k;
 	paBank = malloc(sizeof(Banka));
-	for (i=0; i<500; i++){
+	for (i=0; i<100; i++){
 		paBank->pMusteri[i] = malloc(sizeof(Musteri));
 		pDekont[i] = malloc(sizeof(Dekont)); 
 		for (j=0; j<500; j++){
