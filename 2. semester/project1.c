@@ -571,9 +571,9 @@ void paraCek(int mS, int hS){
 		strAl(temp, 1, 4);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (dTemp>(aBank.musteri+mS)->tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
+		if (!(dTemp>0 && kontrol == 1 && temp[0] != '0')) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
+		else if (dTemp>(aBank.musteri+mS)->tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 		else if (dTemp>limit) printf("Para cekme limitiniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", limit);
-		else if (!(dTemp>0 && kontrol == 1 && temp[0] != '0')) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 	}while(!(dTemp>0 && dTemp<=(aBank.musteri+mS)->tBakiye && dTemp<=limit && kontrol==1 && temp[0] != '0'));
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -1052,7 +1052,7 @@ void strAl(char str[], int min, int max){
 		*(str+t-1) = 0;
 		t = strlen(str);
 		if (t==1 && str[0] == '0') break;
-		if (t>max || t<min) printf("Karakter sayisi gecersiz!\nTekrar deneyiniz: ");
+		if (t>max || t<min) printf("Hatali giris!\nTekrar deneyiniz: ");
 	}while (!(t<=max && t>=min));
 }
 void isimDuzelt(char ad[120]){
