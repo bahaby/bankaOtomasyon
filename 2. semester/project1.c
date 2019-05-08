@@ -747,8 +747,8 @@ void havaleGonder(int mS, int hS){
 		strAl(temp, 1, 9);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
-		else if (!(dTemp>0 && kontrol == 1 && temp[0] != '0')) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
+		if (!(dTemp>0 && kontrol == 1 && temp[0] != '0')) printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
+		else if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 	}while(!(dTemp>0 && dTemp<=(aBank.musteri+mS)->tBakiye && kontrol==1 && temp[0] != '0'));
 	dTemp = ((int)(dTemp*100)) / 100.0;
 	system("@cls||clear");
