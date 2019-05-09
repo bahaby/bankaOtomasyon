@@ -3,10 +3,10 @@
 #include <time.h>
 #include <string.h>
 
-#define MAX_ISLEM 1000
+#define MAX_ISLEM 500
 #define MAX_HESAP 100
-#define MAX_MUSTERI 1000
-#define MAX_DEKONT 1000
+#define MAX_MUSTERI 500
+#define MAX_DEKONT 500
 
 typedef struct{
 	int Gun;
