@@ -3,6 +3,11 @@
 #include <time.h>
 #include <string.h>
 
+#define MAX_ISLEM 1000
+#define MAX_HESAP 100
+#define MAX_MUSTERI 1000
+#define MAX_DEKONT 1000
+
 typedef struct{
 	int Gun;
 	int Ay;
@@ -22,7 +27,7 @@ typedef struct{
 	int hesapNo;
 	int islemSayisi;
 	double bakiye;
-	Islem islem[500];
+	Islem islem[MAX_ISLEM];
 }Hesap;
 
 typedef struct{
@@ -31,8 +36,8 @@ typedef struct{
 
 typedef struct{
 
-	Hesap hesap[100];
-	transferHesap tHesap[100];
+	Hesap hesap[MAX_HESAP];
+	transferHesap tHesap[MAX_HESAP];
 	double tBakiye;
 	char Ad[120];
 	char Sifre[8];
@@ -43,7 +48,7 @@ typedef struct{
 }Musteri;
 
 typedef struct{
-	Musteri musteri[100];
+	Musteri musteri[MAX_MUSTERI];
 	int mSayisi;
 	int girisYapan;
 }Banka;
@@ -58,36 +63,36 @@ typedef struct{
 }dIslem;
 
 typedef struct{
-	dIslem islem[500];
+	dIslem islem[MAX_ISLEM];
 	int islemSayisi;
 }Dekont;
 
 Banka aBank;
-Dekont dekont[500];
-
-void AnaMenu();
-void YeniMusteri();
-void MusteriIslem(int mS);
-void Guncelle();
-void VeriAl();
-void bankaRapor(int mS);
-void hesapIslem(int mS, int hS);
-void paraCek(int mS, int hS);
-void paraYatir(int mS, int hS);
-void havaleGonder(int mS, int hS);
-void hHesapKayit(int mS, int hNo);
-void hesapAc(int mS);
-void hesapSil(int mS, int s);// s 1 ise normal hesap 2 ise kayitli hesap
-void hesapOzeti(int mS, int hS);
-void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);
-int hesapSec(int mS, int hS, int s);// s 1 ise normal hesap 2 ise kayitli hesap
-int HesapNoOlustur();
-int tcNoKontrol(double tcNo);
-int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri sırası 2 ise hesap sırası
-char *sifrele(char sifre[120]);
-void strAl(char str[], int min, int max);
-double cekilenPara(int mS);
-void isimDuzelt(char ad[120]);
+Dekont dekont[MAX_DEKONT];
+//mS = stractaki müsteri indisi, hS = stracttaki hesap indisi
+void AnaMenu();//ana menü
+void YeniMusteri();//yeni müsteri oluşturup müsteriye 1 hesap ekler
+void MusteriIslem(int mS);//musteri işlem menüsü
+void Guncelle();//structta depolanan verileri müsteri dosyaları ve rapor.txt ye yazar
+void VeriAl();//program başlangıcında müsteri doyalarındaki verileri structta depolar
+void bankaRapor(int mS);//rapor.txt yi ekrana yazdırır--mS işlemin yapıldığı müsteriye geri dönebilmek için
+void hesapIslem(int mS, int hS);//Hesap işlemleri
+void paraCek(int mS, int hS);//para çekme işlemleri
+void paraYatir(int mS, int hS);//para yatirma işlemleri
+void havaleGonder(int mS, int hS);//havale işlemleri
+void hHesapKayit(int mS, int hNo);//hNo -1 ise hesap no sorar ve kayitli hesaplara kaydeder veya hNo yu kayitli hesaplara kaydeder
+void hesapAc(int mS);//müsteriye yeni hesap açar
+void hesapSil(int mS, int s);//s'in degerine göre kayitli veya normal hesap siler önce silinecek hesabı seçtirir
+void hesapOzeti(int mS, int hS);//aylık olarak işlem geçmişini gruplar seçilen tarihteki hesap özetini dekont.txt ye yazdırır ve ekranda gosterir
+void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);//işlem kaydı yapar
+int hesapSec(int mS, int hS, int s);//hesap seçme menüsü seçilen hesap noyu döndürür (s'in degerine göre normal hesap veya kayitli hesap)
+int HesapNoOlustur();//hesap numaralarını karşılaştırıp random ve farklı bir hesap numarası döndürür
+int tcNoKontrol(double tcNo);//tc no kontrolü tc no varsa müsteri indisini yoksa -1 döndürür
+int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri indisi 2 ise hesap indisi dondürür hesap numarasi yoksa -1 döndürür
+char *sifrele(char sifre[8]);//müsteri sifresini şifreler 8 haneli karakter dizisi döndürür
+void strAl(char str[], int min, int max);//input alır boşlukları '-' ye çevirir min dan kısa veya max dan uzun karakter girilirse hata verir tekrar input ister
+double cekilenPara(int mS);//müsterinin günlük çektiği parayı hesaplar ve döndürür
+void isimDuzelt(char ad[120]);//isimlerdeki '-' leri boşluğa çevirir
 
 int main(){
 	aBank.girisYapan = -1;
@@ -903,7 +908,7 @@ void hesapAc(int mS){
 		}break;
 	}
 }
-void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
+void hesapSil(int mS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 	int i, n, sorgu, kontrol, shS;
 	char temp[120], c;
 	shS =  hesapSec(mS, -1, s);
@@ -966,7 +971,7 @@ void hesapSil(int mS, int s){//s 1 ise normal hesap 2 ise transfer hesap
 		}
 	}
 }
-int hesapSec(int mS, int hS, int s){ //s 1 ise normal hesap 2 ise transfer hesap
+int hesapSec(int mS, int hS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 	int i, sorgu, kontrol, hNo, n, tmS;
 	char temp[120], c;
 	if (s==1){
@@ -1007,7 +1012,7 @@ int HesapNoOlustur(){
 	int hesapNo;
 	srand(time(NULL));
 	do{
-		hesapNo = rand()%899999999 + 100000000;	
+		hesapNo = (rand()%900+100)*1000000 + (rand()%1000)*1000 + rand()%1000;//windowsta düzgün çalışsın diye
 	}while(hNoKontrol(hesapNo, 1)!=-1);
 	return hesapNo;
 }
@@ -1028,7 +1033,7 @@ int tcNoKontrol(double tcNo){
 	return -1;
 }
 
-int hNoKontrol(int hesapNo, int n){ // n 1 ise müsteri no, 2 ise hesap no
+int hNoKontrol(int hesapNo, int n){//n 1 ise müsteri sırası 2 ise hesap sırası
 	int mS, hS;
 	for (mS=0; mS<aBank.mSayisi; mS++){
 		for (hS=0; hS<(aBank.musteri+mS)->hesapSayisi; hS++){
