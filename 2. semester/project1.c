@@ -32,7 +32,7 @@ typedef struct{
 
 typedef struct{
 	int hesapNo;
-}transferHesap;
+}transferHesap;//test
 
 typedef struct{
 
