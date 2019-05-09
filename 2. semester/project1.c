@@ -44,6 +44,7 @@ typedef struct{
 	double tcNo;
 	int hesapSayisi;
 	int tHesapSayisi;
+	int musteriNo;
 	int mTuru;//1->bireysel || 2->ticari
 }Musteri;
 
@@ -86,8 +87,9 @@ void hesapSil(int mS, int s);//s'in degerine göre kayitli veya normal hesap sil
 void hesapOzeti(int mS, int hS);//aylık olarak işlem geçmişini gruplar seçilen tarihteki hesap özetini dekont.txt ye yazdırır ve ekranda gosterir
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);//işlem kaydı yapar
 int hesapSec(int mS, int hS, int s);//hesap seçme menüsü seçilen hesap noyu döndürür (s'in degerine göre normal hesap veya kayitli hesap)
-int HesapNoOlustur();//hesap numaralarını karşılaştırıp random ve farklı bir hesap numarası döndürür
+int NoOlustur(int n);//hesap numaralarını karşılaştırıp random ve farklı bir hesap numarası döndürür
 int tcNoKontrol(double tcNo);//tc no kontrolü tc no varsa müsteri indisini yoksa -1 döndürür
+int mNoKontrol(int musteriNo);
 int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri indisi 2 ise hesap indisi dondürür hesap numarasi yoksa -1 döndürür
 char *sifrele(char sifre[8]);//müsteri sifresini şifreler 8 haneli karakter dizisi döndürür
 void strAl(char str[], int min, int max);//input alır boşlukları '-' ye çevirir min dan kısa veya max dan uzun karakter girilirse hata verir tekrar input ister
@@ -111,6 +113,7 @@ void VeriAl(){
 			strcpy((aBank.musteri+mNo-1)->Sifre, temp);
 			fscanf(pf, " Tc-No: %lf", &(aBank.musteri+mNo-1)->tcNo);
 			fscanf(pf, " Ad Soyad: %s", (aBank.musteri+mNo-1)->Ad);
+			fscanf(pf, " Musteri No: %d", &(aBank.musteri+mNo-1)->musteriNo);
 			fscanf(pf, " Hesap Sayisi: %d", &(aBank.musteri+mNo-1)->hesapSayisi);
 			for (i=0; i<(aBank.musteri+mNo-1)->hesapSayisi; i++){
 				fscanf(pf, " Hesap %*d : %d", &((aBank.musteri+mNo-1)->hesap+i)->hesapNo);
@@ -149,6 +152,7 @@ void VeriAl(){
 			strcpy((aBank.musteri+mNo-1)->Sifre, temp);
 			fscanf(pf, " Tc-No: %lf", &(aBank.musteri+mNo-1)->tcNo);
 			fscanf(pf, " Ad Soyad: %s", (aBank.musteri+mNo-1)->Ad);
+			fscanf(pf, " Musteri No: %d", &(aBank.musteri+mNo-1)->musteriNo);
 			fscanf(pf, " Hesap Sayisi: %d", &(aBank.musteri+mNo-1)->hesapSayisi);
 			for (i=0; i<(aBank.musteri+mNo-1)->hesapSayisi; i++){
 				fscanf(pf, " Hesap %*d : %d", &((aBank.musteri+mNo-1)->hesap+i)->hesapNo);
@@ -201,6 +205,7 @@ void Guncelle(){
 			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf1, "\n\tTc-No: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf1, "\n\tAd Soyad: %s", (aBank.musteri+i)->Ad);
+			fprintf(pf1, "\n\tMusteri No: %d", (aBank.musteri+i)->musteriNo);
 			fprintf(pf1, "\n\tHesap Sayisi: %d", (aBank.musteri+i)->hesapSayisi);
 			for (j=0; j<(aBank.musteri+i)->hesapSayisi; j++){
 				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->hesap+j)->hesapNo);
@@ -232,6 +237,7 @@ void Guncelle(){
 			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf2, "\n\tTc-No: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf2, "\n\tAd Soyad: %s", (aBank.musteri+i)->Ad);
+			fprintf(pf1, "\n\tMusteri No: %d", (aBank.musteri+i)->musteriNo);
 			fprintf(pf2, "\n\tHesap Sayisi: %d", (aBank.musteri+i)->hesapSayisi);
 			for (j=0; j<(aBank.musteri+i)->hesapSayisi; j++){
 				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->hesap+j)->hesapNo);
@@ -400,7 +406,8 @@ void YeniMusteri(){
 
 	(aBank.musteri+aBank.mSayisi)->hesapSayisi = 1;
 	(aBank.musteri+aBank.mSayisi)->tHesapSayisi = 0;
-	((aBank.musteri+aBank.mSayisi)->hesap)->hesapNo = HesapNoOlustur();
+	(aBank.musteri+aBank.mSayisi)->musteriNo = NoOlustur(1);
+	((aBank.musteri+aBank.mSayisi)->hesap)->hesapNo = NoOlustur(2);
 	((aBank.musteri+aBank.mSayisi)->hesap)->bakiye = 0;
 	((aBank.musteri+aBank.mSayisi)->hesap)->islemSayisi = 0;
 	aBank.girisYapan = aBank.mSayisi;
@@ -413,6 +420,7 @@ void YeniMusteri(){
 	isimDuzelt(temp);
 	printf("Adiniz: %s\n", temp);
 	printf("Tc Numaraniz: %.lf\n", (aBank.musteri+aBank.mSayisi-1)->tcNo);
+	printf("Musteri Numaraniz: %d\n", (aBank.musteri+aBank.mSayisi-1)->musteriNo);
 	printf("Hesap Numaraniz: %d\n", ((aBank.musteri+aBank.mSayisi-1)->hesap)->hesapNo);
 	printf("Sifreniz: %d\n\n", is1);
 	printf("1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
@@ -877,7 +885,7 @@ void hHesapKayit(int mS, int hS, int hNo){
 void hesapAc(int mS){
 	int sorgu, kontrol, hS = (aBank.musteri+mS)->hesapSayisi;
 	char temp[120], c;
-	((aBank.musteri+mS)->hesap+hS)->hesapNo = HesapNoOlustur();
+	((aBank.musteri+mS)->hesap+hS)->hesapNo = NoOlustur(2);
 	((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
 	((aBank.musteri+mS)->hesap+hS)->islemSayisi = 0;
 	(aBank.musteri+mS)->hesapSayisi++;
@@ -1008,13 +1016,14 @@ int hesapSec(int mS, int hS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 	return sorgu-1;
 }
 
-int HesapNoOlustur(){
-	int hesapNo;
-	srand(time(NULL));
+int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
+	int No, kontrol;
+	srand(time(NULL)+n);
 	do{
-		hesapNo = (rand()%900+100)*1000000 + (rand()%1000)*1000 + rand()%1000;//windowsta düzgün çalışsın diye
-	}while(hNoKontrol(hesapNo, 1)!=-1);
-	return hesapNo;
+		No = (rand()%900+100)*1000000 + (rand()%1000)*1000 + rand()%1000;//windowsta düzgün çalışsın diye
+		kontrol = (n==1)?mNoKontrol(No):hNoKontrol(No, 1);
+	}while(kontrol!=-1);
+	return No;
 }
 char *sifrele(char sifre[8]){
 	int i, temp[8]={}, len = strlen(sifre);
@@ -1032,7 +1041,13 @@ int tcNoKontrol(double tcNo){
 	}
 	return -1;
 }
-
+int mNoKontrol(int musteriNo){
+	int i;
+	for (i=0; i<aBank.mSayisi; i++){
+		if ((aBank.musteri+i)->musteriNo == musteriNo) return i;
+	}
+	return -1;
+}
 int hNoKontrol(int hesapNo, int n){//n 1 ise müsteri sırası 2 ise hesap sırası
 	int mS, hS;
 	for (mS=0; mS<aBank.mSayisi; mS++){
