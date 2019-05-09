@@ -80,7 +80,7 @@ void hesapIslem(int mS, int hS);//Hesap işlemleri
 void paraCek(int mS, int hS);//para çekme işlemleri
 void paraYatir(int mS, int hS);//para yatirma işlemleri
 void havaleGonder(int mS, int hS);//havale işlemleri
-void hHesapKayit(int mS, int hNo);//hNo -1 ise hesap no sorar ve kayitli hesaplara kaydeder veya hNo yu kayitli hesaplara kaydeder
+void hHesapKayit(int mS, int hS, int hNo);//hNo -1 ise hesap no sorar ve kayitli hesaplara kaydeder veya hNo yu kayitli hesaplara kaydeder
 void hesapAc(int mS);//müsteriye yeni hesap açar
 void hesapSil(int mS, int s);//s'in degerine göre kayitli veya normal hesap siler önce silinecek hesabı seçtirir
 void hesapOzeti(int mS, int hS);//aylık olarak işlem geçmişini gruplar seçilen tarihteki hesap özetini dekont.txt ye yazdırır ve ekranda gosterir
@@ -499,7 +499,7 @@ void MusteriIslem(int mS){
 			hesapSil(mS, 1);
 		}break;
 		case 4:{
-			hHesapKayit(mS, -1);
+			hHesapKayit(mS, -1, -1);
 		}break;
 		case 5:{
 			hesapSil(mS, 2);
@@ -823,14 +823,14 @@ void havaleGonder(int mS, int hS){
 			hesapIslem(mS, hS);
 		}break;
 		case 2:{
-			hHesapKayit(mS, tHesapNo);
+			hHesapKayit(mS, hS, tHesapNo);
 		}break;
 		case 3:{
 			AnaMenu();
 		}break;
 	}
 }
-void hHesapKayit(int mS, int hNo){
+void hHesapKayit(int mS, int hS, int hNo){
 	int sorgu, kontrol;
 	char temp[120], c;
 	if (hNo == -1){
@@ -852,7 +852,7 @@ void hHesapKayit(int mS, int hNo){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Islem basarili...\n\n");
-	printf("1-)\tMusteri Islemleri\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
+	printf("1-)\tGeri don\n2-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
 		strAl(temp, 1, 1);
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
@@ -866,7 +866,7 @@ void hHesapKayit(int mS, int hNo){
 			exit(0);
 		}break;
 		case 1:{
-			MusteriIslem(mS);
+			hesapIslem(mS, hS);
 		}break;
 		case 2:{
 			AnaMenu();
