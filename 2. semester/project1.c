@@ -40,7 +40,7 @@ typedef struct{
 	transferHesap tHesap[MAX_HESAP];
 	double tBakiye;
 	char Ad[120];
-	char Sifre[8];
+	char Sifre[120];
 	double tcNo;
 	int hesapSayisi;
 	int tHesapSayisi;
@@ -91,7 +91,7 @@ int NoOlustur(int n);//hesap numaralarını karşılaştırıp random ve farklı
 int tcNoKontrol(double tcNo);//tc no kontrolü tc no varsa müsteri indisini yoksa -1 döndürür
 int mNoKontrol(int musteriNo);
 int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri indisi 2 ise hesap indisi dondürür hesap numarasi yoksa -1 döndürür
-char *sifrele(char sifre[8]);//müsteri sifresini şifreler 8 haneli karakter dizisi döndürür
+char *sifrele(char sifre[120]);//müsteri sifresini şifreler 8 haneli karakter dizisi döndürür
 void strAl(char str[], int min, int max);//input alır boşlukları '-' ye çevirir min dan kısa veya max dan uzun karakter girilirse hata verir tekrar input ister
 double cekilenPara(int mS);//müsterinin günlük çektiği parayı hesaplar ve döndürür
 void isimDuzelt(char ad[120]);//isimlerdeki '-' leri boşluğa çevirir
@@ -347,7 +347,7 @@ void AnaMenu(){
 }
 
 void YeniMusteri(){
-	int sorgu, kontrol, is1, is2;
+	int sorgu, kontrol, is1, is2, i;
 	double dTemp;
 	char temp[120], s1[120]={}, s2[120]={}, c;
 	printf(".............aBank.............\n");
@@ -375,7 +375,15 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Ad Soyad: ");
-	strAl((aBank.musteri+aBank.mSayisi)->Ad, 5, 120);
+	do{
+		strAl(temp, 5, 120);
+		kontrol=1;
+		for (i=0; i<(int)strlen(temp); i++){
+			if (!((*(temp+i) >= 'a' && *(temp+i) <= 'z') || (*(temp+i) >= 'A' && *(temp+i) <= 'Z') || *(temp+i) == '-')) kontrol=0;
+		}
+		if (kontrol!=1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
+	}while(kontrol!=1);
+	strcpy((aBank.musteri+aBank.mSayisi)->Ad, temp);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Tc Numaranizi Giriniz: ");
@@ -1025,12 +1033,13 @@ int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
 	}while(kontrol!=-1);
 	return No;
 }
-char *sifrele(char sifre[8]){
+char *sifrele(char sifre[120]){
 	int i, temp[8]={}, len = strlen(sifre);
 	for (i=0; i<8; i++){
 		*(temp+i) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
 		*(sifre+i) = *(temp+i)%93 + 33;
 	}
+	*(sifre+8) = '\0';
 	return sifre;
 }
 
