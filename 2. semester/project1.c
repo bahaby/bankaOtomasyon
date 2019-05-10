@@ -605,9 +605,6 @@ void paraCek(int mS, int hS){
 		else if (dTemp>(aBank.musteri+mS)->tBakiye) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 		else if (dTemp>limit) printf("Para cekme limitiniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", limit);
 	}while(!(dTemp>0 && dTemp<=(aBank.musteri+mS)->tBakiye && dTemp<=limit && kontrol==1 && *temp != '0'));
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Islem basarili...\n\n");
 	dTemp = ((int)(dTemp*100)) / 100.0;
 	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
 		((aBank.musteri+mS)->hesap+hS)->bakiye -= dTemp;
@@ -615,26 +612,43 @@ void paraCek(int mS, int hS){
 		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, dTemp);
 		dTemp = 0;
 	}else{
-		if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
-			dTemp -= ((aBank.musteri+mS)->hesap+hS)->bakiye;
-			islemKaydi(mS, hS, 1, ((aBank.musteri+mS)->hesap+hS)->hesapNo, -((aBank.musteri+mS)->hesap+hS)->bakiye);
-			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye);
-			((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
-		}
-		for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){
-			if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){
-				if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
-					((aBank.musteri+mS)->hesap+i)->bakiye -= dTemp;
-					islemKaydi(mS, i, 1, ((aBank.musteri+mS)->hesap+i)->hesapNo, -dTemp);
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp);
-					dTemp = 0;
-				}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
-					dTemp -= ((aBank.musteri+mS)->hesap+i)->bakiye;
-					islemKaydi(mS, i, 1, ((aBank.musteri+mS)->hesap+i)->hesapNo, -((aBank.musteri+mS)->hesap+i)->bakiye);
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye);
-					((aBank.musteri+mS)->hesap+i)->bakiye = 0;
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		printf("Hesap bakiyeniz yetersiz!\n");
+		printf("1-)\tEk hesaplarinizi kullanarak islemi tamamla\n2-)\tIslemi iptal et\nSecim: ");
+		do{
+			strAl(temp, 1, 1);
+			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
+			if(sorgu<1 || sorgu>2 || kontrol != 1) {
+				printf("Hatali Giris!\nTekrar Deneyiniz: ");
+			}
+		}while(sorgu<1 || sorgu>2 || kontrol != 1);
+		if (sorgu == 2) hesapIslem(mS, hS);
+		else{
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		printf("Islem basarili...\n\n");
+			if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+				dTemp -= ((aBank.musteri+mS)->hesap+hS)->bakiye;
+				islemKaydi(mS, hS, 1, ((aBank.musteri+mS)->hesap+hS)->hesapNo, -((aBank.musteri+mS)->hesap+hS)->bakiye);
+				printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye);
+				((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
+			}
+			for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){
+				if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){
+					if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+						((aBank.musteri+mS)->hesap+i)->bakiye -= dTemp;
+						islemKaydi(mS, i, 1, ((aBank.musteri+mS)->hesap+i)->hesapNo, -dTemp);
+						printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp);
+						dTemp = 0;
+					}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+						dTemp -= ((aBank.musteri+mS)->hesap+i)->bakiye;
+						islemKaydi(mS, i, 1, ((aBank.musteri+mS)->hesap+i)->hesapNo, -((aBank.musteri+mS)->hesap+i)->bakiye);
+						printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye);
+						((aBank.musteri+mS)->hesap+i)->bakiye = 0;
+					}
+					if (dTemp==0) printf("\n");
 				}
-				if (dTemp==0) printf("\n");
 			}
 		}
 	}
@@ -781,10 +795,10 @@ void havaleGonder(int mS, int hS){
 		else if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1) printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 	}while(!(dTemp>0 && dTemp<=(aBank.musteri+mS)->tBakiye && kontrol==1 && *temp != '0'));
 	dTemp = ((int)(dTemp*100)) / 100.0;
-	system("@cls||clear");
-	printf(".............aBank.............\n");
-	printf("Islem basarili...\n\n");
 	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		printf("Islem basarili...\n\n");
 		((aBank.musteri+mS)->hesap+hS)->bakiye -= dTemp;
 		islemKaydi(mS, hS, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -dTemp);
 		kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
@@ -794,39 +808,56 @@ void havaleGonder(int mS, int hS){
 		islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+hS)->hesapNo, dTemp - kesinti);
 		dTemp = 0;
 	}else{
-		if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
-			dTemp -= ((aBank.musteri+mS)->hesap+hS)->bakiye;
-			islemKaydi(mS, hS, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -((aBank.musteri+mS)->hesap+hS)->bakiye);
-			kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(((aBank.musteri+mS)->hesap+hS)->bakiye*2)) / 100.0 : 0;
-			printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye);
-			
-			((aBank.musteri+hmS)->hesap+hhS)->bakiye += (((aBank.musteri+mS)->hesap+hS)->bakiye - kesinti);
-			islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye - kesinti);
-			((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
-		}
-		for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){
-			if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){
-				if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
-					((aBank.musteri+mS)->hesap+i)->bakiye -= dTemp;
-					islemKaydi(mS, i, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -dTemp);
-					kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp);
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		printf("Hesap bakiyeniz yetersiz!\n");
+		printf("1-)\tEk hesaplarinizi kullanarak islemi tamamla\n2-)\tIslemi iptal et\nSecim: ");
+		do{
+			strAl(temp, 1, 1);
+			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
+			if(sorgu<1 || sorgu>2 || kontrol != 1) {
+				printf("Hatali Giris!\nTekrar Deneyiniz: ");
+			}
+		}while(sorgu<1 || sorgu>2 || kontrol != 1);
+		if (sorgu == 2) hesapIslem(mS, hS);
+		else{
+			system("@cls||clear");
+			printf(".............aBank.............\n");
+			printf("Islem basarili...\n\n");
+			if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+				dTemp -= ((aBank.musteri+mS)->hesap+hS)->bakiye;
+				islemKaydi(mS, hS, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -((aBank.musteri+mS)->hesap+hS)->bakiye);
+				kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(((aBank.musteri+mS)->hesap+hS)->bakiye*2)) / 100.0 : 0;
+				printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye);
+				
+				((aBank.musteri+hmS)->hesap+hhS)->bakiye += (((aBank.musteri+mS)->hesap+hS)->bakiye - kesinti);
+				islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye - kesinti);
+				((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
+			}
+			for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){
+				if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){
+					if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+						((aBank.musteri+mS)->hesap+i)->bakiye -= dTemp;
+						islemKaydi(mS, i, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -dTemp);
+						kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
+						printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp);
 
-					((aBank.musteri+hmS)->hesap+hhS)->bakiye += (dTemp - kesinti);
-					islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp - kesinti);
-					dTemp = 0;
+						((aBank.musteri+hmS)->hesap+hhS)->bakiye += (dTemp - kesinti);
+						islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp - kesinti);
+						dTemp = 0;
 
-				}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
-					dTemp -= ((aBank.musteri+mS)->hesap+i)->bakiye;
-					islemKaydi(mS, i, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -((aBank.musteri+mS)->hesap+i)->bakiye);
-					kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(((aBank.musteri+mS)->hesap+i)->bakiye*2)) / 100.0 : 0;
-					printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye);
-					
-					((aBank.musteri+hmS)->hesap+hhS)->bakiye += (((aBank.musteri+mS)->hesap+i)->bakiye - kesinti);
-					islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye - kesinti);
-					((aBank.musteri+mS)->hesap+i)->bakiye = 0;
+					}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+						dTemp -= ((aBank.musteri+mS)->hesap+i)->bakiye;
+						islemKaydi(mS, i, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -((aBank.musteri+mS)->hesap+i)->bakiye);
+						kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(((aBank.musteri+mS)->hesap+i)->bakiye*2)) / 100.0 : 0;
+						printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye);
+						
+						((aBank.musteri+hmS)->hesap+hhS)->bakiye += (((aBank.musteri+mS)->hesap+i)->bakiye - kesinti);
+						islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye - kesinti);
+						((aBank.musteri+mS)->hesap+i)->bakiye = 0;
+					}
+					if (dTemp==0) printf("\n");
 				}
-				if (dTemp==0) printf("\n");
 			}
 		}
 	}
