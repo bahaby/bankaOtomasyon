@@ -1108,7 +1108,7 @@ int hNoKontrol(int hesapNo, int n){//n 1 ise müsteri sırası 2 ise hesap sıra
 }
 
 void strAl(char str[], int min, int max){
-	int t;
+	int t, i, kontrol=1;
 	char cTemp;
 	do{
 		scanf("%s", str);
@@ -1120,9 +1120,20 @@ void strAl(char str[], int min, int max){
 		}while (cTemp != '\n');
 		*(str+t-1) = 0;
 		t = strlen(str);
+		for (i=t-1; i>0; i--){
+			if (*(str+i) == '-'){
+				*(str+i) = '\0';
+				continue;
+			}
+			else break;
+		}
+		for (i=1; i<t; i++){
+			if (*(str+i-1) == '-' && *(str+i) == '-') kontrol=0;
+		}
 		if (t==1 && *str == '0') break;
-		if (t>max || t<min) printf("Hatali giris!\nTekrar deneyiniz: ");
-	}while (!(t<=max && t>=min));
+		t = strlen(str);
+		if (t>max || t<min || kontrol!=1) printf("Hatali giris!\nTekrar deneyiniz: ");
+	}while (!(t<=max && t>=min && kontrol==1));
 }
 void isimDuzelt(char ad[120]){
 	int i, t;
