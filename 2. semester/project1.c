@@ -1107,10 +1107,11 @@ int hNoKontrol(int hesapNo, int n){//n 1 ise müsteri sırası 2 ise hesap sıra
 	return -1;
 }
 
-void strAl(char str[], int min, int max){
-	int t, i, kontrol=1;
+void strAl(char str[120], int min, int max){
+	int t, i, kontrol;
 	char cTemp;
 	do{
+		kontrol=1;
 		scanf("%s", str);
 		t = strlen(str);
 		do{
@@ -1120,18 +1121,11 @@ void strAl(char str[], int min, int max){
 		}while (cTemp != '\n');
 		*(str+t-1) = 0;
 		t = strlen(str);
-		for (i=t-1; i>0; i--){
-			if (*(str+i) == '-'){
-				*(str+i) = '\0';
-				continue;
-			}
-			else break;
-		}
-		for (i=1; i<t; i++){
+		if (*(str+t-1) == '-') kontrol=0;
+		for (i=1; i<t && kontrol==1; i++){
 			if (*(str+i-1) == '-' && *(str+i) == '-') kontrol=0;
 		}
 		if (t==1 && *str == '0') break;
-		t = strlen(str);
 		if (t>max || t<min || kontrol!=1) printf("Hatali giris!\nTekrar deneyiniz: ");
 	}while (!(t<=max && t>=min && kontrol==1));
 }
