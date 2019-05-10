@@ -91,6 +91,7 @@ int NoOlustur(int n);//hesap numaralarını karşılaştırıp random ve farklı
 int tcNoKontrol(double tcNo);//tc no kontrolü tc no varsa müsteri indisini yoksa -1 döndürür
 int mNoKontrol(int musteriNo);
 int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri indisi 2 ise hesap indisi dondürür hesap numarasi yoksa -1 döndürür
+int thKontrol(int mS, int hNo);
 char *sifrele(char sifre[120]);//müsteri sifresini şifreler 8 haneli karakter dizisi döndürür
 void strAl(char str[], int min, int max);//input alır boşlukları '-' ye çevirir min dan kısa veya max dan uzun karakter girilirse hata verir tekrar input ister
 double cekilenPara(int mS);//müsterinin günlük çektiği parayı hesaplar ve döndürür
@@ -868,6 +869,9 @@ void havaleGonder(int mS, int hS){
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 		if(sorgu<0 || sorgu>3 || kontrol != 1) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
+		}else if(thKontrol(mS, tHesapNo) != -1 && kontrol == 1 && sorgu == 2){
+			printf("Bu hesap zaten ekli!\nTekrar Deneyiniz: ");
+			kontrol = 0;
 		}
 	}while(sorgu<0 || sorgu>3 || kontrol != 1);
 	switch (sorgu){
@@ -887,9 +891,10 @@ void havaleGonder(int mS, int hS){
 	}
 }
 void hHesapKayit(int mS, int hS, int hNo){
-	int sorgu, kontrol;
+	int sorgu, kontrol, t=1;
 	char temp[120], c;
 	if (hNo == -1){
+		t=0;
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Hesap numarasini giriniz (Iptal etmek icin 0 giriniz): ");
@@ -898,8 +903,14 @@ void hHesapKayit(int mS, int hS, int hNo){
 			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 			if (sorgu == 0 && kontrol == 1) MusteriIslem(mS);
 			if (kontrol!=1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
-			else if (hNoKontrol(sorgu, 1) == -1) printf("Boyle bir hesap numarasi yok!\nTekrar Deneyiniz: ");
-		}while(!(hNoKontrol(sorgu, 1) != -1 && kontrol==1));
+			else if (hNoKontrol(sorgu, 1) == -1){
+				printf("Boyle bir hesap numarasi yok!\nTekrar deneyiniz: ");
+				kontrol = 0;
+			}else if (thKontrol(mS, sorgu) != -1){
+				printf("Hesap numarasi zaten kayitli!\nTekrar deneyiniz: ");
+				kontrol = 0;
+			} 
+		}while(kontrol != 1);
 		hNo = sorgu;
 	}
 	((aBank.musteri+mS)->tHesap+(aBank.musteri+mS)->tHesapSayisi)->hesapNo = hNo;
@@ -922,7 +933,8 @@ void hHesapKayit(int mS, int hS, int hNo){
 			exit(0);
 		}break;
 		case 1:{
-			hesapIslem(mS, hS);
+			if (t==1) hesapIslem(mS, hS);
+			else MusteriIslem(mS);
 		}break;
 		case 2:{
 			AnaMenu();
@@ -1103,6 +1115,13 @@ int hNoKontrol(int hesapNo, int n){//n 1 ise müsteri sırası 2 ise hesap sıra
 		for (hS=0; hS<(aBank.musteri+mS)->hesapSayisi; hS++){
 			if (((aBank.musteri+mS)->hesap+hS)->hesapNo == hesapNo) return (n==1)?mS:hS;
 		}
+	}
+	return -1;
+}
+int thKontrol(int mS, int hNo){
+	int i;
+	for (i=0; i<(aBank.musteri+mS)->tHesapSayisi; i++){
+		if (((aBank.musteri+mS)->tHesap+i)->hesapNo == hNo) return i;
 	}
 	return -1;
 }
