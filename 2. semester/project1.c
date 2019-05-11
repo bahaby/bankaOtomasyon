@@ -52,6 +52,9 @@ typedef struct{
 	Musteri musteri[MAX_MUSTERI];
 	int mSayisi;
 	int girisYapan;
+	double tGelen;
+	double tGiden;
+	double tKar;
 }Banka;
 
 typedef struct{
@@ -185,6 +188,17 @@ void VeriAl(){
 		}
 		fclose(pf);
 	}
+	aBank.tGelen=0;
+	aBank.tGiden=0;
+	aBank.tKar=0;
+	pf = fopen("rapor.txt", "r");
+	if (pf != NULL){
+		fseek(pf, 64, SEEK_SET);
+		fscanf(pf, " Gelen toplam para: %lf", &aBank.tGelen);
+		fscanf(pf, " Giden toplam para: %lf", &aBank.tGiden);
+		fscanf(pf, " Bankanin kari: %lf", &aBank.tKar);
+		fclose(pf);
+	}
 
 	for (i=0; i<aBank.mSayisi; i++){
 		(aBank.musteri+i)->tBakiye = 0;
@@ -264,6 +278,16 @@ void Guncelle(){
 			t=1;
 		}
 	}
+
+
+	fclose(fopen("rapor.txt", "w"));
+	pf1 = fopen("rapor.txt", "a");
+	fprintf(pf1, "aBank gelir-gider raporu...\n\n");
+	fprintf(pf1, "Bankada bulunan toplam para: %.2lf\n", aBank.tGelen - aBank.tGiden + aBank.tKar);
+	fprintf(pf1, "Gelen toplam para:           %.2lf\n", aBank.tGelen);
+	fprintf(pf1, "Giden toplam para:           %.2lf\n", aBank.tGiden);
+	fprintf(pf1, "Bankanin kari:               %.2lf", aBank.tKar);
+	fclose(pf1);
 
 	for (i=0; i<aBank.mSayisi; i++){
 		(aBank.musteri+i)->tBakiye = 0;
@@ -585,6 +609,9 @@ void paraCek(int mS, int hS){
 	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
 		((aBank.musteri+mS)->hesap+hS)->bakiye -= dTemp;
 		islemKaydi(mS, hS, 1, ((aBank.musteri+mS)->hesap+hS)->hesapNo, -dTemp);
+		system("@cls||clear");
+		printf(".............aBank.............\n");
+		printf("Islem basarili...\n\n");
 		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, dTemp);
 		dTemp = 0;
 	}else{
@@ -736,7 +763,7 @@ void havaleGonder(int mS, int hS){
 				printf(".............aBank.............\n");
 				printf("Hesap numarasini giriniz (Iptal etmek icin 0 giriniz): ");
 				do{
-					strAl(temp, 9, 9);
+					strAl(temp, 7, 7);
 					kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 					if (sorgu == 0 && kontrol == 1) hesapIslem(mS, hS);
 					if (kontrol!=1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
@@ -748,7 +775,7 @@ void havaleGonder(int mS, int hS){
 	}else{
 		printf("Hesap numarasini giriniz (Iptal etmek icin 0 giriniz): ");
 		do{
-			strAl(temp, 9, 9);
+			strAl(temp, 7, 7);
 			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 			if (sorgu == 0 && kontrol == 1) hesapIslem(mS, hS);
 			if (kontrol!=1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
@@ -874,7 +901,7 @@ void hHesapKayit(int mS, int hS, int hNo){
 		printf(".............aBank.............\n");
 		printf("Hesap numarasini giriniz (Iptal etmek icin 0 giriniz): ");
 		do{
-			strAl(temp, 9, 9);
+			strAl(temp, 7, 7);
 			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 			if (sorgu == 0 && kontrol == 1) MusteriIslem(mS);
 			if (kontrol!=1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
@@ -1055,7 +1082,8 @@ int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
 	int No, kontrol;
 	srand(time(NULL)+n);
 	do{
-		No = (rand()%900+100)*1000000 + (rand()%1000)*1000 + rand()%1000;//windowsta düzgün çalışsın diye
+		if (n==1) No = (rand()%900+100)*1000000 + (rand()%1000)*1000 + rand()%1000;
+		else if(n==2) No = (rand()%9000+100)*1000 + (rand()%1000);
 		kontrol = (n==1)?mNoKontrol(No):hNoKontrol(No, 1);
 	}while(kontrol!=-1);
 	return No;
@@ -1314,9 +1342,8 @@ void bankaRapor(int mS){
 }
 
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
-	FILE *pf;
 	int iS, mTuru;
-	double tGelen=0, tGiden=0, tKar=0, kesinti=0; 
+	double kesinti;
 	iS = ((aBank.musteri+mS)->hesap+hS)->islemSayisi;
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
@@ -1332,32 +1359,15 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	
 	((aBank.musteri+mS)->hesap+hS)->islemSayisi++;
 
-	pf = fopen("rapor.txt", "r");
-	if (pf != NULL){
-		fseek(pf, 64, SEEK_SET);
-		fscanf(pf, " Gelen toplam para: %lf", &tGelen);
-		fscanf(pf, " Giden toplam para: %lf", &tGiden);
-		fscanf(pf, " Bankanin kari: %lf", &tKar);
-		fclose(pf);
-	}
 	mTuru = (aBank.musteri+mS)->mTuru;
 	if (iT == 1){
-		tGiden -= iTutar;
+		aBank.tGiden -= iTutar;
 	}else if (iT == 2){
-		tGelen += iTutar;
+		aBank.tGelen += iTutar;
 	}else if (iT == 3 && mTuru == 1){
 		kesinti = ((int)(-iTutar*2)) / 100.0;
-		tKar += kesinti;
+		aBank.tKar += kesinti;
 	}
-
-	fclose(fopen("rapor.txt", "w"));
-	pf = fopen("rapor.txt", "a");
-	fprintf(pf, "aBank gelir-gider raporu...\n\n");
-	fprintf(pf, "Bankada bulunan toplam para: %.2lf\n", tGelen - tGiden + tKar);
-	fprintf(pf, "Gelen toplam para:           %.2lf\n", tGelen);
-	fprintf(pf, "Giden toplam para:           %.2lf\n", tGiden);
-	fprintf(pf, "Bankanin kari:               %.2lf", tKar);
-	fclose(pf);
 }
 
 double cekilenPara(int mS){
