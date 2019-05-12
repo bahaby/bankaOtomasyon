@@ -92,9 +92,9 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);//işlem kaydı y
 int hesapSec(int mS, int hS, int s);//hesap seçme menüsü seçilen hesap noyu döndürür (s'in degerine göre normal hesap veya kayitli hesap)
 int NoOlustur(int n);//hesap numaralarını karşılaştırıp random ve farklı bir hesap numarası döndürür
 int tcNoKontrol(double tcNo);//tc no kontrolü tc no varsa müsteri indisini yoksa -1 döndürür
-int mNoKontrol(int musteriNo);
+int mNoKontrol(int musteriNo);//musteri no kontrolu yoksa -1 varsa indisini döndürür
 int hNoKontrol(int hesapNo, int n); //n 1 ise müsteri indisi 2 ise hesap indisi dondürür hesap numarasi yoksa -1 döndürür
-int thKontrol(int mS, int hNo);
+int thKontrol(int mS, int hNo);//transfer hesap kontrolü yoksa -1 varsa indisini döndürür
 char *sifrele(char sifre[120]);//müsteri sifresini şifreler 8 haneli karakter dizisi döndürür
 void strAl(char str[], int min, int max);//input alır boşlukları '-' ye çevirir min dan kısa veya max dan uzun karakter girilirse hata verir tekrar input ister
 double cekilenPara(int mS);//müsterinin günlük çektiği parayı hesaplar ve döndürür
@@ -110,7 +110,10 @@ void VeriAl(){
 	char temp[120];
 	aBank.mSayisi=0;
 	FILE *pf;
-	pf = fopen("bireyselMusteri.txt", "r");
+	for (i=0; i<5; i++){
+		pf = fopen("bireyselMusteri.txt", "r");
+		if(pf!=NULL) break;
+	}
 	if (pf!=NULL){
 		fseek(pf, 0, SEEK_END);
 		if (ftell(pf) != 0){
@@ -153,7 +156,10 @@ void VeriAl(){
 		}
 		fclose(pf);
 	}
-	pf = fopen("ticariMusteri.txt", "r");
+	for (i=0; i<5; i++){
+		pf = fopen("ticariMusteri.txt", "r");
+		if(pf!=NULL) break;
+	}
 	if (pf!=NULL){
 		fseek(pf, 0, SEEK_END);
 		if (ftell(pf) != 0){
@@ -199,7 +205,10 @@ void VeriAl(){
 	aBank.tGelen=0;
 	aBank.tGiden=0;
 	aBank.tKar=0;
-	pf = fopen("rapor.txt", "r");
+	for (i=0; i<5; i++){
+		pf = fopen("rapor.txt", "r");
+		if(pf!=NULL) break;
+	}
 	if (pf != NULL){
 		fseek(pf, 64, SEEK_SET);
 		fscanf(pf, " Gelen toplam para: %lf", &aBank.tGelen);
@@ -222,7 +231,10 @@ void Guncelle(){
 	for (i=0; i<aBank.mSayisi; i++){
 		if ((aBank.musteri+i)->mTuru == 1){
 			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));
-			pf1 = fopen("bireyselMusteri.txt", "a");
+			if ((pf1 = fopen("bireyselMusteri.txt", "a")) == NULL){
+				printf("Dosya acma hatasi!\n");
+				exit(1);
+			}
 			if (b!=0) fprintf(pf1, "\n");
 			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf1, "\n\tTc-No: %.lf", (aBank.musteri+i)->tcNo);
@@ -254,7 +266,10 @@ void Guncelle(){
 			b=1;
 		}else if ((aBank.musteri+i)->mTuru == 2){
 			if (t==0) fclose(fopen("ticariMusteri.txt", "w"));
-			pf2 = fopen("ticariMusteri.txt", "a");
+			if ((pf2 = fopen("ticariMusteri.txt", "a")) == NULL){
+				printf("Dosya acma hatasi!\n");
+				exit(1);
+			}
 			if (t!=0) fprintf(pf2, "\n");
 			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf2, "\n\tTc-No: %.lf", (aBank.musteri+i)->tcNo);
@@ -289,7 +304,10 @@ void Guncelle(){
 
 
 	fclose(fopen("rapor.txt", "w"));
-	pf1 = fopen("rapor.txt", "a");
+	if ((pf1 = fopen("rapor.txt", "a")) == NULL){
+		printf("Dosya acma hatasi!\n");
+		exit(1);
+	}
 	fprintf(pf1, "aBank gelir-gider raporu...\n\n");
 	fprintf(pf1, "Bankada bulunan toplam para: %.2lf\n", aBank.tGelen - aBank.tGiden + aBank.tKar);
 	fprintf(pf1, "Gelen toplam para:           %.2lf\n", aBank.tGelen);
@@ -1141,7 +1159,7 @@ int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
 	srand(time(NULL)+n);
 	do{
 		if (n==1) No = (rand()%900+100)*1000000 + (rand()%1000)*1000 + rand()%1000;
-		else if(n==2) No = (rand()%9000+100)*1000 + (rand()%1000);
+		else if(n==2) No = (rand()%9000+1000)*1000 + (rand()%1000);
 		kontrol = (n==1)?mNoKontrol(No):hNoKontrol(No, 1);
 	}while(kontrol!=-1);
 	return No;
@@ -1280,7 +1298,10 @@ void hesapOzeti(int mS, int hS){
 	}while(kontrol != 1);
 	
 	fclose(fopen("dekont.txt", "w"));
-	pf = fopen("dekont.txt", "a");
+	if ((pf = fopen("dekont.txt", "a")) == NULL){
+		printf("Dosya acma hatasi!\n");
+		exit(1);
+	}
 	i = *(index + sorgu);
 	iY = (t2 - i) / 12 + 1900;
 	iA = (t2 - i -1) % 12 +1; 
@@ -1338,10 +1359,12 @@ void hesapOzeti(int mS, int hS){
 				fprintf(pf, "\tGonderen kisi:    %s (%d)\n", ((dekont+i)->islem+j)->Ad, ((dekont+i)->islem+j)->hesapNo);
 			}
 		}
-		
 	}
 	fclose(pf);
-	pf = fopen("dekont.txt", "r");
+	if ((pf = fopen("dekont.txt", "r")) == NULL){
+		printf("Dosya acma hatasi!\n");
+		exit(1);
+	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	while ((c=fgetc(pf))!=EOF){
@@ -1378,7 +1401,10 @@ void bankaRapor(int mS){
 	Guncelle();
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	pf = fopen("rapor.txt", "r");
+	if ((pf = fopen("rapor.txt", "r")) == NULL){
+		printf("Dosya acma hatasi!\n");
+		exit(1);
+	}
 	while((c = fgetc(pf)) != EOF){
 		printf("%c", c);
 	}
