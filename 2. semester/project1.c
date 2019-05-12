@@ -640,10 +640,10 @@ void paraCek(int mS, int hS){
 	printf(".............aBank.............\n");
 	printf("Cekmek istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
-		strAl(temp, 1, 4);
+		strAl(temp, 1, 10);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (!(dTemp>0 && kontrol == 1 && *temp != '0')){
+		if (!(dTemp>0 && dTemp<10000 && kontrol == 1 && *temp != '0')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}else if (dTemp>(aBank.musteri+mS)->tBakiye){
@@ -736,10 +736,10 @@ void paraYatir(int mS, int hS){
 	printf(".............aBank.............\n");
 	printf("Yatirmak istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
-		strAl(temp, 1, 6);
+		strAl(temp, 1, 12);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		else if (!(dTemp>0 && kontrol == 1 && *temp != '0')){
+		else if (!(dTemp>0 && dTemp<1000000 && kontrol == 1 && *temp != '0')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
@@ -854,10 +854,10 @@ void havaleGonder(int mS, int hS){
 	printf(".............aBank.............\n");
 	printf("Gondermek istediginiz tutari giriniz(Iptal etmek icin 0 giriniz): ");
 	do{
-		strAl(temp, 1, 9);
+		strAl(temp, 1, 12);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1) hesapIslem(mS, hS);
-		if (!(dTemp>0 && kontrol == 1 && *temp != '0')){
+		if (!(dTemp>0 && dTemp<1000000 && kontrol == 1 && *temp != '0')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
