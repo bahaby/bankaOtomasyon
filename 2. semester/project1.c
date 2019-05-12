@@ -101,6 +101,7 @@ double cekilenPara(int mS);//müsterinin günlük çektiği parayı hesaplar ve 
 void isimDuzelt(char ad[120]);//isimlerdeki '-' leri boşluğa çevirir
 
 int main(){
+	VeriAl();
 	aBank.girisYapan = -1;
 	AnaMenu();
 }
@@ -202,15 +203,14 @@ void VeriAl(){
 		}
 		fclose(pf);
 	}
-	aBank.tGelen=0;
-	aBank.tGiden=0;
-	aBank.tKar=0;
 	for (i=0; i<5; i++){
 		pf = fopen("rapor.txt", "r");
 		if(pf!=NULL) break;
 	}
 	if (pf != NULL){
-		fseek(pf, 64, SEEK_SET);
+		fscanf(pf, " aBank gelir-gider raporu...");
+		fscanf(pf, " ");
+		fscanf(pf, " Bankada bulunan toplam para: %*lf");
 		fscanf(pf, " Gelen toplam para: %lf", &aBank.tGelen);
 		fscanf(pf, " Giden toplam para: %lf", &aBank.tGiden);
 		fscanf(pf, " Bankanin kari: %lf", &aBank.tKar);
@@ -324,7 +324,6 @@ void Guncelle(){
 }
 
 void AnaMenu(){
-	VeriAl();
 	int sorgu, kontrol;
 	char temp[120], c;
 	system("@cls||clear");
