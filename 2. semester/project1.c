@@ -373,9 +373,10 @@ void AnaMenu(){
 }
 
 void YeniMusteri(){
-	int sorgu, kontrol, is1, is2, i;
+	int sorgu, kontrol, is1, is2, i, t;
 	double dTemp;
 	char temp[120], s1[120]={}, s2[120]={}, c;
+	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n2-)\tTicari Musteri\n3-)\tAna Menu\n0-)\tCikis\nSecim: ");
 	do{
@@ -401,21 +402,25 @@ void YeniMusteri(){
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Ad Soyad: ");
+	printf("Ad Soyad (Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp, 5, 120);
 		kontrol=1;
+		t = strlen(temp);
 		for (i=0; i<(int)strlen(temp); i++){
 			if (!((*(temp+i) >= 'a' && *(temp+i) <= 'z') || (*(temp+i) >= 'A' && *(temp+i) <= 'Z') || *(temp+i) == '-')) kontrol=0;
 		}
+		if (t == 1 && *temp == '0') YeniMusteri();
 		if (kontrol != 1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
 	}while(kontrol != 1);
 	strcpy((aBank.musteri+aBank.mSayisi)->Ad, temp);
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Tc Numaranizi Giriniz: ");
+	printf("Tc Numaranizi Giriniz (Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp, 11, 11);
+		t = strlen(temp);
+		if (t == 1 && *temp == '0') YeniMusteri();
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (kontrol != 1 || *temp=='0'){
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
@@ -430,11 +435,15 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	do{
-		printf("Sifrenizi Giriniz (4 ile 8 karakter arasi): ");
+		printf("Sifrenizi Giriniz (min 4, max 8 hane. Iptal etmek icin 0 giriniz): ");
 		strAl(s1, 1, 30);
+		t = strlen(s1);
+		if (t == 1 && *s1 == '0') YeniMusteri();
 		sscanf(s1, "%d%c", &is1, &c);
 		printf("Tekrar Giriniz: ");
 		strAl(s2, 1, 30);
+		t = strlen(s2);
+		if (t == 1 && *s2 == '0') YeniMusteri();
 		kontrol = sscanf(s2, "%d%c", &is2, &c);
 		if (!(strcmp(s1, s2) == 0 && is1>=1000 && is1<=99999999 && kontrol == 1)){
 			system("@cls||clear");
@@ -488,7 +497,7 @@ void YeniMusteri(){
 }
 
 void MusteriIslem(int mS){
-	int sonuc, sorgu, kontrol, t, iTemp;
+	int sonuc, sorgu, kontrol, t, s, iTemp;
 	char temp[120], c;
 	double dTemp;
 	if (mS == -1){
@@ -514,15 +523,18 @@ void MusteriIslem(int mS){
 			}
 		}while(kontrol != 1);
 		mS=sonuc;
-		t=0;
+		s=0;
 		do{
 			system("@cls||clear");
 			printf(".............aBank.............\n");
-			if (t!=0) printf("Hatali sifre!\n");
-			printf("Sifrenizi Giriniz: ");
+			if (s!=0) printf("Hatali sifre!%d\n", t);
+			printf("Sifrenizi Giriniz (Iptal etmek icin 0 giriniz): ");
 			strAl(sifre, 4, 8);
-			t = strcmp((aBank.musteri+mS)->Sifre, sifrele(sifre));
-		}while(t!=0);
+			t = strlen(sifre);
+			if (t == 1 && *sifre == '0') AnaMenu();
+			s = strcmp((aBank.musteri+mS)->Sifre, sifrele(sifre));
+			
+		}while(s!=0);
 		aBank.girisYapan = mS;
 		AnaMenu();
 	}
