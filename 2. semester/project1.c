@@ -348,7 +348,6 @@ void AnaMenu(){
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
-	system("@cls||clear");
 	switch (sorgu){
 		case 0:{
 			printf("Cikis Basarili\n\n");
@@ -1277,8 +1276,6 @@ void hesapOzeti(int mS, int hS){
 	aralik = t2-t1;
 	int index[aralik+1];
 	
-	system("@cls||clear");
-	printf(".............aBank.............\n");
 	for (i=0; i<aralik+1; i++){
 		*(index+i) = -1;
 		(dekont+i)->islemSayisi = 0;
@@ -1299,6 +1296,8 @@ void hesapOzeti(int mS, int hS){
 			}
 		}
 	}
+	system("@cls||clear");
+	printf(".............aBank.............\n");
 	k=0;
 	for (i=0; i<aralik+1; i++){
 		if (((dekont+i)->islem)->Tutar != 0){
