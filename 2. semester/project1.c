@@ -641,12 +641,12 @@ void paraCek(int mS, int hS){
 		strAl(temp, 1, 10);
 		t = strlen(temp);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
-		sorgu = (int)dTemp;
+		sorgu = (int)(dTemp*100);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
-		if (!(dTemp>0 && kontrol == 1 && *temp != '0')){
+		if (!(dTemp>0 && kontrol == 1 && *temp !='0')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu%5 != 0){
+		}else if (sorgu%500 != 0){
 			printf("5 ve katlari sadece!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}else if (dTemp>(aBank.musteri+mS)->tBakiye){
@@ -738,12 +738,12 @@ void paraYatir(int mS, int hS){
 		strAl(temp, 1, 12);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		t = strlen(temp);
-		sorgu = (int)dTemp;
+		sorgu = (int)(dTemp*100);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
 		else if (!(dTemp>0 && dTemp<1000000 && kontrol == 1 && *temp != '0')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu%5 != 0){
+		}else if (sorgu%500 != 0){
 			printf("5 ve katlari sadece!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
@@ -1456,3 +1456,5 @@ double cekilenPara(int mS){
 	}
 	return limit;
 }
+
+//para cekme havale para yatırma fonksiyonlarını kontrol et
