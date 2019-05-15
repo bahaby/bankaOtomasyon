@@ -405,7 +405,7 @@ void YeniMusteri(){
 		j=0;
 		for (i=0; i<t; i++){
 			if (!((*(temp+i) >= 'a' && *(temp+i) <= 'z') || (*(temp+i) >= 'A' && *(temp+i) <= 'Z') || *(temp+i) == '-')) kontrol=0;
-			if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;
+			else if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;
 			if (*(temp+i) == '-') j++;
 		}
 		if (j == 0) kontrol=0;
