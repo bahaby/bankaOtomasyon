@@ -210,7 +210,7 @@ void VeriAl(){
 	if (pf != NULL){
 		fscanf(pf, " aBank gelir-gider raporu...");
 		fscanf(pf, " ");
-		fscanf(pf, " Bankada bulunan toplam para: %*lf");
+		fscanf(pf, " Bankada bulunan toplam para: %*f");
 		fscanf(pf, " Gelen toplam para: %lf", &aBank.tGelen);
 		fscanf(pf, " Giden toplam para: %lf", &aBank.tGiden);
 		fscanf(pf, " Bankanin kari: %lf", &aBank.tKar);
