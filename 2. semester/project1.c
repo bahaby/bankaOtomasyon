@@ -372,7 +372,7 @@ void AnaMenu(){
 }
 
 void YeniMusteri(){
-	int sorgu, kontrol, is1, is2, i, t;
+	int sorgu, kontrol, is1, is2, i, j, t;
 	double dTemp;
 	char temp[120], s1[120]={}, s2[120]={}, c;
 	system("@cls||clear");
@@ -402,9 +402,13 @@ void YeniMusteri(){
 		strAl(temp, 5, 120);
 		kontrol=1;
 		t = strlen(temp);
-		for (i=0; i<(int)strlen(temp); i++){
+		j=0;
+		for (i=0; i<t; i++){
 			if (!((*(temp+i) >= 'a' && *(temp+i) <= 'z') || (*(temp+i) >= 'A' && *(temp+i) <= 'Z') || *(temp+i) == '-')) kontrol=0;
+			if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;
+			if (*(temp+i) == '-') j++;
 		}
+		if (j == 0) kontrol=0;
 		if (t == 1 && *temp == '0') YeniMusteri();
 		if (kontrol != 1) printf("Hatali Giris!\nTekrar Deneyiniz: ");
 	}while(kontrol != 1);
@@ -1202,9 +1206,6 @@ void strAl(char str[120], int min, int max){
 		*(str+t-1) = 0;
 		t = strlen(str);
 		if (*(str+t-1) == '-') kontrol=0;
-		for (i=1; i<t && kontrol==1; i++){
-			if (*(str+i-1) == '-' && *(str+i) == '-') kontrol=0;
-		}
 		if (t==1 && *str == '0') break;
 		if (t>max || t<min || kontrol != 1){
 			printf("Hatali giris!\nTekrar deneyiniz: ");
