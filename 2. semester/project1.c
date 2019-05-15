@@ -1192,7 +1192,7 @@ int thKontrol(int mS, int hNo){
 }
 
 void strAl(char str[120], int min, int max){
-	int t, i, kontrol;
+	int t, kontrol;
 	char cTemp;
 	do{
 		kontrol=1;
