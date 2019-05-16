@@ -73,6 +73,8 @@ typedef struct{
 
 Banka aBank;
 Dekont dekont[MAX_DEKONT];
+
+char temp[120];
 //mS = stractaki müsteri indisi, hS = stracttaki hesap indisi
 void AnaMenu();//ana menü
 void YeniMusteri();//yeni müsteri oluşturup müsteriye 1 hesap ekler
@@ -108,8 +110,6 @@ int main(){
 
 void VeriAl(){
 	int i, j, mNo;
-	char temp[120];
-	aBank.mSayisi=0;
 	FILE *pf;
 	for (i=0; i<5; i++){
 		pf = fopen("bireyselMusteri.txt", "r");
@@ -325,7 +325,7 @@ void Guncelle(){
 
 void AnaMenu(){
 	int sorgu, kontrol;
-	char temp[120], c;
+	char c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	if (aBank.girisYapan == -1){
@@ -374,7 +374,7 @@ void AnaMenu(){
 void YeniMusteri(){
 	int sorgu, kontrol, is1, is2, i, j, t;
 	double dTemp;
-	char temp[120], s1[120]={}, s2[120]={}, c;
+	char s1[120]={}, s2[120]={}, c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("1-)\tBireysel Musteri\n2-)\tTicari Musteri\n0-)\tAna Menu\nSecim: ");
@@ -493,7 +493,7 @@ void YeniMusteri(){
 
 void MusteriIslem(int mS){
 	int sonuc, sorgu, kontrol, t, s, iTemp;
-	char temp[120], c;
+	char c;
 	double dTemp;
 	if (mS == -1){
 		char sifre[120];
@@ -582,7 +582,7 @@ void MusteriIslem(int mS){
 }
 
 void hesapIslem(int mS, int hS){
-	char temp[120], c;
+	char c;
 	int sorgu, kontrol;
 	double limit;
 	if (hS == -1) hS = hesapSec(mS, -1, 1);
@@ -631,7 +631,7 @@ void hesapIslem(int mS, int hS){
 }
 void paraCek(int mS, int hS){
 	int i, t, kontrol, sorgu;
-	char temp[120], c;
+	char c;
 	double dTemp, limit;
 	limit = (((aBank.musteri+mS)->mTuru == 1) ? 750 : 1500) - cekilenPara(mS);
 	system("@cls||clear");
@@ -729,7 +729,7 @@ void paraCek(int mS, int hS){
 }
 void paraYatir(int mS, int hS){
 	int kontrol, sorgu, t;
-	char temp[120], c;
+	char c;
 	double dTemp;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -778,7 +778,7 @@ void paraYatir(int mS, int hS){
 void havaleGonder(int mS, int hS){
 	double dTemp, kesinti;
 	int i, t, tHesapS, hhS, hmS, tHesapNo, sorgu, kontrol;
-	char temp[120], c;
+	char c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	if ((aBank.musteri+mS)->tHesapSayisi != 0){
@@ -963,7 +963,7 @@ void havaleGonder(int mS, int hS){
 }
 void hHesapKayit(int mS, int hS, int hNo){
 	int sorgu, kontrol, s=1, t;
-	char temp[120], c;
+	char c;
 	if (hNo == -1){
 		s=0;
 		system("@cls||clear");
@@ -1013,7 +1013,7 @@ void hHesapKayit(int mS, int hS, int hNo){
 }
 void hesapAc(int mS){
 	int sorgu, kontrol, hS = (aBank.musteri+mS)->hesapSayisi;
-	char temp[120], c;
+	char c;
 	((aBank.musteri+mS)->hesap+hS)->hesapNo = NoOlustur(2);
 	((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
 	((aBank.musteri+mS)->hesap+hS)->islemSayisi = 0;
@@ -1045,7 +1045,7 @@ void hesapAc(int mS){
 }
 void hesapSil(int mS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 	int i, n, sorgu, kontrol, shS;
-	char temp[120], c;
+	char c;
 	shS =  hesapSec(mS, -1, s);
 	n = (s==1) ? (aBank.musteri+mS)->hesapSayisi : (aBank.musteri+mS)->tHesapSayisi;
 	if (s==1 && ((aBank.musteri+mS)->hesap+shS)->bakiye!=0){
@@ -1102,7 +1102,7 @@ void hesapSil(int mS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 }
 int hesapSec(int mS, int hS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 	int i, t, sorgu, kontrol, hNo, n, tmS;
-	char temp[120], c;
+	char c;
 	if (s==1){
 		n = (aBank.musteri+mS)->hesapSayisi;
 		if (n==1) return 0;
@@ -1194,6 +1194,7 @@ void strAl(char str[120], int min, int max){
 	int t, kontrol;
 	char cTemp;
 	do{
+		temizle(str);
 		kontrol=1;
 		scanf("%s", str);
 		t = strlen(str);
@@ -1225,7 +1226,7 @@ void hesapOzeti(int mS, int hS){
 	struct tm tm = *localtime(&t);
 	int i, j, k, n, t1, t2, t3, iS, aralik, ihNo, imS, iA, iY, sorgu, kontrol;
 	double kesinti;
-	char c, temp[120];
+	char c;
 	iS = ((aBank.musteri+mS)->hesap+hS)->islemSayisi;
 	t1 = ((((aBank.musteri+mS)->hesap+hS)->islem)->tarih.Yil - 1900) * 12 + (((aBank.musteri+mS)->hesap+hS)->islem)->tarih.Ay;
 	t2 = tm.tm_year * 12 + tm.tm_mon+1 ;
@@ -1376,7 +1377,7 @@ void hesapOzeti(int mS, int hS){
 void bankaRapor(int mS){
 	FILE *pf;
 	int sorgu, kontrol;
-	char temp[120], c;
+	char c;
 	Guncelle();
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -1454,4 +1455,11 @@ double cekilenPara(int mS){
 		}
 	}
 	return limit;
+}
+
+void temizle(char dizi[]){
+	size_t i;
+	for (i=0; i<sizeof(dizi)/sizeof(dizi[0]); ++i) {
+		dizi[i] = 0;
+	}
 }
