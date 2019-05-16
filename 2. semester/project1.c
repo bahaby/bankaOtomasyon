@@ -643,7 +643,7 @@ void paraCek(int mS, int hS){
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		sorgu = (int)(dTemp*100);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
-		if (!(dTemp>0 && kontrol == 1 && *temp !='0')){
+		if (dTemp<=0 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}else if (sorgu%500 != 0){
@@ -740,7 +740,7 @@ void paraYatir(int mS, int hS){
 		t = strlen(temp);
 		sorgu = (int)(dTemp*100);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
-		else if (!(dTemp>0 && dTemp<1000000 && kontrol == 1 && *temp != '0')){
+		if (dTemp<=0 || dTemp>=1000000 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}else if (sorgu%500 != 0){
@@ -860,11 +860,10 @@ void havaleGonder(int mS, int hS){
 		t = strlen(temp);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
-		if (!(dTemp>0 && kontrol == 1 && *temp != '0')){
+		if (dTemp<=0 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}
-		else if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1){
+		}else if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1){
 			printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 			kontrol = 0;
 		}
@@ -945,7 +944,7 @@ void havaleGonder(int mS, int hS){
 		if(sorgu<0 || sorgu>2 || kontrol != 1) {
 			printf("Hatali Giris!\nTekrar Deneyiniz: ");
 			kontrol = 0;
-		}else if(thKontrol(mS, tHesapNo) != -1 && kontrol == 1 && sorgu == 2){
+		}else if(thKontrol(mS, tHesapNo) != -1 && kontrol == 1 && sorgu == 1){
 			printf("Bu hesap zaten ekli!\nTekrar Deneyiniz: ");
 			kontrol = 0;
 		}
@@ -1456,5 +1455,3 @@ double cekilenPara(int mS){
 	}
 	return limit;
 }
-
-//para cekme havale para yatırma fonksiyonlarını kontrol et
