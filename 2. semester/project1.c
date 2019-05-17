@@ -444,7 +444,7 @@ void YeniMusteri(){
 		t = strlen(s2);
 		if (t == 1 && *s2 == '0') YeniMusteri();
 		kontrol = sscanf(s2, "%d%c", &is2, &c);
-		if (!(strcmp(s1, s2) == 0 && is1>=1000 && is1<=99999999 && kontrol == 1)){
+		if (!(strcmp(s1, s2) == 0 && is1>=0 && is1<=99999999 && kontrol == 1)){
 			system("@cls||clear");
 			printf(".............aBank.............\n");
 			printf("Hatali Giris!\n");
@@ -471,7 +471,7 @@ void YeniMusteri(){
 	printf("Tc Numaraniz: %.lf\n", (aBank.musteri+aBank.mSayisi-1)->tcNo);
 	printf("Musteri Numaraniz: %d\n", (aBank.musteri+aBank.mSayisi-1)->musteriNo);
 	printf("Hesap Numaraniz: %d\n", ((aBank.musteri+aBank.mSayisi-1)->hesap)->hesapNo);
-	printf("Sifreniz: %d\n\n", is1);
+	printf("Sifreniz: %s\n\n", s2);
 	printf("1-)\tMusteri Islemleri\n0-)\tAna Menu\nSecim: ");
 	do{
 		strAl(temp, 1, 1);
@@ -1150,10 +1150,10 @@ int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
 	return No;
 }
 char *sifrele(char sifre[120]){
-	int i, temp[8]={}, len = strlen(sifre);
+	int i, iTemp[8]={}, len = strlen(sifre);
 	for (i=0; i<8; i++){
-		*(temp+i) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
-		*(sifre+i) = *(temp+i)%93 + 33;
+		*(iTemp+i) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
+		*(sifre+i) = *(iTemp+i)%93 + 33;
 	}
 	*(sifre+8) = '\0';
 	return sifre;
