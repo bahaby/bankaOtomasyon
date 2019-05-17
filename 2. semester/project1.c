@@ -1191,10 +1191,12 @@ int thKontrol(int mS, int hNo){
 }
 
 void strAl(char str[120], int min, int max){
-	int t, kontrol;
+	int t, i, kontrol;
 	char cTemp;
 	do{
-		temizle(str);
+		for (i=0; i<120; i++) {
+			str[i] = '\0';
+		}
 		kontrol=1;
 		scanf("%s", str);
 		t = strlen(str);
@@ -1455,11 +1457,4 @@ double cekilenPara(int mS){
 		}
 	}
 	return limit;
-}
-
-void temizle(char dizi[]){
-	size_t i;
-	for (i=0; i<sizeof(dizi)/sizeof(dizi[0]); ++i) {
-		dizi[i] = 0;
-	}
 }
