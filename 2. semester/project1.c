@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <locale.h>
 
 #define MAX_ISLEM 500
 #define MAX_HESAP 100
@@ -104,7 +103,6 @@ double cekilenPara(int mS);//müşterinin günlük çektiği parayı hesaplar ve
 void isimDuzelt(char ad[120]);//isimlerdeki '-' leri boşluğa çevirir
 
 int main(){
-	setlocale(LC_ALL, "Turkish");
 	VeriAl();
 	aBank.girisYapan = -1;
 	AnaMenu();
