@@ -540,7 +540,7 @@ void MusteriIslem(int mS){
 	printf("Hosgeldin, %s\n", temp);
 	printf("Musteri Numaraniz: %d\n", (aBank.musteri+mS)->musteriNo);
 	printf("Toplam Bakiyeniz: %.2lf\n\n", (aBank.musteri+mS)->tBakiye);
-	printf("1-)\tHesap Sec\n2-)\tHesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n");
+	printf("1-)\tHesap islemleri\n2-)\tYeni hesap Ac\n3-)\tHesap Sil\n4-)\tHavale Hesabi Kaydet\n5-)\tHavale Hesabi Sil\n");
 	printf("6-)\tRapor Al\n0-)\tAna Menu\nSecim: ");
 	do{
 		strAl(temp, 1, 1);
@@ -641,7 +641,7 @@ void paraCek(int mS, int hS){
 		strAl(temp, 1, 10);
 		t = strlen(temp);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
-		sorgu = (int)(dTemp*100);
+		if (kontrol == 1) sorgu = (int)(dTemp*100);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
 		if (dTemp<=0 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
@@ -738,7 +738,7 @@ void paraYatir(int mS, int hS){
 		strAl(temp, 1, 12);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		t = strlen(temp);
-		sorgu = (int)(dTemp*100);
+		if (kontrol == 1) sorgu = (int)(dTemp*100);
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
 		if (dTemp<=0 || dTemp>=1000000 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
