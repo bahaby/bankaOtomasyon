@@ -375,7 +375,9 @@ void YeniMusteri(){
 	int sorgu, kontrol, is1, is2, i, j, k, t;
 	double dTemp;
 	char s1[120]={}, s2[120]={}, c;
-	char alfabe[47] = "abcdefghijklmnoprstuvyzABCDEFGHIJKLMNOPRSTUVYZ-";
+	char alfabe[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-";
+	//char alfabe[] = "abcdefghijklmnoprstuvyzABCDEFGHIJKLMNOPRSTUVYZ-";
+	int lenA = strlen(alfabe);
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -399,14 +401,14 @@ void YeniMusteri(){
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Ad Soyad (Iptal etmek icin 0 giriniz): ");
+	printf("Ad soyad (Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp, 5, 120);
 		kontrol=1;
 		t = strlen(temp);
 		k=0;
         for (i=0; i<t && kontrol==1; i++){
-            for (j=0; j<47; j++){
+            for (j=0; j<lenA; j++){
                 if(*(temp+i) == *(alfabe+j)) {
                     kontrol = 1;
 					break;
@@ -415,19 +417,19 @@ void YeniMusteri(){
                     continue;
                 }
             }
-			for (j=0; j<23; j++){
-				if (*(temp+i) == *(alfabe+j+23)) *(temp+i) = *(alfabe+j);
+			for (j=0; j<lenA/2; j++){
+				if (*(temp+i) == *(alfabe+j+lenA/2)) *(temp+i) = *(alfabe+j);
 			}
 			if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;
 			if (*(temp+i) == '-') k++;
         }
 		for (i=0; i<t && kontrol == 1; i++){
-			for (j=0; j<23; j++){
+			for (j=0; j<lenA/2; j++){
 				if (i==0 && *(temp+i) == *(alfabe+j)){
-					*(temp+i) = *(alfabe+j+23);
+					*(temp+i) = *(alfabe+j+lenA/2);
 					continue;
 				}else if (*(temp+i) == '-' && *(temp+i+1) == *(alfabe+j)){
-					*(temp+i+1) = *(alfabe+j+23);
+					*(temp+i+1) = *(alfabe+j+lenA/2);
 					i++;
 				}
 			}
