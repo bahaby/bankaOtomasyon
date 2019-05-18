@@ -108,7 +108,7 @@ int main(){
 	AnaMenu();
 }
 
-void VeriAl(){
+void VeriAl(){//dosyaya yazdırılan verileri struct yapısına yükler
 	int i, j, mNo;//mNo -> Dosyadaki musteri sırası
 	FILE *pf;
 	for (i=0; i<5; i++){//okuma başarısız olma ihtimali için 5 kere deneme
@@ -225,7 +225,7 @@ void VeriAl(){
 	}
 }
 
-void Guncelle(){
+void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 	int i, j, k, b=0, t=0;
 	FILE *pf1, *pf2;
 	for (i=0; i<aBank.mSayisi; i++){
@@ -407,27 +407,23 @@ void YeniMusteri(){//yeni müşteri kaydı
 		kontrol=1;//döngüden çıkılsınmı çıkılmasınmı kontrolü için
 		t = strlen(temp);
 		k=0;//kullanılan (-) boşluk sayısnın atanacağı değişken
-        for (i=0; i<t && kontrol==1; i++){//alfabe kontrolü ve bütün harfleri küçültme için
-            for (j=0; j<lenA; j++){//alfabe kontrolü
-                if(*(temp+i) == *(alfabe+j)) {
-                    kontrol = 1;
+		for (i=0; i<t && kontrol==1; i++){//alfabe kontrolü ve bütün harfleri küçültme için
+			for (j=0; j<lenA; j++){//alfabe kontrolü
+				if(*(temp+i) == *(alfabe+j)) {
+					kontrol=1;
 					break;
-                }else {
-                    kontrol = 0;
-                    continue;
-                }
-            }
+				}else kontrol=0;
+			}
 			for (j=0; j<lenA/2; j++){//bütün büyük harfleri küçültme
 				if (*(temp+i) == *(alfabe+j+lenA/2)) *(temp+i) = *(alfabe+j);
 			}
 			if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;//2 boşluk yan yana varsa hata versin diye
 			if (*(temp+i) == '-') k++;//boşluk hiç yoksa hata versin diye
-        }
+		}
 		for (i=0; i<t && kontrol == 1; i++){//kullanıcı adının ilk harflerini büyütmek için
 			for (j=0; j<lenA/2; j++){
 				if (i==0 && *(temp+i) == *(alfabe+j)){//ilk harf için
 					*(temp+i) = *(alfabe+j+lenA/2);
-					continue;
 				}else if (*(temp+i) == '-' && *(temp+i+1) == *(alfabe+j)){//boşluk sonrası harfler için
 					*(temp+i+1) = *(alfabe+j+lenA/2);
 					i++;
@@ -1436,7 +1432,7 @@ void bankaRapor(int mS){//gelir gider raporu goruntülemek içim
 
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){//iT -> işlem türü, iH -> işlemin yapıldıgı hesapno, iTutar ->işlem tutarı
 	int iS, mTuru;
-	double kesinti;
+	double kesinti = 0;
 	iS = ((aBank.musteri+mS)->hesap+hS)->islemSayisi;
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
@@ -1457,7 +1453,7 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){//iT -> işlem t�
 		aBank.tGiden -= iTutar;
 	}else if (iT == 2){
 		aBank.tGelen += iTutar;
-	}else if (iT == 3 && mTuru == 1){
+	}else if (iT == 3 && mTuru == 1 && iTutar<0){
 		kesinti = ((int)(-iTutar*2)) / 100.0;
 		aBank.tKar += kesinti;
 	}
