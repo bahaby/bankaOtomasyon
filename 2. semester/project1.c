@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 
-#define MAX_ISLEM 500
+#define MAX_ISLEM 500//dizi büyüklüklerinikolay değiştirebilmek için
 #define MAX_HESAP 100
 #define MAX_MUSTERI 500
 #define MAX_DEKONT 500
@@ -32,7 +32,7 @@ typedef struct{
 
 typedef struct{
 	int hesapNo;
-}transferHesap;//test
+}transferHesap;//havale hesabları için oluşturulan struct
 
 typedef struct{
 
@@ -43,7 +43,7 @@ typedef struct{
 	char Sifre[120];
 	double tcNo;
 	int hesapSayisi;
-	int tHesapSayisi;
+	int tHesapSayisi;//havale hesabı sayısı
 	int musteriNo;
 	int mTuru;//1->bireysel || 2->ticari
 }Musteri;
@@ -52,9 +52,9 @@ typedef struct{
 	Musteri musteri[MAX_MUSTERI];
 	int mSayisi;
 	int girisYapan;
-	double tGelen;
-	double tGiden;
-	double tKar;
+	double tGelen;//bankaya giren toplam para
+	double tGiden;//bankadan çıkan toplam para
+	double tKar;//bankanın toplam karı
 }Banka;
 
 typedef struct{
@@ -69,7 +69,7 @@ typedef struct{
 typedef struct{
 	dIslem islem[MAX_ISLEM];
 	int islemSayisi;
-}Dekont;
+}Dekont;//yapılan işlemlerin aylık olarak düzenlenip saklandığı struct yapısı(dekont[0] son işlemin yapıldığı ay)
 
 Banka aBank;
 Dekont dekont[MAX_DEKONT];
@@ -109,15 +109,15 @@ int main(){
 }
 
 void VeriAl(){
-	int i, j, mNo;
+	int i, j, mNo;//mNo -> Dosyadaki musteri sırası
 	FILE *pf;
-	for (i=0; i<5; i++){
+	for (i=0; i<5; i++){//okuma başarısız olma ihtimali için 5 kere deneme
 		pf = fopen("bireyselMusteri.txt", "r");
 		if(pf!=NULL) break;
 	}
 	if (pf!=NULL){
 		fseek(pf, 0, SEEK_END);
-		if (ftell(pf) != 0){
+		if (ftell(pf) != 0){//dosya boşmu değilmi kontrolü
 			fseek(pf, 0, SEEK_SET);
 			while(!feof(pf)){
 				fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
@@ -157,13 +157,13 @@ void VeriAl(){
 		}
 		fclose(pf);
 	}
-	for (i=0; i<5; i++){
+	for (i=0; i<5; i++){//okuma başarısız olma ihtimali için 5 kere deneme
 		pf = fopen("ticariMusteri.txt", "r");
 		if(pf!=NULL) break;
 	}
 	if (pf!=NULL){
 		fseek(pf, 0, SEEK_END);
-		if (ftell(pf) != 0){
+		if (ftell(pf) != 0){//dosya boşmu değilmi kontrolü
 			fseek(pf, 0, SEEK_SET);
 			while(!feof(pf)){
 				fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
@@ -203,7 +203,7 @@ void VeriAl(){
 		}
 		fclose(pf);
 	}
-	for (i=0; i<5; i++){
+	for (i=0; i<5; i++){//okuma başarısız olma ihtimali için 5 kere deneme
 		pf = fopen("rapor.txt", "r");
 		if(pf!=NULL) break;
 	}
@@ -217,7 +217,7 @@ void VeriAl(){
 		fclose(pf);
 	}
 
-	for (i=0; i<aBank.mSayisi; i++){
+	for (i=0; i<aBank.mSayisi; i++){//müşterinin bütün hesaplarındaki paraları toplayıp struct elemanına atar
 		(aBank.musteri+i)->tBakiye = 0;
 		for (j=0; j<(aBank.musteri+i)->hesapSayisi; j++){
 			(aBank.musteri+i)->tBakiye += ((aBank.musteri+i)->hesap+j)->bakiye;
@@ -230,12 +230,12 @@ void Guncelle(){
 	FILE *pf1, *pf2;
 	for (i=0; i<aBank.mSayisi; i++){
 		if ((aBank.musteri+i)->mTuru == 1){
-			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));
+			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
 			if ((pf1 = fopen("bireyselMusteri.txt", "a")) == NULL){
 				printf("Dosya acma hatasi!\n");
 				exit(1);
 			}
-			if (b!=0) fprintf(pf1, "\n");
+			if (b!=0) fprintf(pf1, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf1, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf1, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
@@ -265,12 +265,12 @@ void Guncelle(){
 			fclose(pf1);
 			b=1;
 		}else if ((aBank.musteri+i)->mTuru == 2){
-			if (t==0) fclose(fopen("ticariMusteri.txt", "w"));
+			if (t==0) fclose(fopen("ticariMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
 			if ((pf2 = fopen("ticariMusteri.txt", "a")) == NULL){
 				printf("Dosya acma hatasi!\n");
 				exit(1);
 			}
-			if (t!=0) fprintf(pf2, "\n");
+			if (t!=0) fprintf(pf2, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf2, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf2, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
@@ -315,7 +315,7 @@ void Guncelle(){
 	fprintf(pf1, "Bankanin kari:               %.2lf", aBank.tKar);
 	fclose(pf1);
 
-	for (i=0; i<aBank.mSayisi; i++){
+	for (i=0; i<aBank.mSayisi; i++){//müşterinin bütün hesaplarındaki paraları toplayıp struct elemanına atar
 		(aBank.musteri+i)->tBakiye = 0;
 		for (j=0; j<(aBank.musteri+i)->hesapSayisi; j++){
 			(aBank.musteri+i)->tBakiye += ((aBank.musteri+i)->hesap+j)->bakiye;
@@ -328,10 +328,10 @@ void AnaMenu(){
 	char c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	if (aBank.girisYapan == -1){
+	if (aBank.girisYapan == -1){//giriş yapan yoksa
 		printf("1-)\tYeni musteri kaydi\n");
 		printf("2-)\tMusteri girisi\n");
-	}else{
+	}else{//giriş yapan varsa
 		printf("1-)\tMusteri islemleri\n");
 		printf("2-)\tMusteri cikisi\n");
 	}
@@ -371,10 +371,10 @@ void AnaMenu(){
 	}
 }
 
-void YeniMusteri(){
+void YeniMusteri(){//yeni müşteri kaydı
 	int sorgu, kontrol, is1, is2, i, j, k, t;
 	double dTemp;
-	char s1[120]={}, s2[120]={}, c;
+	char s1[120]={}, s2[120]={}, c;//s1 s2 girilen şifrelerin atandığı değişkenler
 	char alfabe[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-";
 	//char alfabe[] = "abcdefghijklmnoprstuvyzABCDEFGHIJKLMNOPRSTUVYZ-";
 	int lenA = strlen(alfabe);
@@ -404,11 +404,11 @@ void YeniMusteri(){
 	printf("Ad soyad (Iptal etmek icin 0 giriniz): ");
 	do{
 		strAl(temp, 5, 120);
-		kontrol=1;
+		kontrol=1;//döngüden çıkılsınmı çıkılmasınmı kontrolü için
 		t = strlen(temp);
-		k=0;
-        for (i=0; i<t && kontrol==1; i++){
-            for (j=0; j<lenA; j++){
+		k=0;//kullanılan (-) boşluk sayısnın atanacağı değişken
+        for (i=0; i<t && kontrol==1; i++){//alfabe kontrolü ve bütün harfleri küçültme için
+            for (j=0; j<lenA; j++){//alfabe kontrolü
                 if(*(temp+i) == *(alfabe+j)) {
                     kontrol = 1;
 					break;
@@ -417,25 +417,25 @@ void YeniMusteri(){
                     continue;
                 }
             }
-			for (j=0; j<lenA/2; j++){
+			for (j=0; j<lenA/2; j++){//bütün büyük harfleri küçültme
 				if (*(temp+i) == *(alfabe+j+lenA/2)) *(temp+i) = *(alfabe+j);
 			}
-			if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;
-			if (*(temp+i) == '-') k++;
+			if (i!=0 && *(temp+i-1) == '-' && *(temp+i) == '-') kontrol=0;//2 boşluk yan yana varsa hata versin diye
+			if (*(temp+i) == '-') k++;//boşluk hiç yoksa hata versin diye
         }
-		for (i=0; i<t && kontrol == 1; i++){
+		for (i=0; i<t && kontrol == 1; i++){//kullanıcı adının ilk harflerini büyütmek için
 			for (j=0; j<lenA/2; j++){
-				if (i==0 && *(temp+i) == *(alfabe+j)){
+				if (i==0 && *(temp+i) == *(alfabe+j)){//ilk harf için
 					*(temp+i) = *(alfabe+j+lenA/2);
 					continue;
-				}else if (*(temp+i) == '-' && *(temp+i+1) == *(alfabe+j)){
+				}else if (*(temp+i) == '-' && *(temp+i+1) == *(alfabe+j)){//boşluk sonrası harfler için
 					*(temp+i+1) = *(alfabe+j+lenA/2);
 					i++;
 				}
 			}
 		}
-		if (k == 0) kontrol=0;
-		if (t == 1 && *temp == '0') YeniMusteri();
+		if (k == 0) kontrol=0;//boşluk yoksa hata
+		if (t == 1 && *temp == '0') YeniMusteri();//işlem iptali için
 		if (kontrol != 1) printf("Hatali giris!\nTekrar deneyiniz: ");
 	}while(kontrol != 1);
 	strcpy((aBank.musteri+aBank.mSayisi)->Ad, temp);
@@ -445,12 +445,12 @@ void YeniMusteri(){
 	do{
 		strAl(temp, 11, 11);
 		t = strlen(temp);
-		if (t == 1 && *temp == '0') YeniMusteri();
-		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
-		if (kontrol != 1 || *temp=='0'){
+		if (t == 1 && *temp == '0') YeniMusteri();//işlem iptali için
+		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);//doğru input alabilmek için
+		if (kontrol != 1){
 			printf("Hatali giris!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (tcNoKontrol(dTemp) != -1){
+		}else if (tcNoKontrol(dTemp) != -1){//Tc no kayıtlımı kontrolü
 			printf("Bu tc numarasi kayitli!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
@@ -470,19 +470,19 @@ void YeniMusteri(){
 		t = strlen(s2);
 		if (t == 1 && *s2 == '0') YeniMusteri();
 		kontrol = sscanf(s2, "%d%c", &is2, &c);
-		if (!(strcmp(s1, s2) == 0 && is1>=0 && is1<=99999999 && kontrol == 1)){
+		if (!(strcmp(s1, s2) == 0 && is1>=0 && is1<=99999999 && kontrol == 1)){//şifreler aynımı kontrolü
 			system("@cls||clear");
 			printf(".............aBank.............\n");
 			printf("Hatali giris!\n");
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
-	strcpy((aBank.musteri+aBank.mSayisi)->Sifre, sifrele(s1));
+	strcpy((aBank.musteri+aBank.mSayisi)->Sifre, sifrele(s1));//kullanıcı şifresini şifreleyerek structa kaydeder
 
 	(aBank.musteri+aBank.mSayisi)->hesapSayisi = 1;
 	(aBank.musteri+aBank.mSayisi)->tHesapSayisi = 0;
-	(aBank.musteri+aBank.mSayisi)->musteriNo = NoOlustur(1);
-	((aBank.musteri+aBank.mSayisi)->hesap)->hesapNo = NoOlustur(2);
+	(aBank.musteri+aBank.mSayisi)->musteriNo = NoOlustur(1);//9 habeli rasgele rakam oluşturur
+	((aBank.musteri+aBank.mSayisi)->hesap)->hesapNo = NoOlustur(2);//7 haneli rasgele rakam oluşturur (ilk hesap)
 	((aBank.musteri+aBank.mSayisi)->hesap)->bakiye = 0;
 	((aBank.musteri+aBank.mSayisi)->hesap)->islemSayisi = 0;
 	aBank.girisYapan = aBank.mSayisi;
@@ -492,7 +492,7 @@ void YeniMusteri(){
 	system("@cls||clear");
 	printf(".............aBank.............\nHesabiniz kuruldu...\n\n");
 	strcpy(temp, (aBank.musteri+aBank.mSayisi-1)->Ad);
-	isimDuzelt(temp);
+	isimDuzelt(temp);//ekrana yazdırma işlemi için (-) leri boşluğa çevirir
 	printf("Adiniz: %s\n", temp);
 	printf("Tc numaraniz: %.lf\n", (aBank.musteri+aBank.mSayisi-1)->tcNo);
 	printf("Musteri numaraniz: %d\n", (aBank.musteri+aBank.mSayisi-1)->musteriNo);
@@ -517,11 +517,11 @@ void YeniMusteri(){
 	}
 }
 
-void MusteriIslem(int mS){
+void MusteriIslem(int mS){//structtaki indisi mS olan müşteri işlemleri için
 	int sonuc, sorgu, kontrol, t, s, iTemp;
 	char c;
 	double dTemp;
-	if (mS == -1){
+	if (mS == -1){// mS -1 ise kulllanıcı girişi yapılır
 		char sifre[120];
 		system("@cls||clear");
 		printf(".............aBank.............\n");
@@ -531,10 +531,10 @@ void MusteriIslem(int mS){
 			t = strlen(temp);
 			if(t==1 && *temp == '0'){
 				AnaMenu();
-			}else if(t==9){
+			}else if(t==9){//müşteri no girildi ise
 				kontrol = sscanf(temp, "%d%c", &iTemp, &c);
 				sonuc = mNoKontrol(iTemp);
-			}else if(t==11){
+			}else if(t==11){//tc no girildi ise
 				kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 				sonuc = tcNoKontrol(dTemp);
 			}else kontrol = 0;
@@ -543,8 +543,8 @@ void MusteriIslem(int mS){
 				kontrol = 0;
 			}
 		}while(kontrol != 1);
-		mS=sonuc;
-		s=0;
+		mS=sonuc;//giriş yapan müşterinin structtaki indisi
+		s=0;//şifre kontolunde ilk başta hata vermesin diye
 		do{
 			system("@cls||clear");
 			printf(".............aBank.............\n");
@@ -574,10 +574,10 @@ void MusteriIslem(int mS){
 		if(sorgu<0 || sorgu>6 || kontrol != 1){
 			printf("Hatali giris!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu == 3 && (aBank.musteri+mS)->hesapSayisi == 1){
+		}else if (sorgu == 3 && (aBank.musteri+mS)->hesapSayisi == 1){//1 hesap kaldı ise hata 
 			printf("Son hesabinizi silemezsiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if(sorgu == 5 && (aBank.musteri+mS)->tHesapSayisi == 0){
+		}else if(sorgu == 5 && (aBank.musteri+mS)->tHesapSayisi == 0){//kayıtlı hesap yoksa hata
 			printf("Kayitli hesabiniz kalmamistir!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
@@ -607,29 +607,29 @@ void MusteriIslem(int mS){
 	}
 }
 
-void hesapIslem(int mS, int hS){
+void hesapIslem(int mS, int hS){//mS indisli müşterinin hS indisli hesap işlemleri
 	char c;
 	int sorgu, kontrol;
 	double limit;
-	if (hS == -1) hS = hesapSec(mS, -1, 1);
+	if (hS == -1) hS = hesapSec(mS, -1, 1);//hS -1 ise hesapno seçimi ekranı gelir ve seçilen hesabın indisini hS ye atanır
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Hesabinizdaki bakiyeniz: %.2lf TL'dir.\n\n", ((aBank.musteri+mS)->hesap+hS)->bakiye);
 	printf("1-)\tPara cekme\n2-)\tPara yatirma\n3-)\tHavale\n4-)\tHesap ozeti\n5-)\tGeri don\n0-)\tAna menu\nSecim: ");
-	limit = (((aBank.musteri+mS)->mTuru == 1) ? 750 : 1500) - cekilenPara(mS);
+	limit = (((aBank.musteri+mS)->mTuru == 1) ? 750 : 1500) - cekilenPara(mS);//müşterinin kalan günlük limit hesabı
 	do{
 		strAl(temp, 1, 1);
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 		if(sorgu<0 || sorgu>5 ||kontrol != 1){
 			printf("Hatali giris!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if ((sorgu == 1 || sorgu == 3) && (aBank.musteri+mS)->tBakiye == 0){
+		}else if ((sorgu == 1 || sorgu == 3) && (aBank.musteri+mS)->tBakiye == 0){//müşterinin parası yoksa hata
 			printf("Bu islem icin hesaplarinizda yeterli para yok!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu == 1 && limit == 0){
+		}else if (sorgu == 1 && limit == 0){//günlük limit yetersiz ise hata
 			printf("Gunluk para cekme limitinize ulastiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu == 4 && ((aBank.musteri+mS)->hesap+hS)->islemSayisi==0){
+		}else if (sorgu == 4 && ((aBank.musteri+mS)->hesap+hS)->islemSayisi==0){//henüz işlem yapılmadı ise hata
 			printf("Hesabinizda herhangi bir islem yapilmadi henuz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
@@ -655,7 +655,7 @@ void hesapIslem(int mS, int hS){
 		}break;
 	}
 }
-void paraCek(int mS, int hS){
+void paraCek(int mS, int hS){//mS indisli müşterinin hS indisli hesabından para çekme işlemi
 	int i, t, kontrol, sorgu;
 	char c;
 	double dTemp, limit;
@@ -667,24 +667,24 @@ void paraCek(int mS, int hS){
 		strAl(temp, 1, 10);
 		t = strlen(temp);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
-		if (kontrol == 1) sorgu = (int)(dTemp*100);
+		if (kontrol == 1) sorgu = (int)(dTemp*100);//küsürat sorunu için (5 ve katları)
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
-		if (dTemp<=0 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
+		if (dTemp<=0 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){//. ile başlıyor ise veya 0 dan sonra . gelmiyor ise hata
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu%500 != 0){
+		}else if (sorgu%500 != 0){//5 ve katları değilse hata
 			printf("5 ve katlari sadece!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (dTemp>(aBank.musteri+mS)->tBakiye){
+		}else if (dTemp>(aBank.musteri+mS)->tBakiye){//müşterinin yeterli parası yoksa hata
 			printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 			kontrol = 0;
-		}else if (dTemp>limit){
+		}else if (dTemp>limit){//müşterinin yeterli limiti yoksa hata
 			printf("Para cekme limitiniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", limit);
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
-	dTemp = ((int)(dTemp*100)) / 100.0;
-	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+	dTemp = ((int)(dTemp*100)) / 100.0;//küsüratın 2. hanesinden sonrasını silmek için
+	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){//hesapta yeterli para varsa bu sorgu
 		((aBank.musteri+mS)->hesap+hS)->bakiye -= dTemp;
 		islemKaydi(mS, hS, 1, ((aBank.musteri+mS)->hesap+hS)->hesapNo, -dTemp);
 		system("@cls||clear");
@@ -692,7 +692,7 @@ void paraCek(int mS, int hS){
 		printf("Islem basarili...\n\n");
 		printf("%d Nolu hesabinizdan %.2lf TL kesildi\n\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, dTemp);
 		dTemp = 0;
-	}else{
+	}else{//hesapta yeterli para yoksa..
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Hesap bakiyeniz yetersiz!\n");
@@ -705,25 +705,25 @@ void paraCek(int mS, int hS){
 				kontrol = 0;
 			}
 		}while(kontrol != 1);
-		if (sorgu == 2) hesapIslem(mS, hS);
-		else{
+		if (sorgu == 2) hesapIslem(mS, hS);//işlem iptali için
+		else{//işlem iptal edilmedi ise
 			system("@cls||clear");
 			printf(".............aBank.............\n");
 			printf("Islem basarili...\n\n");
-			if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+			if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){//işlemin yapıldığı hesaptaki bütün para çekilir
 				dTemp -= ((aBank.musteri+mS)->hesap+hS)->bakiye;
 				islemKaydi(mS, hS, 1, ((aBank.musteri+mS)->hesap+hS)->hesapNo, -((aBank.musteri+mS)->hesap+hS)->bakiye);
 				printf("%d Nolu hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye);
 				((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
 			}
-			for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){
-				if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){
-					if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+			for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){//diğer hesaplarda işlem yapılır yeterli para kesilene kadar
+				if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){//bakiye 0 ise işlem yapmasın diye
+					if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){//kesilecek para hesaptaki paradan az ise
 						((aBank.musteri+mS)->hesap+i)->bakiye -= dTemp;
 						islemKaydi(mS, i, 1, ((aBank.musteri+mS)->hesap+i)->hesapNo, -dTemp);
 						printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp);
 						dTemp = 0;
-					}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+					}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){//kesilecek para hesaptaki paradan fazla ise
 						dTemp -= ((aBank.musteri+mS)->hesap+i)->bakiye;
 						islemKaydi(mS, i, 1, ((aBank.musteri+mS)->hesap+i)->hesapNo, -((aBank.musteri+mS)->hesap+i)->bakiye);
 						printf("%d Nolu ek hesabinizdan %.2lf TL kesildi\n", ((aBank.musteri+mS)->hesap+i)->hesapNo, ((aBank.musteri+mS)->hesap+i)->bakiye);
@@ -753,7 +753,7 @@ void paraCek(int mS, int hS){
 		}break;
 	}
 }
-void paraYatir(int mS, int hS){
+void paraYatir(int mS, int hS){//mS indisli müşterinin hS indisli hesabına para yatırma işlemi
 	int kontrol, sorgu, t;
 	char c;
 	double dTemp;
@@ -764,12 +764,12 @@ void paraYatir(int mS, int hS){
 		strAl(temp, 1, 12);
 		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);
 		t = strlen(temp);
-		if (kontrol == 1) sorgu = (int)(dTemp*100);
+		if (kontrol == 1) sorgu = (int)(dTemp*100);//küsürat sorunu için (5tl katı)
 		if (dTemp == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
-		if (dTemp<=0 || dTemp>=1000000 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
+		if (dTemp<=0 || dTemp>=1000000 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){//. ve 0. kontolü
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (sorgu%500 != 0){
+		}else if (sorgu%500 != 0){//5tl katı kontrolü
 			printf("5 ve katlari sadece!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
@@ -801,13 +801,13 @@ void paraYatir(int mS, int hS){
 		}break;
 	}
 }
-void havaleGonder(int mS, int hS){
+void havaleGonder(int mS, int hS){//mS indisli müşterinin hS indisli hesabının havale işlemi
 	double dTemp, kesinti;
 	int i, t, tHesapS, hhS, hmS, tHesapNo, sorgu, kontrol;
 	char c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	if ((aBank.musteri+mS)->tHesapSayisi != 0){
+	if ((aBank.musteri+mS)->tHesapSayisi != 0){//kayıtlı havale hesabı varsa 
 		printf("1-)\tKayitli havale hesabina gonder\n2-)\tHesap no girerek gonder\nSecim: ");
 		do{
 			strAl(temp, 1, 1);
@@ -819,8 +819,8 @@ void havaleGonder(int mS, int hS){
 		}while(kontrol != 1);
 		switch (sorgu){
 			case 1:{
-				tHesapS = hesapSec(mS, hS, 2);
-				tHesapNo = ((aBank.musteri+mS)->tHesap+tHesapS)->hesapNo;
+				tHesapS = hesapSec(mS, hS, 2);//kayıtlı havale hesapları arasından seçim yaptırılır ve seçilen hesabın indisi tHesapS ye atanır
+				tHesapNo = ((aBank.musteri+mS)->tHesap+tHesapS)->hesapNo;//indisten hesap no elde edilir
 				if (tHesapNo == ((aBank.musteri+mS)->hesap+hS)->hesapNo){
 					system("@cls||clear");
 					printf(".............aBank.............\n");
@@ -875,8 +875,8 @@ void havaleGonder(int mS, int hS){
 		tHesapNo = sorgu;
 	}
 
-	hhS = hNoKontrol(tHesapNo, 2);
-	hmS = hNoKontrol(tHesapNo, 1);
+	hhS = hNoKontrol(tHesapNo, 2);//havalenin yapılacağı hesabın indisi
+	hmS = hNoKontrol(tHesapNo, 1);//havalenin yapılacağı hesabın sahibinin müşteri indisi
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -889,13 +889,13 @@ void havaleGonder(int mS, int hS){
 		if (dTemp<=0 || kontrol != 1 || *temp == '.' || (*temp == '0' && *(temp+1) != '.')){
 			printf("Hatali giris yaptiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1){
+		}else if (dTemp>(aBank.musteri+mS)->tBakiye && kontrol == 1){//müşterinin yeterli parası yoksa hata
 			printf("Toplam bakiyeniz %.2lf TL'dir!\nFarkli bir miktar giriniz: ", (aBank.musteri+mS)->tBakiye);
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
 	dTemp = ((int)(dTemp*100)) / 100.0;
-	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+	if (dTemp<=((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){//hesapta yeterli para varsa bu sorgu
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Islem basarili...\n\n");
@@ -907,7 +907,7 @@ void havaleGonder(int mS, int hS){
 		((aBank.musteri+hmS)->hesap+hhS)->bakiye += (dTemp - kesinti);
 		islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+hS)->hesapNo, dTemp - kesinti);
 		dTemp = 0;
-	}else{
+	}else{//hesapta yeterli para yoksa..
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Hesap bakiyeniz yetersiz!\n");
@@ -921,11 +921,11 @@ void havaleGonder(int mS, int hS){
 			}
 		}while(kontrol != 1);
 		if (sorgu == 2) hesapIslem(mS, hS);
-		else{
+		else{//işlem iptal edilmedi ise
 			system("@cls||clear");
 			printf(".............aBank.............\n");
 			printf("Islem basarili...\n\n");
-			if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){
+			if (dTemp>((aBank.musteri+mS)->hesap+hS)->bakiye && ((aBank.musteri+mS)->hesap+hS)->bakiye != 0){//işlemin yapıldığı hesaptaki bütün para çekilir
 				dTemp -= ((aBank.musteri+mS)->hesap+hS)->bakiye;
 				islemKaydi(mS, hS, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -((aBank.musteri+mS)->hesap+hS)->bakiye);
 				kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(((aBank.musteri+mS)->hesap+hS)->bakiye*2)) / 100.0 : 0;
@@ -935,9 +935,9 @@ void havaleGonder(int mS, int hS){
 				islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+hS)->hesapNo, ((aBank.musteri+mS)->hesap+hS)->bakiye - kesinti);
 				((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
 			}
-			for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){
-				if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){
-					if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+			for (i=0; i<(aBank.musteri+mS)->hesapSayisi; i++){//diğer hesaplarda işlem yapılır yeterli para kesilene kadar
+				if (((aBank.musteri+mS)->hesap+i)->bakiye != 0){//bakiye 0 ise işlem yapmasın diye
+					if (dTemp<=((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){//kesilecek para hesaptaki paradan az ise
 						((aBank.musteri+mS)->hesap+i)->bakiye -= dTemp;
 						islemKaydi(mS, i, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -dTemp);
 						kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(dTemp*2)) / 100.0 : 0;
@@ -946,8 +946,7 @@ void havaleGonder(int mS, int hS){
 						((aBank.musteri+hmS)->hesap+hhS)->bakiye += (dTemp - kesinti);
 						islemKaydi(hmS, hhS, 3, ((aBank.musteri+mS)->hesap+i)->hesapNo, dTemp - kesinti);
 						dTemp = 0;
-
-					}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){
+					}else if (dTemp>((aBank.musteri+mS)->hesap+i)->bakiye && dTemp!=0){//kesilecek para hesaptaki paradan fazla ise
 						dTemp -= ((aBank.musteri+mS)->hesap+i)->bakiye;
 						islemKaydi(mS, i, 3, ((aBank.musteri+hmS)->hesap+hhS)->hesapNo, -((aBank.musteri+mS)->hesap+i)->bakiye);
 						kesinti = ((aBank.musteri+mS)->mTuru == 1) ? ((int)(((aBank.musteri+mS)->hesap+i)->bakiye*2)) / 100.0 : 0;
@@ -987,10 +986,10 @@ void havaleGonder(int mS, int hS){
 		}break;
 	}
 }
-void hHesapKayit(int mS, int hS, int hNo){
+void hHesapKayit(int mS, int hS, int hNo){//mS indisli müşterinin hNo hesap nosunu kayıt işlemi (hS sadece geri dön işlemi için)
 	int sorgu, kontrol, s=1, t;
 	char c;
-	if (hNo == -1){
+	if (hNo == -1){//hNo -1 ise kaydedilecek hesap no sorulur
 		s=0;
 		system("@cls||clear");
 		printf(".............aBank.............\n");
@@ -1001,10 +1000,10 @@ void hHesapKayit(int mS, int hS, int hNo){
 			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 			if (sorgu == 0 && kontrol == 1 && t == 1) MusteriIslem(mS);
 			if (kontrol != 1) printf("Hatali giris!\nTekrar deneyiniz: ");
-			else if (hNoKontrol(sorgu, 1) == -1){
+			else if (hNoKontrol(sorgu, 1) == -1){//hesap no varmı kontrolü
 				printf("Boyle bir hesap numarasi yok!\nTekrar deneyiniz: ");
 				kontrol = 0;
-			}else if (thKontrol(mS, sorgu) != -1){
+			}else if (thKontrol(mS, sorgu) != -1){//hesap zaten kayıtlı mı kontrolü
 				printf("Hesap numarasi zaten kayitli!\nTekrar deneyiniz: ");
 				kontrol = 0;
 			} 
@@ -1037,10 +1036,10 @@ void hHesapKayit(int mS, int hS, int hNo){
 	}
 
 }
-void hesapAc(int mS){
+void hesapAc(int mS){//mS indisli müşterinin hesap açma işlemi
 	int sorgu, kontrol, hS = (aBank.musteri+mS)->hesapSayisi;
 	char c;
-	((aBank.musteri+mS)->hesap+hS)->hesapNo = NoOlustur(2);
+	((aBank.musteri+mS)->hesap+hS)->hesapNo = NoOlustur(2);//7 haneli rasgele rakam oluşturur
 	((aBank.musteri+mS)->hesap+hS)->bakiye = 0;
 	((aBank.musteri+mS)->hesap+hS)->islemSayisi = 0;
 	(aBank.musteri+mS)->hesapSayisi++;
@@ -1069,12 +1068,12 @@ void hesapAc(int mS){
 		}break;
 	}
 }
-void hesapSil(int mS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
+void hesapSil(int mS, int s){//mS indisli müşterinin hesap silme işlemi
 	int i, n, sorgu, kontrol, shS;
 	char c;
-	shS =  hesapSec(mS, -1, s);
-	n = (s==1) ? (aBank.musteri+mS)->hesapSayisi : (aBank.musteri+mS)->tHesapSayisi;
-	if (s==1 && ((aBank.musteri+mS)->hesap+shS)->bakiye!=0){
+	shS =  hesapSec(mS, -1, s);// s 1 ise normal hesap 2 ise havale hesap seçimi yapılır seçilen hesabın indisi shS ye atanır
+	n = (s==1) ? (aBank.musteri+mS)->hesapSayisi : (aBank.musteri+mS)->tHesapSayisi;//s 1 ise normal hesap 2 ise havale hesap sayısı alınır
+	if (s==1 && ((aBank.musteri+mS)->hesap+shS)->bakiye!=0){//normal hesap silme işlemi
 		system("@cls||clear");
 		printf(".............aBank.............\n");
 		printf("Hesabinizda para varken hesabinizi silemezsiniz!\n1-)\tGeri don\n0-)\tAna menu\nSecim: ");
@@ -1094,11 +1093,11 @@ void hesapSil(int mS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 				hesapSil(mS, 1);
 			}break;
 		}
-	}else{
-		for (i=shS; i<n; i++){
-			if (s==1){
+	}else{//havale hesap silme işlemi
+		for (i=shS; i<n; i++){//struct eşitleme kullanılarak silme işlemi yapılır
+			if (s==1){//normal hesap ise
 				(aBank.musteri+mS)->hesap[i] = (aBank.musteri+mS)->hesap[i+1]; 
-			}else{
+			}else{//havale hesabı ise
 				(aBank.musteri+mS)->tHesap[i] = (aBank.musteri+mS)->tHesap[i+1]; 
 			}
 		}
@@ -1126,22 +1125,22 @@ void hesapSil(int mS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 		}
 	}
 }
-int hesapSec(int mS, int hS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
+int hesapSec(int mS, int hS, int s){//mS indisli müşterinin hesap seçme işlemi (hS geri dön menüsü için
 	int i, t, sorgu, kontrol, hNo, n, tmS;
 	char c;
-	if (s==1){
+	if (s==1){//s 1 ise normal hesap
 		n = (aBank.musteri+mS)->hesapSayisi;
 		if (n==1) return 0;
-	}else n = (aBank.musteri+mS)->tHesapSayisi;
-	if(n==0) return -1;
+	}else n = (aBank.musteri+mS)->tHesapSayisi; //s 1 değilse havale hesap 
+	if(n==0) return -1;//hiç hesap yoksa -1 döner
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	printf("Islem yapilacak hesap no seciniz (Iptal etmek icin 0 giriniz): \n\n");
 	for (i=0; i<n; i++){
 		hNo = (s==1) ? ((aBank.musteri+mS)->hesap+i)->hesapNo : ((aBank.musteri+mS)->tHesap+i)->hesapNo;
-		if (s==1){
+		if (s==1){//s 1 ise normal hesapları listeler
 			printf("%d-) %d (%.2lf TL)\n", i+1, hNo, ((aBank.musteri+mS)->hesap+i)->bakiye);
-		}else{
+		}else{//s 1 değilse havale hesaplarını listeler
 			tmS = hNoKontrol(hNo, 1);
 			strcpy(temp, (aBank.musteri+tmS)->Ad);
 			isimDuzelt(temp);
@@ -1162,10 +1161,10 @@ int hesapSec(int mS, int hS, int s){// s 1 ise normal hesap 2 ise kayitli hesap
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
-	return sorgu-1;
+	return sorgu-1;//seçilen hesabın indisini döndürür
 }
 
-int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
+int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno oluşturur
 	int No, kontrol;
 	srand(time(NULL)+n);
 	do{
@@ -1175,7 +1174,7 @@ int NoOlustur(int n){ //n 1 ise musterino 2 ise hesapno
 	}while(kontrol!=-1);
 	return No;
 }
-char *sifrele(char sifre[120]){
+char *sifrele(char sifre[120]){//kullanıcı şifresini şifreler dosyadan şifre anlaşılmasın diye
 	int i, iTemp[8]={}, len = strlen(sifre);
 	for (i=0; i<8; i++){
 		*(iTemp+i) += ((i+1) * (*(sifre+(i%len)) + 11) + *(sifre+len-(i%len)-1) + i);
@@ -1185,30 +1184,30 @@ char *sifrele(char sifre[120]){
 	return sifre;
 }
 
-int tcNoKontrol(double tcNo){
+int tcNoKontrol(double tcNo){//tcNo kontrolü
 	int i;
 	for (i=0; i<aBank.mSayisi; i++){
-		if ((aBank.musteri+i)->tcNo == tcNo) return i;
+		if ((aBank.musteri+i)->tcNo == tcNo) return i;//tcNo kayıtlı ise müşteri indisini döndürür
 	}
-	return -1;
+	return -1;//kayıtlı değilse -1 döndürür
 }
-int mNoKontrol(int musteriNo){
+int mNoKontrol(int musteriNo){//müşteri no kontrolü
 	int i;
 	for (i=0; i<aBank.mSayisi; i++){
-		if ((aBank.musteri+i)->musteriNo == musteriNo) return i;
+		if ((aBank.musteri+i)->musteriNo == musteriNo) return i;//müşteri no varsa müşteri indisini döndürür
 	}
-	return -1;
+	return -1;//yoksa -1 döndürür
 }
 int hNoKontrol(int hesapNo, int n){//n 1 ise musteri sirasi 2 ise hesap sirasi
 	int mS, hS;
 	for (mS=0; mS<aBank.mSayisi; mS++){
 		for (hS=0; hS<(aBank.musteri+mS)->hesapSayisi; hS++){
-			if (((aBank.musteri+mS)->hesap+hS)->hesapNo == hesapNo) return (n==1)?mS:hS;
+			if (((aBank.musteri+mS)->hesap+hS)->hesapNo == hesapNo) return (n==1)?mS:hS;//n 1 ise musteri sirasi 2 ise hesap sirasini döndürür
 		}
 	}
-	return -1;
+	return -1;//hesap no yoksa -1 döndürür
 }
-int thKontrol(int mS, int hNo){
+int thKontrol(int mS, int hNo){//mS indisli müşterinin havale hesap kontrolü
 	int i;
 	for (i=0; i<(aBank.musteri+mS)->tHesapSayisi; i++){
 		if (((aBank.musteri+mS)->tHesap+i)->hesapNo == hNo) return i;
@@ -1216,11 +1215,11 @@ int thKontrol(int mS, int hNo){
 	return -1;
 }
 
-void strAl(char str[120], int min, int max){
+void strAl(char str[120], int min, int max){//string almak için (min minimum karakter sayısı, max maximum karakter sayısı)
 	int t, i, kontrol;
 	char cTemp;
 	do{
-		for (i=0; i<120; i++) {
+		for (i=0; i<120; i++) {//bazı hatalar için string sıfırlanır
 			str[i] = '\0';
 		}
 		kontrol=1;
@@ -1228,56 +1227,56 @@ void strAl(char str[120], int min, int max){
 		t = strlen(str);
 		do{
 			scanf("%c", &cTemp);
-			if (cTemp == ' ') cTemp = '-';
+			if (cTemp == ' ') cTemp = '-';//boşlukları (-) ye çevirir
 			*(str + t++) = cTemp;
 		}while (cTemp != '\n');
-		*(str+t-1) = 0;
+		*(str+t-1) = 0;//string sonunu belirtir
 		t = strlen(str);
-		if (*(str+t-1) == '-') kontrol=0;
-		if (t==1 && *str == '0') break;
-		if (t>max || t<min || kontrol != 1){
+		if (*(str+t-1) == '-') kontrol=0;//son karakter boşluk ise hata verir
+		if (t==1 && *str == '0') break;//iptal işlemleri için döngüden çıkar
+		if (t>max || t<min || kontrol != 1){//min max kontrolü
 			printf("Hatali giris!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
 	}while (kontrol != 1);
 }
-void isimDuzelt(char ad[120]){
+void isimDuzelt(char ad[120]){//(-) leri boşluğa çevirir
 	int i, t;
 	t = strlen(ad);
 	for (i=0; i<t; i++){
 		if (*(ad+i) == '-') *(ad+i) = ' ';
 	}
 }
-void hesapOzeti(int mS, int hS){
+void hesapOzeti(int mS, int hS){//mS indisli müşterinin hS indisli hesabının hesap özeti işlemleri
 	FILE *pf;
 	time_t t = time(NULL);
-	struct tm tm = *localtime(&t);
+	struct tm tm = *localtime(&t);//güncel zaman alınır
 	int i, j, k, n, t1, t2, t3, iS, aralik, ihNo, imS, iA, iY, sorgu, kontrol;
 	double kesinti;
 	char c;
 	iS = ((aBank.musteri+mS)->hesap+hS)->islemSayisi;
-	t1 = ((((aBank.musteri+mS)->hesap+hS)->islem)->tarih.Yil - 1900) * 12 + (((aBank.musteri+mS)->hesap+hS)->islem)->tarih.Ay;
-	t2 = tm.tm_year * 12 + tm.tm_mon+1 ;
-	aralik = t2-t1;
-	int index[aralik+1];
+	t1 = ((((aBank.musteri+mS)->hesap+hS)->islem)->tarih.Yil - 1900) * 12 + (((aBank.musteri+mS)->hesap+hS)->islem)->tarih.Ay;//toplam ay sayısı ilk işlem için (aralık hesabı için)
+	t2 = tm.tm_year * 12 + tm.tm_mon+1 ;//güncel tarih toplam ay sayısı (aralık hesabı için)
+	aralik = t2-t1;//ilk işlem ile güncel tarih arasında kaç ay olduğunu bulmak için
+	int index[aralik+1];//menüdeki indislere işlemin ay sırasını ekler (işlem yapılan ayların indislerini kaydetmek için)
 	
-	for (i=0; i<aralik+1; i++){
-		*(index+i) = -1;
+	for (i=0; i<aralik+1; i++){//bütün işlem kayıtlarını aylara ayırmak için (hiç işlem yapılmayan aylarında indisi olur)
+		*(index+i) = -1;//sıfırlama işlemi
 		(dekont+i)->islemSayisi = 0;
 		((dekont+i)->islem)->Tutar = 0;
-		for (j=iS-1; j>=0; j--){
-			t3 = ((((aBank.musteri+mS)->hesap+hS)->islem+j)->tarih.Yil - 1900) * 12 + (((aBank.musteri+mS)->hesap+hS)->islem+j)->tarih.Ay;
-			if ((t2-t3) == i){
-				ihNo = (((aBank.musteri+mS)->hesap+hS)->islem+j)->iHesap;
-				imS = hNoKontrol(ihNo, 1);
-				strcpy(((dekont+i)->islem+(dekont+i)->islemSayisi)->Ad, (aBank.musteri+imS)->Ad);
+		for (j=iS-1; j>=0; j--){//ay aralığındaki işlemleri listeler
+			t3 = ((((aBank.musteri+mS)->hesap+hS)->islem+j)->tarih.Yil - 1900) * 12 + (((aBank.musteri+mS)->hesap+hS)->islem+j)->tarih.Ay;//işlemin yapıldıgı tarihteki toplam ay sayısı
+			if ((t2-t3) == i){//ay aralığı ay farkına eşitse işlem yapar 
+				ihNo = (((aBank.musteri+mS)->hesap+hS)->islem+j)->iHesap;//işlemin yapıldığı hesap noyu alır
+				imS = hNoKontrol(ihNo, 1);//işlemin yapıldıgı müşteri indisini alır
+				strcpy(((dekont+i)->islem+(dekont+i)->islemSayisi)->Ad, (aBank.musteri+imS)->Ad);//işlemin yapıldığı kişinin adını kaydeder(Havale işlem kaydı için)
 				isimDuzelt(((dekont+i)->islem+(dekont+i)->islemSayisi)->Ad);
 				((dekont+i)->islem+(dekont+i)->islemSayisi)->hesapNo = ihNo;
 				((dekont+i)->islem+(dekont+i)->islemSayisi)->mTuru = (aBank.musteri+mS)->mTuru;
 				((dekont+i)->islem+(dekont+i)->islemSayisi)->iTuru = (((aBank.musteri+mS)->hesap+hS)->islem+j)->iTuru;
 				((dekont+i)->islem+(dekont+i)->islemSayisi)->Tutar = (((aBank.musteri+mS)->hesap+hS)->islem+j)->iTutar;
 				((dekont+i)->islem+(dekont+i)->islemSayisi)->tarih = (((aBank.musteri+mS)->hesap+hS)->islem+j)->tarih;
-				(dekont+i)->islemSayisi++;
+				(dekont+i)->islemSayisi++;//her işlemde işlem sayısını 1 arttırır
 			}
 		}
 	}
@@ -1285,15 +1284,15 @@ void hesapOzeti(int mS, int hS){
 	printf(".............aBank.............\n");
 	k=0;
 	for (i=0; i<aralik+1; i++){
-		if (((dekont+i)->islem)->Tutar != 0){
+		if (((dekont+i)->islem)->Tutar != 0){//ay indisinde işlem yapıldı ise
 			iY = (t2 - i) / 12 + 1900;
 			iA = (t2 - i -1) % 12 +1; 
-			n = i-k+1;
+			n = i-k+1;//menüdeki indis numarası hesaplanır
 			if (i==0) printf("%2d-)\t%02d - %02d\t", n, iY, iA);
 			else printf("%2d-)\t%d - %02d/%02d\t", n, iY, iA, iA%12+1);
 			if (n%2 == 0) printf("\n");
-			*(index+n) = i;
-		}else{
+			*(index+n) = i;//menüdeki indis sırasından dekont structındaki ay indisini elde edebilmek için
+		}else{//ay indisinde işlem yapılmadı ise k arttırılır (menüde gösterilen tarih aralıkları sıralı olsun diye)
 			k++;
 		}
 	}
@@ -1314,14 +1313,14 @@ void hesapOzeti(int mS, int hS){
 		printf("Dosya acma hatasi!\n");
 		exit(1);
 	}
-	i = *(index + sorgu);
+	i = *(index + sorgu);//ay indisi elde edilir
 	iY = (t2 - i) / 12 + 1900;
 	iA = (t2 - i -1) % 12 +1; 
 	if (i==0) fprintf(pf, "(%02d - %02d)  Donemi hesap ozeti", iY, iA);
 	else fprintf(pf, "(%d - %02d/%02d)  Donemi hesap ozeti", iY, iA, iA%12+1);
 	fprintf(pf, "  (%d)\n\n", ((aBank.musteri+mS)->hesap+hS)->hesapNo);
-	for (j=(dekont+i)->islemSayisi-1; j>=0; j--){
-		if (((dekont+i)->islem+j)->iTuru == 1){
+	for (j=(dekont+i)->islemSayisi-1; j>=0; j--){//ilk başa en yeni işlem gelsin diye tersten listelendi(dekont yazdırma işlemi)
+		if (((dekont+i)->islem+j)->iTuru == 1){//para çekme işlemi ise
 			fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Para cekme    %.2lf\n", 
 				((dekont+i)->islem+j)->tarih.Gun,
 				((dekont+i)->islem+j)->tarih.Ay,
@@ -1329,7 +1328,7 @@ void hesapOzeti(int mS, int hS){
 				((dekont+i)->islem+j)->tarih.Saat,
 				((dekont+i)->islem+j)->tarih.Dk,
 				-((dekont+i)->islem+j)->Tutar);
-		}else if (((dekont+i)->islem+j)->iTuru == 2){
+		}else if (((dekont+i)->islem+j)->iTuru == 2){//para yatırma işlemi ise
 			fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Para yatirma  %.2lf\n", 
 				((dekont+i)->islem+j)->tarih.Gun,
 				((dekont+i)->islem+j)->tarih.Ay,
@@ -1337,9 +1336,9 @@ void hesapOzeti(int mS, int hS){
 				((dekont+i)->islem+j)->tarih.Saat,
 				((dekont+i)->islem+j)->tarih.Dk,
 				((dekont+i)->islem+j)->Tutar);
-		}else if (((dekont+i)->islem+j)->iTuru == 3){
-			if (((dekont+i)->islem+j)->Tutar<0){
-				if (((dekont+i)->islem+j)->mTuru == 1){
+		}else if (((dekont+i)->islem+j)->iTuru == 3){//havale işlemi ise
+			if (((dekont+i)->islem+j)->Tutar<0){//havale göderildi ise
+				if (((dekont+i)->islem+j)->mTuru == 1){//bireysel müşteri ise
 					kesinti = ((int)(-((dekont+i)->islem+j)->Tutar*2)) / 100.0;
 					fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Giden havale  %.2lf (-%.2lf)\n", 
 						((dekont+i)->islem+j)->tarih.Gun,
@@ -1350,7 +1349,7 @@ void hesapOzeti(int mS, int hS){
 						-((dekont+i)->islem+j)->Tutar,
 						kesinti);
 					fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", ((dekont+i)->islem+j)->Ad, ((dekont+i)->islem+j)->hesapNo);
-				}else{
+				}else{//ticari müşteri ise
 					fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Giden havale  %.2lf\n", 
 						((dekont+i)->islem+j)->tarih.Gun,
 						((dekont+i)->islem+j)->tarih.Ay,
@@ -1360,7 +1359,7 @@ void hesapOzeti(int mS, int hS){
 						-((dekont+i)->islem+j)->Tutar);
 					fprintf(pf, "\tGonderilen kisi:  %s (%d)\n", ((dekont+i)->islem+j)->Ad, ((dekont+i)->islem+j)->hesapNo);
 				}
-			}else if (((dekont+i)->islem+j)->Tutar>0){
+			}else if (((dekont+i)->islem+j)->Tutar>0){//havale alındı ise
 				fprintf(pf, "%02d.%02d.%04d - %02d:%02d  Gelen havale  %.2lf\n", 
 					((dekont+i)->islem+j)->tarih.Gun,
 					((dekont+i)->islem+j)->tarih.Ay,
@@ -1379,7 +1378,7 @@ void hesapOzeti(int mS, int hS){
 	}
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	while ((c=fgetc(pf))!=EOF){
+	while ((c=fgetc(pf))!=EOF){//işlem kaydı dekont.txt den alınır ve yazdırılır
 		printf("%c", c);
 	}
 	fclose(pf);
@@ -1402,7 +1401,7 @@ void hesapOzeti(int mS, int hS){
 	}
 }
 
-void bankaRapor(int mS){
+void bankaRapor(int mS){//gelir gider raporu goruntülemek içim
 	FILE *pf;
 	int sorgu, kontrol;
 	char c;
@@ -1435,7 +1434,7 @@ void bankaRapor(int mS){
 	}
 }
 
-void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
+void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){//iT -> işlem türü, iH -> işlemin yapıldıgı hesapno, iTutar ->işlem tutarı
 	int iS, mTuru;
 	double kesinti;
 	iS = ((aBank.musteri+mS)->hesap+hS)->islemSayisi;
@@ -1454,7 +1453,7 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	((aBank.musteri+mS)->hesap+hS)->islemSayisi++;
 
 	mTuru = (aBank.musteri+mS)->mTuru;
-	if (iT == 1){
+	if (iT == 1){//işlem tutarları gelir gider raporu için structa kaydedilir
 		aBank.tGiden -= iTutar;
 	}else if (iT == 2){
 		aBank.tGelen += iTutar;
@@ -1464,7 +1463,7 @@ void islemKaydi(int mS, int hS, int iT, int iH, double iTutar){
 	}
 }
 
-double cekilenPara(int mS){
+double cekilenPara(int mS){//mS indisli müşterinin gün içinde çektiği para miktarını hesaplar
 	int i, j, iYil, iAy, iGun, Yil, Ay, Gun;
 	double limit = 0;
 	time_t t = time(NULL);
