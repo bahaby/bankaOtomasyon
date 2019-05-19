@@ -1138,7 +1138,7 @@ void musteriSil(int mS){
 	char c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
-	printf("Musteri kaydinizi silmek istediginize eminmisiz?\n1-)\tMusteri kaydi sil\n2-)\tGeri don\nSecim: ");
+	printf("Musteri kaydinizi silmek istediginize eminmisiz?\n\n1-)\tMusteri kaydi sil\n2-)\tGeri don\nSecim: ");
 	do{
 		strAl(temp, 1, 1);
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
