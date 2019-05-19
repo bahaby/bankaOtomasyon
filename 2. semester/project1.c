@@ -25,7 +25,7 @@ typedef struct{
 
 typedef struct{
 	int hesapNo;
-	int islemSayisi;
+	int islemSayisi;//hesaptaki toplam işlem sayısı
 	double bakiye;
 	Islem islem[MAX_ISLEM];
 }Hesap;
@@ -42,7 +42,7 @@ typedef struct{
 	char Ad[120];
 	char Sifre[120];
 	double tcNo;
-	int hesapSayisi;
+	int hesapSayisi;//müşterinin toplam hesap sayısı
 	int tHesapSayisi;//havale hesabı sayısı
 	int musteriNo;
 	int mTuru;//1->bireysel || 2->ticari
@@ -50,8 +50,8 @@ typedef struct{
 
 typedef struct{
 	Musteri musteri[MAX_MUSTERI];
-	int mSayisi;
-	int girisYapan;
+	int mSayisi;//toplam müşteri sayısı
+	int girisYapan;//giriş yapmış olan müşterinin indisi -1 ise giriş yapan yok
 	double tGelen;//bankaya giren toplam para
 	double tGiden;//bankadan çıkan toplam para
 	double tKar;//bankanın toplam karı
@@ -229,13 +229,20 @@ void VeriAl(){//dosyaya yazdırılan verileri struct yapısına yükler
 void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 	int i, j, k, b=0, t=0;
 	FILE *pf1, *pf2;
+	if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
+	if (t==0) fclose(fopen("ticariMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
+	if ((pf1 = fopen("bireyselMusteri.txt", "a")) == NULL){
+		printf("Dosya acma hatasi!\n");
+		exit(1);
+	}
+	if ((pf2 = fopen("ticariMusteri.txt", "a")) == NULL){
+		printf("Dosya acma hatasi!\n");
+		exit(1);
+	}
+	printf("%d", aBank.mSayisi);
+	
 	for (i=0; i<aBank.mSayisi; i++){
 		if ((aBank.musteri+i)->mTuru == 1){
-			if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
-			if ((pf1 = fopen("bireyselMusteri.txt", "a")) == NULL){
-				printf("Dosya acma hatasi!\n");
-				exit(1);
-			}
 			if (b!=0) fprintf(pf1, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf1, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
@@ -263,19 +270,13 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 			for (j=0; j<(aBank.musteri+i)->tHesapSayisi; j++){
 				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->tHesap+j)->hesapNo);
 			}
-			fclose(pf1);
 			b=1;
 		}else if ((aBank.musteri+i)->mTuru == 2){
-			if (t==0) fclose(fopen("ticariMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
-			if ((pf2 = fopen("ticariMusteri.txt", "a")) == NULL){
-				printf("Dosya acma hatasi!\n");
-				exit(1);
-			}
 			if (t!=0) fprintf(pf2, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf2, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf2, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
-			fprintf(pf1, "\n\tMusteri no: %d", (aBank.musteri+i)->musteriNo);
+			fprintf(pf2, "\n\tMusteri no: %d", (aBank.musteri+i)->musteriNo);
 			fprintf(pf2, "\n\tHesap sayisi: %d", (aBank.musteri+i)->hesapSayisi);
 			for (j=0; j<(aBank.musteri+i)->hesapSayisi; j++){
 				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->hesap+j)->hesapNo);
@@ -298,10 +299,11 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 			for (j=0; j<(aBank.musteri+i)->tHesapSayisi; j++){
 				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->tHesap+j)->hesapNo);
 			}
-			fclose(pf2);
 			t=1;
 		}
 	}
+	fclose(pf1);
+	fclose(pf2);
 
 
 	fclose(fopen("rapor.txt", "w"));
@@ -1133,7 +1135,7 @@ void hesapSil(int mS, int s){//mS indisli müşterinin hesap silme işlemi
 		}
 	}
 }
-void musteriSil(int mS){
+void musteriSil(int mS){//müsteri kaydi siler
 	int i, kontrol, sorgu;
 	char c;
 	system("@cls||clear");
@@ -1148,7 +1150,7 @@ void musteriSil(int mS){
 		}
 	}while(kontrol != 1);
 	if (sorgu == 2) AnaMenu();
-	for(i=mS; i<aBank.mSayisi; i++){
+	for(i=mS; i<aBank.mSayisi; i++){//struct eşitleme kullanılarak silinecek hesaptan başlanarak müşterilerin indisleri 1 kaydırılır
 		*(aBank.musteri+i) = *(aBank.musteri+i+1);
 	}
 	aBank.mSayisi--;
