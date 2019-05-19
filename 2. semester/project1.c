@@ -227,10 +227,10 @@ void VeriAl(){//dosyaya yazdırılan verileri struct yapısına yükler
 }
 
 void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
-	int i, j, k, b=0, t=0;
+	int i, j, k, s1=0, s2=0;
 	FILE *pf1, *pf2;
-	if (b==0) fclose(fopen("bireyselMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
-	if (t==0) fclose(fopen("ticariMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
+	fclose(fopen("bireyselMusteri.txt", "w"));//döngüde sadece ilk okuma için dosyayı silip tekrar açsın diye
+	fclose(fopen("ticariMusteri.txt", "w"));
 	if ((pf1 = fopen("bireyselMusteri.txt", "a")) == NULL){
 		printf("Dosya acma hatasi!\n");
 		exit(1);
@@ -242,7 +242,7 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 	
 	for (i=0; i<aBank.mSayisi; i++){
 		if ((aBank.musteri+i)->mTuru == 1){
-			if (b!=0) fprintf(pf1, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
+			if (s1!=0) fprintf(pf1, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf1, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf1, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
@@ -269,9 +269,9 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 			for (j=0; j<(aBank.musteri+i)->tHesapSayisi; j++){
 				fprintf(pf1, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->tHesap+j)->hesapNo);
 			}
-			b=1;
+			s1=1;
 		}else if ((aBank.musteri+i)->mTuru == 2){
-			if (t!=0) fprintf(pf2, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
+			if (s2!=0) fprintf(pf2, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
 			fprintf(pf2, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf2, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
@@ -298,7 +298,7 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 			for (j=0; j<(aBank.musteri+i)->tHesapSayisi; j++){
 				fprintf(pf2, "\n\t\tHesap %d: %d", j+1, ((aBank.musteri+i)->tHesap+j)->hesapNo);
 			}
-			t=1;
+			s2=1;
 		}
 	}
 	fclose(pf1);
