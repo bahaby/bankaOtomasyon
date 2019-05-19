@@ -239,7 +239,6 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 		printf("Dosya acma hatasi!\n");
 		exit(1);
 	}
-	printf("%d", aBank.mSayisi);
 	
 	for (i=0; i<aBank.mSayisi; i++){
 		if ((aBank.musteri+i)->mTuru == 1){
