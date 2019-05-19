@@ -89,6 +89,7 @@ void havaleGonder(int mS, int hS);//havale islemleri
 void hHesapKayit(int mS, int hS, int hNo);//hNo -1 ise hesap no sorar ve kayitli hesaplara kaydeder veya hNo yu kayitli hesaplara kaydeder
 void hesapAc(int mS);//musteriye yeni hesap acar
 void hesapSil(int mS, int s);//s'in degerine gore kayitli veya normal hesap siler once silinecek hesabi sectirir
+void musteriSil(int mS);
 void hesapOzeti(int mS, int hS);//aylik olarak islem gecmisini gruplar secilen tarihteki hesap ozetini dekont.txt ye yazdirir ve ekranda gosterir
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);//islem kaydi yapar
 int hesapSec(int mS, int hS, int s);//hesap secme menusu secilen hesap noyu dondurur (s'in degerine gore normal hesap veya kayitli hesap)
@@ -324,27 +325,33 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 }
 
 void AnaMenu(){
-	int sorgu, kontrol;
+	int sorgu, kontrol, n;
 	char c;
 	system("@cls||clear");
 	printf(".............aBank.............\n");
 	if (aBank.girisYapan == -1){//giriş yapan yoksa
 		printf("1-)\tYeni musteri kaydi\n");
 		printf("2-)\tMusteri girisi\n");
+		n=2;
 	}else{//giriş yapan varsa
 		printf("1-)\tMusteri islemleri\n");
-		printf("2-)\tMusteri cikisi\n");
+		printf("2-)\tMusteri kaydini sil\n");
+		printf("3-)\tMusteri cikisi\n");
+		n=3;
 	}
 	printf("0-)\tCikis\n");
 	printf("Secim: ");
 	do{
 		strAl(temp, 1, 1);
 		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
-		if(sorgu<0 || sorgu>2 || kontrol != 1) {
+		if(sorgu<0 || sorgu>n || kontrol != 1) {
 			printf("Hatali giris!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}else if(sorgu == 2 && aBank.mSayisi==0){
 			printf("Herhangi bir musteri yok henuz!\nTekrar deneyiniz: ");
+			kontrol = 0;
+		}else if(sorgu == 2 && (aBank.musteri+aBank.girisYapan)->tBakiye != 0 && aBank.girisYapan != -1){
+			printf("Hesaplarinizda para varken kaydinizi silemezsiniz!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
@@ -364,6 +371,11 @@ void AnaMenu(){
 			if (aBank.girisYapan == -1){
 				MusteriIslem(aBank.girisYapan);
 			}else{
+				musteriSil(aBank.girisYapan);
+			}
+		}break;
+		case 3:{
+			if (aBank.girisYapan != -1){
 				aBank.girisYapan = -1;
 				AnaMenu();
 			}
@@ -1092,9 +1104,9 @@ void hesapSil(int mS, int s){//mS indisli müşterinin hesap silme işlemi
 	}else{//havale hesap silme işlemi
 		for (i=shS; i<n; i++){//struct eşitleme kullanılarak silme işlemi yapılır
 			if (s==1){//normal hesap ise
-				(aBank.musteri+mS)->hesap[i] = (aBank.musteri+mS)->hesap[i+1]; 
+				*((aBank.musteri+mS)->hesap+i) = *((aBank.musteri+mS)->hesap+i+1); 
 			}else{//havale hesabı ise
-				(aBank.musteri+mS)->tHesap[i] = (aBank.musteri+mS)->tHesap[i+1]; 
+				*((aBank.musteri+mS)->tHesap+i) = *((aBank.musteri+mS)->tHesap+i+1); 
 			}
 		}
 		(s==1) ? (aBank.musteri+mS)->hesapSayisi-- : (aBank.musteri+mS)->tHesapSayisi--;
@@ -1119,6 +1131,46 @@ void hesapSil(int mS, int s){//mS indisli müşterinin hesap silme işlemi
 				MusteriIslem(mS);
 			}break;
 		}
+	}
+}
+void musteriSil(int mS){
+	int i, kontrol, sorgu;
+	char c;
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Musteri kaydinizi silmek istediginize eminmisiz?\n1-)\tMusteri kaydi sil\n2-)\tGeri don\nSecim: ");
+	do{
+		strAl(temp, 1, 1);
+		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
+		if(sorgu<1 || sorgu>2 || kontrol != 1) {
+			printf("Hatali giris!\nTekrar deneyiniz: ");
+			kontrol = 0;
+		}
+	}while(kontrol != 1);
+	if (sorgu == 2) AnaMenu();
+	for(i=mS; i<aBank.mSayisi; i++){
+		*(aBank.musteri+i) = *(aBank.musteri+i+1);
+	}
+	aBank.mSayisi--;
+	Guncelle();
+
+	system("@cls||clear");
+	printf(".............aBank.............\n");
+	printf("Islem basarili...\n\n");
+	printf("1-)\tGeri don\nSecim: ");
+	do{
+		strAl(temp, 1, 1);
+		kontrol = sscanf(temp, "%d%c", &sorgu, &c);
+		if(sorgu<1 || sorgu>1 || kontrol != 1) {
+			printf("Hatali giris!\nTekrar deneyiniz: ");
+			kontrol = 0;
+		}
+	}while(kontrol != 1);
+	switch (sorgu){
+		case 1:{
+			aBank.girisYapan = -1;
+			AnaMenu();
+		}break;
 	}
 }
 int hesapSec(int mS, int hS, int s){//mS indisli müşterinin hesap seçme işlemi (hS geri dön menüsü için
