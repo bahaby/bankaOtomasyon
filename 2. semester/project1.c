@@ -860,7 +860,10 @@ void havaleGonder(int mS, int hS){//mS indisli müşterinin hS indisli hesabın�
 					kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 					if (sorgu == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
 					if (kontrol != 1) printf("Hatali giris!\nTekrar deneyiniz: ");
-					else if (hNoKontrol(sorgu, 1) == -1){
+					else if(((aBank.musteri+mS)->hesap+hS)->hesapNo == sorgu){
+						printf("Islem yaptiginiz hesabi secemezsiniz!\nTekrar deneyiniz: ");
+						kontrol = 0;
+					}else if (hNoKontrol(sorgu, 1) == -1){
 						printf("Boyle bir hesap numarasi yok!\nTekrar deneyiniz: ");
 						kontrol = 0;
 					}
@@ -876,7 +879,10 @@ void havaleGonder(int mS, int hS){//mS indisli müşterinin hS indisli hesabın�
 			kontrol = sscanf(temp, "%d%c", &sorgu, &c);
 			if (sorgu == 0 && kontrol == 1 && t == 1) hesapIslem(mS, hS);
 			if (kontrol != 1) printf("Hatali giris!\nTekrar deneyiniz: ");
-			else if (hNoKontrol(sorgu, 1) == -1){
+			else if(((aBank.musteri+mS)->hesap+hS)->hesapNo == sorgu){
+				printf("Islem yaptiginiz hesabi secemezsiniz!\nTekrar deneyiniz: ");
+				kontrol = 0;
+			}else if (hNoKontrol(sorgu, 1) == -1){
 				printf("Boyle bir hesap numarasi yok!\nTekrar deneyiniz: ");
 				kontrol = 0;
 			}
