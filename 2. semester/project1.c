@@ -35,12 +35,13 @@ typedef struct{
 }transferHesap;//havale hesabları için oluşturulan struct
 
 typedef struct{
+
 	Hesap hesap[MAX_HESAP];
 	transferHesap tHesap[MAX_HESAP];
 	double tBakiye;
 	char Ad[120];
 	char Sifre[120];
-	long tcNo;
+	double tcNo;
 	int hesapSayisi;//müşterinin toplam hesap sayısı
 	int tHesapSayisi;//havale hesabı sayısı
 	int musteriNo;
@@ -93,7 +94,7 @@ void hesapOzeti(int mS, int hS);//aylik olarak islem gecmisini gruplar secilen t
 void islemKaydi(int mS, int hS, int iT, int iH, double iTutar);//islem kaydi yapar
 int hesapSec(int mS, int hS, int s);//hesap secme menusu secilen hesap noyu dondurur (s'in degerine gore normal hesap veya kayitli hesap)
 int NoOlustur(int n);//hesap numaralarini karsilastirip random ve farkli bir hesap numarasi dondurur
-int tcNoKontrol(long tcNo);//tc no kontrolu tc no varsa musteri indisini yoksa -1 dondurur
+int tcNoKontrol(double tcNo);//tc no kontrolu tc no varsa musteri indisini yoksa -1 dondurur
 int mNoKontrol(int musteriNo);//musteri no kontrolu yoksa -1 varsa indisini dondurur
 int hNoKontrol(int hesapNo, int n); //n 1 ise musteri indisi 2 ise hesap indisi dondurur hesap numarasi yoksa -1 dondurur
 int thKontrol(int mS, int hNo);//transfer hesap kontrolu yoksa -1 varsa indisini dondurur
@@ -122,7 +123,7 @@ void VeriAl(){//dosyaya yazdırılan verileri struct yapısına yükler
 			while(!feof(pf)){
 				fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
 				strcpy((aBank.musteri+mNo-1)->Sifre, temp);
-				fscanf(pf, " Tc no: %ld", &(aBank.musteri+mNo-1)->tcNo);
+				fscanf(pf, " Tc no: %lf", &(aBank.musteri+mNo-1)->tcNo);
 				fscanf(pf, " Ad soyad: %s", (aBank.musteri+mNo-1)->Ad);
 				fscanf(pf, " Musteri no: %d", &(aBank.musteri+mNo-1)->musteriNo);
 				fscanf(pf, " Hesap sayisi: %d", &(aBank.musteri+mNo-1)->hesapSayisi);
@@ -168,7 +169,7 @@ void VeriAl(){//dosyaya yazdırılan verileri struct yapısına yükler
 			while(!feof(pf)){
 				fscanf(pf, " Musteri: %d / [ %s ]", &mNo, temp);
 				strcpy((aBank.musteri+mNo-1)->Sifre, temp);
-				fscanf(pf, " Tc no: %ld", &(aBank.musteri+mNo-1)->tcNo);
+				fscanf(pf, " Tc no: %lf", &(aBank.musteri+mNo-1)->tcNo);
 				fscanf(pf, " Ad soyad: %s", (aBank.musteri+mNo-1)->Ad);
 				fscanf(pf, " Musteri no: %d", &(aBank.musteri+mNo-1)->musteriNo);
 				fscanf(pf, " Hesap sayisi: %d", &(aBank.musteri+mNo-1)->hesapSayisi);
@@ -243,7 +244,7 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 		if ((aBank.musteri+i)->mTuru == 1){
 			if (s1!=0) fprintf(pf1, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf1, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
-			fprintf(pf1, "\n\tTc no: %ld", (aBank.musteri+i)->tcNo);
+			fprintf(pf1, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf1, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
 			fprintf(pf1, "\n\tMusteri no: %d", (aBank.musteri+i)->musteriNo);
 			fprintf(pf1, "\n\tHesap sayisi: %d", (aBank.musteri+i)->hesapSayisi);
@@ -272,7 +273,7 @@ void Guncelle(){//struct yapısında olan verileri dosyaya yazdırır
 		}else if ((aBank.musteri+i)->mTuru == 2){
 			if (s2!=0) fprintf(pf2, "\n");//ilk okuma dışında döngünün başında alt satıra inmek için
 			fprintf(pf2, "Musteri: %d / [ %s ]", i+1, (aBank.musteri+i)->Sifre);
-			fprintf(pf2, "\n\tTc no: %ld", (aBank.musteri+i)->tcNo);
+			fprintf(pf2, "\n\tTc no: %.lf", (aBank.musteri+i)->tcNo);
 			fprintf(pf2, "\n\tAd soyad: %s", (aBank.musteri+i)->Ad);
 			fprintf(pf2, "\n\tMusteri no: %d", (aBank.musteri+i)->musteriNo);
 			fprintf(pf2, "\n\tHesap sayisi: %d", (aBank.musteri+i)->hesapSayisi);
@@ -385,7 +386,7 @@ void AnaMenu(){
 
 void YeniMusteri(){//yeni müşteri kaydı
 	int sorgu, kontrol, is1, is2, i, j, k, t;
-	long lTemp;
+	double dTemp;
 	char s1[120]={}, s2[120]={}, c;//s1 s2 girilen şifrelerin atandığı değişkenler
 	char alfabe[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-";
 	//char alfabe[] = "abcdefghijklmnoprstuvyzABCDEFGHIJKLMNOPRSTUVYZ-";
@@ -454,16 +455,16 @@ void YeniMusteri(){//yeni müşteri kaydı
 		strAl(temp, 11, 11);
 		t = strlen(temp);
 		if (t == 1 && *temp == '0') YeniMusteri();//işlem iptali için
-		kontrol = sscanf(temp, "%ld%c", &lTemp, &c);//doğru input alabilmek için
+		kontrol = sscanf(temp, "%lf%c", &dTemp, &c);//doğru input alabilmek için
 		if (kontrol != 1){
 			printf("Hatali giris!\nTekrar deneyiniz: ");
 			kontrol = 0;
-		}else if (tcNoKontrol(lTemp) != -1){//Tc no kayıtlımı kontrolü
+		}else if (tcNoKontrol(dTemp) != -1){//Tc no kayıtlımı kontrolü
 			printf("Bu tc numarasi kayitli!\nTekrar deneyiniz: ");
 			kontrol = 0;
 		}
 	}while(kontrol != 1);
-	(aBank.musteri+aBank.mSayisi)->tcNo = lTemp;
+	(aBank.musteri+aBank.mSayisi)->tcNo = dTemp;
 
 	system("@cls||clear");
 	printf(".............aBank.............\n");
@@ -502,7 +503,7 @@ void YeniMusteri(){//yeni müşteri kaydı
 	strcpy(temp, (aBank.musteri+aBank.mSayisi-1)->Ad);
 	isimDuzelt(temp);//ekrana yazdırma işlemi için (-) leri boşluğa çevirir
 	printf("Adiniz: %s\n", temp);
-	printf("Tc numaraniz: %ld\n", (aBank.musteri+aBank.mSayisi-1)->tcNo);
+	printf("Tc numaraniz: %.lf\n", (aBank.musteri+aBank.mSayisi-1)->tcNo);
 	printf("Musteri numaraniz: %d\n", (aBank.musteri+aBank.mSayisi-1)->musteriNo);
 	printf("Hesap numaraniz: %d\n", ((aBank.musteri+aBank.mSayisi-1)->hesap)->hesapNo);
 	printf("Sifreniz: %s\n\n", s2);
@@ -1232,7 +1233,7 @@ char *sifrele(char sifre[120]){//kullanıcı şifresini şifreler dosyadan şifr
 	return sifre;
 }
 
-int tcNoKontrol(long tcNo){//tcNo kontrolü
+int tcNoKontrol(double tcNo){//tcNo kontrolü
 	int i;
 	for (i=0; i<aBank.mSayisi; i++){
 		if ((aBank.musteri+i)->tcNo == tcNo) return i;//tcNo kayıtlı ise müşteri indisini döndürür
